@@ -1,0 +1,6 @@
+# SheetJS is fetched on demand by the build script.
+.cache/
+node_modules/
+~$*.xlsx
+Thumbs.db
+.DS_Store

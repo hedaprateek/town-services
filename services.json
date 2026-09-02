@@ -1,0 +1,205 @@
+{
+  "title": "Local Services & Help",
+  "tagline": "Plumbers, electricians, help at home — numbers collected by neighbours.",
+  "city": "Ichalkaranji",
+  "theme": "civic",
+  "country": "91",
+  "note": "These numbers are shared by neighbours. They are not verified or endorsed here — please check credentials and agree charges before engaging anyone. You do so at your own risk.",
+  "noteHi": "ये नंबर पड़ोसियों द्वारा साझा किए गए हैं। इनकी जाँच या सिफ़ारिश यहाँ नहीं की गई है — किसी को काम देने से पहले पहचान जाँचें और शुल्क तय कर लें। जोखिम आपका अपना होगा।",
+  "updated": "2026-09-02",
+  "sheets": [
+    "Services"
+  ],
+  "columns": [
+    "Name",
+    "Role",
+    "Category",
+    "Charges",
+    "Timings",
+    "Phone",
+    "Notes",
+    "Covers"
+  ],
+  "rows": [
+    {
+      "Name": "Rahul Shelar",
+      "Role": "Plumber",
+      "Category": "Repairs & Maintenance",
+      "Charges": "",
+      "Timings": "8 AM – 8 PM, on call",
+      "Phone": "9673020210",
+      "Notes": "Plumbing solutions",
+      "Covers": ""
+    },
+    {
+      "Name": "Ankush Mhetar",
+      "Role": "Electrician",
+      "Category": "Repairs & Maintenance",
+      "Charges": "",
+      "Timings": "9 AM – 8 PM, on call",
+      "Phone": "9309564191",
+      "Notes": "Major and Minor electric works",
+      "Covers": ""
+    },
+    {
+      "Name": "Jangid",
+      "Role": "Carpenter",
+      "Category": "Repairs & Maintenance",
+      "Charges": "₹150 / visit",
+      "Timings": "On call",
+      "Phone": "",
+      "Notes": "Furniture repair and fittings",
+      "Covers": ""
+    },
+    {
+      "Name": "Otis Service",
+      "Role": "Lift Technician",
+      "Category": "Building Services",
+      "Charges": "Society AMC",
+      "Timings": "4-hour response",
+      "Phone": "",
+      "Notes": "Report faults to the manager first",
+      "Covers": ""
+    },
+    {
+      "Name": "HiCare",
+      "Role": "Pest Control",
+      "Category": "Building Services",
+      "Charges": "₹1,200 / flat",
+      "Timings": "By appointment",
+      "Phone": "",
+      "Notes": "Quarterly society drive is free",
+      "Covers": ""
+    },
+    {
+      "Name": "Shanti Devi",
+      "Role": "Housekeeping",
+      "Category": "Building Services",
+      "Charges": "Society staff",
+      "Timings": "6 AM – 2 PM",
+      "Phone": "",
+      "Notes": "Common areas and staircases",
+      "Covers": ""
+    },
+    {
+      "Name": "Ganesh Pawar",
+      "Role": "Gardener",
+      "Category": "Building Services",
+      "Charges": "₹80 / visit",
+      "Timings": "Tue & Sat mornings",
+      "Phone": "",
+      "Notes": "Balcony and terrace plants",
+      "Covers": ""
+    },
+    {
+      "Name": "Jai Bhavani",
+      "Role": "Water Tanker",
+      "Category": "Utilities",
+      "Charges": "₹900 / tanker",
+      "Timings": "Same-day delivery",
+      "Phone": "",
+      "Notes": "10,000 litre tanker",
+      "Covers": ""
+    },
+    {
+      "Name": "MSEDCL",
+      "Role": "Electricity Board",
+      "Category": "Utilities",
+      "Charges": "",
+      "Timings": "24x7 helpline",
+      "Phone": "",
+      "Notes": "Outages and meter faults",
+      "Covers": ""
+    },
+    {
+      "Name": "Mahanagar Gas",
+      "Role": "Gas Agency",
+      "Category": "Utilities",
+      "Charges": "",
+      "Timings": "24x7 for leaks",
+      "Phone": "",
+      "Notes": "Leak helpline 1800 22 9944",
+      "Covers": ""
+    },
+    {
+      "Name": "D. Kamble",
+      "Role": "Society Manager",
+      "Category": "Society Staff",
+      "Charges": "",
+      "Timings": "Mon–Sat, 10 AM – 6 PM",
+      "Phone": "",
+      "Notes": "Maintenance bills, NOCs, complaints",
+      "Covers": ""
+    },
+    {
+      "Name": "S. Rane",
+      "Role": "Accountant",
+      "Category": "Society Staff",
+      "Charges": "",
+      "Timings": "Tue & Thu, 4 PM – 7 PM",
+      "Phone": "",
+      "Notes": "Dues, receipts, statements",
+      "Covers": ""
+    },
+    {
+      "Name": "Sunita Bai",
+      "Role": "Maid",
+      "Category": "Home Help",
+      "Charges": "₹50 / visit",
+      "Timings": "7 AM – 11 AM",
+      "Phone": "",
+      "Notes": "Sweeping, mopping, utensils",
+      "Covers": ""
+    },
+    {
+      "Name": "Lata Devi",
+      "Role": "Maid",
+      "Category": "Home Help",
+      "Charges": "₹60 / visit",
+      "Timings": "6 AM – 10 AM",
+      "Phone": "",
+      "Notes": "Also irons clothes on request",
+      "Covers": ""
+    },
+    {
+      "Name": "Kamla Bai",
+      "Role": "Cook",
+      "Category": "Home Help",
+      "Charges": "₹2,500 / month",
+      "Timings": "11 AM – 2 PM",
+      "Phone": "",
+      "Notes": "Vegetarian, two meals a day",
+      "Covers": ""
+    },
+    {
+      "Name": "ganesh raju",
+      "Role": "Car Cleaning",
+      "Category": "Home Help",
+      "Charges": "₹500 / month",
+      "Timings": "6 AM – 9 AM",
+      "Phone": "",
+      "Notes": "Daily wash, interior weekly",
+      "Covers": ""
+    },
+    {
+      "Name": "Deepak Sawant",
+      "Role": "Driver",
+      "Category": "Home Help",
+      "Charges": "₹300 / trip",
+      "Timings": "By appointment",
+      "Phone": "",
+      "Notes": "Local trips, holds a valid licence",
+      "Covers": ""
+    },
+    {
+      "Name": "Anita Kamble",
+      "Role": "Baby Sitter",
+      "Category": "Home Help",
+      "Charges": "₹150 / hour",
+      "Timings": "Flexible",
+      "Phone": "",
+      "Notes": "Experienced with toddlers",
+      "Covers": ""
+    }
+  ]
+}

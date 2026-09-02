@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Local Services &amp; Help</title>
+<meta name="description" content="Plumbers, electricians, help at home — local numbers, with charges where known.">
+<meta name="theme-color" content="#FBF7F0">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Local Services &amp; Help">
+<meta property="og:description" content="Plumbers, electricians, help at home — local numbers, with charges where known.">
+<!-- Deliberately standalone. This page is shared around the town, so it holds
+     no link back to the society directory and never names it. It reads
+     services.json, which is built to contain the services sheet and nothing
+     else — see scripts/make-services.js. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230EA5C8'/%3E%3Cpath d='M21 10l-3 3-2-2 3-3a5 5 0 00-7 6l-6 6v3h3l6-6a5 5 0 006-7z' fill='%230A1628'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* This page has its own look on purpose. Someone handed the link has no
+     idea which society compiled it and does not need to feel they have walked
+     into one — "civic" is a warm, paper-like default, deliberately nothing
+     like the directory's navy. Set "Services Page Theme" in About to change
+     it; the society's own Theme is not inherited. */
+  :root, html[data-theme="civic"]{
+    --navy:#FBF7F0; --navy-2:#FFFFFF; --navy-3:#F3ECE1;
+    --teal:#0F766E; --teal-bright:#0B5E57; --gold:#B45309;
+    --line:rgba(60,42,20,.16); --muted:#6B5B47;
+    --fg:#1C1611; --fg-2:#4A3F33; --on-accent:#FFFFFF;
+    --warn-fg:#8A4B0B; --warn-tint:rgba(180,83,9,.09); --warn-line:rgba(180,83,9,.32);
+    --tap:44px;
+  }
+  html[data-theme="slate"]{
+    --navy:#12161C; --navy-2:#1A2027; --navy-3:#232B34;
+    --teal:#4ADE80; --teal-bright:#86EFAC; --gold:#FBBF24;
+    --line:rgba(255,255,255,.11); --muted:#93A2B4;
+    --fg:#ECF1F6; --fg-2:#C7D2DD; --on-accent:#0B1116;
+    --warn-fg:#FCD9A0; --warn-tint:rgba(251,191,36,.11); --warn-line:rgba(251,191,36,.34);
+  }
+  html[data-theme="paper"]{
+    --navy:#F5F7FB; --navy-2:#FFFFFF; --navy-3:#EDF1F8;
+    --teal:#1D4ED8; --teal-bright:#1E40AF; --gold:#B45309;
+    --line:rgba(15,23,42,.13); --muted:#5B6676;
+    --fg:#0F172A; --fg-2:#334155; --on-accent:#FFFFFF;
+    --warn-fg:#8A4B0B; --warn-tint:rgba(180,83,9,.08); --warn-line:rgba(180,83,9,.30);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{background:var(--navy);color:var(--fg);
+    font-family:Inter,'Noto Sans Devanagari',system-ui,-apple-system,sans-serif;
+    font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  html[lang="hi"] body{font-family:'Noto Sans Devanagari',Inter,system-ui,sans-serif}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:900px;margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left));
+    padding-right:max(16px,env(safe-area-inset-right))}
+
+  header{padding:26px 0 18px;border-bottom:1px solid var(--line);background:var(--navy-2)}
+  .htop{display:flex;align-items:flex-start;gap:12px}
+  .mark{width:42px;height:42px;border-radius:11px;flex:none;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--teal),var(--gold));color:var(--on-accent)}
+  .mark svg{width:22px;height:22px}
+  h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:clamp(21px,5vw,29px);
+    font-weight:700;line-height:1.15;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:14px;margin-top:5px}
+  .langsw{margin-left:auto;flex:none;min-height:36px;padding:0 12px;border-radius:8px;
+    background:none;border:1px solid var(--line);color:var(--fg);font:inherit;
+    font-size:12.5px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .langsw:hover{border-color:var(--teal)}
+
+  .caution{display:flex;gap:10px;margin-top:16px;padding:11px 13px;border-radius:12px;
+    font-size:13px;line-height:1.55;color:var(--warn-fg);
+    background:var(--warn-tint);border:1px solid var(--warn-line)}
+  .caution svg{width:17px;height:17px;flex:none;margin-top:1px}
+
+  .tools{position:sticky;top:0;z-index:20;background:var(--navy);
+    border-bottom:1px solid var(--line);padding:11px 0}
+  .sfield{position:relative;display:flex;align-items:center}
+  .sfield>svg{position:absolute;left:13px;width:16px;height:16px;color:var(--muted);pointer-events:none}
+  .sfield input{width:100%;font:inherit;font-size:16px;color:var(--fg);min-height:var(--tap);
+    background:var(--navy-2);border:1px solid var(--line);border-radius:10px;
+    padding:10px 44px 10px 40px}
+  .sfield input:focus{outline:none;border-color:var(--teal)}
+  .sfield input::-webkit-search-cancel-button{display:none}
+  .qx{position:absolute;right:0;width:var(--tap);height:var(--tap);display:grid;place-items:center;
+    background:none;border:0;cursor:pointer;color:var(--muted);-webkit-tap-highlight-color:transparent}
+  .qx svg{width:16px;height:16px}
+  .chips{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 13px;
+    border-radius:999px;white-space:nowrap;cursor:pointer;font:inherit;font-size:12.5px;
+    font-weight:600;color:var(--fg-2);background:var(--navy-2);border:1px solid var(--line);
+    -webkit-tap-highlight-color:transparent}
+  .chip.on{color:var(--on-accent);background:var(--teal);border-color:var(--teal)}
+  .chip .n{font-size:11px;font-weight:700;opacity:.7}
+  @media(max-width:700px){ .chip{min-height:var(--tap)} }
+
+  main{padding:18px 0 44px}
+  /* Category, then the trade inside it: "Repairs & Maintenance" holds
+     plumbers, electricians and carpenters, and there can be several of each. */
+  .gsub{display:flex;align-items:center;gap:9px;margin:22px 0 4px;
+    font-family:'Space Grotesk',Inter,sans-serif;font-size:17px;font-weight:700;
+    letter-spacing:-.01em;color:var(--fg)}
+  .gsub:first-child{margin-top:0}
+  .gsub .n{font-family:Inter,sans-serif;font-size:11.5px;font-weight:700;
+    color:var(--on-accent);background:var(--teal);border-radius:999px;padding:2px 8px}
+  .gsub::after{content:"";flex:1;height:1px;background:var(--line)}
+  .gsub2{display:flex;align-items:center;gap:7px;margin:14px 0 7px;
+    font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted)}
+  .gsub2 .n{font-size:11px;font-weight:700;color:var(--teal-bright)}
+  .gsub2::before{content:"";width:12px;height:1px;background:var(--line);flex:none}
+  /* One line per contact. A list you can run your eye down beats a grid of
+     boxes when there are forty trades; everything else opens on a tap. */
+  .rows{display:flex;flex-direction:column;background:var(--navy-2);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 12px;
+    min-height:56px;cursor:pointer;background:none;border:0;width:100%;text-align:left;
+    font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;
+    border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .row:hover{background:var(--navy-3)}
+  .row:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  .who{flex:1;min-width:0}
+  .line1{display:flex;align-items:baseline;gap:7px;min-width:0}
+  .nm{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;flex:0 1 auto}
+  .role{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;flex:0 1 auto}
+  /* Two or three words on what they actually do — "small works", "routine
+     jobs", the areas they cover. Only appears when the sheet has a column for
+     it, so a row without one stays a single line. */
+  .info{display:block;font-size:12px;color:var(--fg-2);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rate{flex:none;font-size:11.5px;font-weight:700;color:var(--gold);white-space:nowrap}
+  @media(max-width:430px){ .rate{display:none} }
+  .acts{display:flex;gap:6px;flex:none}
+  .b{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+    flex:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .b svg{width:17px;height:17px}
+  .b.call{background:var(--teal);color:var(--on-accent)}
+  .b.wa{background:#25D366;color:#06301A}
+  .b.alt{background:none;border:1px solid var(--line);color:var(--muted)}
+  .chev{width:14px;height:14px;flex:none;color:var(--muted);margin-left:2px}
+
+  /* ── Details, on a tap ── */
+  /* Every inset written out: a fixed box that sets only three of them inherits
+     the fourth and stretches over the whole screen. */
+  .sheet-wrap{position:fixed;top:0;right:0;bottom:0;left:0;z-index:70;
+    display:flex;align-items:center;justify-content:center;padding:18px}
+  .sheet-back{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(20,14,6,.55)}
+  .sheet{position:relative;z-index:1;width:100%;max-width:440px;max-height:86vh;
+    overflow-y:auto;overscroll-behavior:contain;background:var(--navy-2);
+    border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px}
+  .sheet-x{position:absolute;top:8px;right:8px;width:var(--tap);height:var(--tap);
+    display:grid;place-items:center;background:none;border:0;cursor:pointer;
+    color:var(--muted);border-radius:10px}
+  .sheet-x svg{width:18px;height:18px}
+  .sheet h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:20px;font-weight:700;
+    line-height:1.25;padding-right:40px;overflow-wrap:anywhere}
+  .sheet .srole{font-size:13px;color:var(--muted);margin-top:3px}
+  .sline{font-size:13.5px;color:var(--fg-2);line-height:1.55;margin-top:8px;overflow-wrap:anywhere}
+  .sline b{color:var(--muted);font-weight:600}
+  .sline a{color:var(--teal-bright)}
+  .sacts{display:flex;gap:8px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+  .sacts .b{width:var(--tap);height:var(--tap);border-radius:11px}
+  html.noscroll,html.noscroll body{overflow:hidden}
+  @media(max-width:700px){
+    .sheet-wrap{align-items:flex-end;padding:0}
+    .sheet{max-width:none;max-height:88vh;border-radius:18px 18px 0 0;
+      padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  }
+
+  .empty{padding:34px 14px;text-align:center;color:var(--muted);font-size:14px}
+  footer{border-top:1px solid var(--line);padding:20px 0 calc(24px + env(safe-area-inset-bottom));
+    color:var(--muted);font-size:12.5px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  footer .credit{margin-left:auto}
+  footer b{color:var(--fg-2);font-weight:600}
+  .toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    top:auto;z-index:60;padding:11px 13px;border-radius:11px;font-size:13px;
+    background:var(--navy-3);color:var(--fg);border:1px solid var(--line);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:520px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="htop">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.7 5.6 18 8.3l-2.3-2.3 2.7-2.7A5 5 0 0011.6 9L4 16.6V20h3.4L15 12.4a5 5 0 005.7-6.8z"/></svg>
+      </div>
+      <div style="min-width:0">
+        <h1 id="title">Local Services &amp; Help</h1>
+        <p class="sub" id="sub"></p>
+      </div>
+      <button class="langsw" id="lang" type="button">हिं</button>
+    </div>
+    <div class="caution" id="caution" hidden>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2zm0 5 7.5 12.9h-15L12 7zm-1 4v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg>
+      <div id="cautionText"></div>
+    </div>
+  </div>
+</header>
+
+<div class="tools">
+  <div class="wrap">
+    <div class="sfield">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg>
+      <input id="q" type="search" placeholder="Search a trade or a name…"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+             enterkeyhint="search" aria-label="Search">
+      <button class="qx" id="qx" hidden type="button" aria-label="Clear">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>
+      </button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</div>
+
+<main><div class="wrap" id="list"></div></main>
+
+<div class="sheet-wrap" id="sheet" hidden></div>
+
+<footer><div class="wrap" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;width:100%">
+  <span id="upd"></span>
+  <span class="credit"><b>Stunity Tech</b> · by Prateek</span>
+</div></footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var T = {
+    en: { search:"Search a trade or a name…", all:"All", other:"Other",
+          call:"Call", wa:"WhatsApp", share:"Share", copied:"Copied to the clipboard",
+          details:"Details", close:"Close", phone:"Phone",
+          none:"Nothing matches that.", updated:"Updated", swap:"हिं",
+          charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", fail:"Could not load the list. Please try again later." },
+    hi: { search:"काम या नाम खोजें…", all:"सभी", other:"अन्य",
+          call:"कॉल", wa:"व्हाट्सएप", share:"साझा करें", copied:"क्लिपबोर्ड पर कॉपी हो गया",
+          details:"विवरण", close:"बंद करें", phone:"फ़ोन",
+          none:"कुछ नहीं मिला।", updated:"अपडेट", swap:"EN",
+          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" }
+  };
+  var lang = "en", data = null, group = "", built = [];
+  function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
+  var $ = function (id) { return document.getElementById(id); };
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null && text !== "") n.textContent = text;
+    return n;
+  }
+  function svg(d) {
+    var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 24 24");
+    s.setAttribute("fill", "currentColor");
+    var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("d", d);
+    s.appendChild(p);
+    return s;
+  }
+  var P = {
+    phone:"M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z",
+    wa:"M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 016.7 12.4l-.3.4.8 2.8-2.9-.8-.4.2A8 8 0 1112 4zm-3.6 4c-.2 0-.5 0-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1.1 2.6c.1.2 1.8 2.8 4.4 3.8 2.1.8 2.6.7 3 .6.6 0 1.6-.6 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.4-1.7c-.1-.3 0-.4.1-.5l.5-.5.3-.5v-.5l-.8-2c-.2-.5-.4-.4-.6-.4h-.4z",
+    share:"M18 16.1c-.8 0-1.4.3-1.9.8l-6.9-4a2.5 2.5 0 000-1.7l6.8-4a2.9 2.9 0 10-.9-2.1v.4L8.2 9.5a2.9 2.9 0 100 4.9l6.9 4.1-.1.4a2.9 2.9 0 102.9-2.9z"
+  };
+
+  /* ---- column meaning, same idea as the main directory ---- */
+  function pick(row, rx) {
+    for (var k in row) {
+      if (!rx.test(k.toLowerCase().replace(/[^a-z]/g, ""))) continue;
+      var v = String(row[k] || "").trim();
+      if (v) return v;
+    }
+    return "";
+  }
+  var COL = {
+    name:  /^(name|person|contact|service|title)$/,
+    role:  /^(role|trade|designation|post|service)$/,
+    cat:   /^(category|group|department|kind)$/,
+    rate:  /^(charges|charge|rate|rates|fee|fees|price|cost|amount)$/,
+    time:  /^(timings|timing|time|hours|available)$/,
+    phone: /^(phone|mobile|cell|tel|contactno|number)$/,
+    notes: /^(notes|note|details|description|remark|remarks)$/,
+    // Two or three words: what they do, or where they go.
+    info:  /^(covers|area|areas|serves|servicearea|speciality|specialty|works|worktype|does|for|tag|summary|shortnote|info|about)$/
+  };
+  function initials(n) {
+    var p = String(n || "?").trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return "?";
+    return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase();
+  }
+  function tel(v) { return "tel:" + String(v).replace(/[^\d+]/g, ""); }
+  function waNum(v) {
+    var cc = String((data && data.country) || "91").replace(/\D/g, "") || "91";
+    var d = String(v || "").replace(/\D/g, "");
+    if (!d) return "";
+    if (d.length === 10) d = cc + d;
+    else if (d.length === 11 && d.charAt(0) === "0") d = cc + d.slice(1);
+    return d.length >= 11 && d.length <= 15 ? d : "";
+  }
+
+  function shareText(r) {
+    var L = [pick(r, COL.name)];
+    var role = pick(r, COL.role); if (role) L.push(role);
+    var ph = pick(r, COL.phone); if (ph) L.push("📞 " + ph);
+    var rate = pick(r, COL.rate); if (rate) L.push("💰 " + rate);
+    var tm = pick(r, COL.time); if (tm) L.push("🕘 " + tm);
+    var tail = [];
+    if (data && data.note) tail.push("⚠️ " + noteText());
+    tail.push(location.href);
+    return L.join("\n") + "\n\n" + tail.join("\n");
+  }
+  function noteText() {
+    if (!data) return "";
+    return (lang === "hi" && data.noteHi) || data.note || "";
+  }
+
+  function toast(msg) {
+    var b = $("toast");
+    b.textContent = msg;
+    b.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { b.hidden = true; }, 2200);
+  }
+
+  /** Call and WhatsApp, shared by the row and the sheet. */
+  function callButtons(r, name) {
+    var acts = el("div", "acts");
+    var ph = pick(r, COL.phone);
+    if (!ph) return acts;
+    var call = el("a", "b call");
+    call.href = tel(ph);
+    call.title = t("call") + " " + name;
+    call.setAttribute("aria-label", t("call") + " " + name);
+    call.appendChild(svg(P.phone));
+    acts.appendChild(call);
+    var w = waNum(ph);
+    if (w) {
+      var wa = el("a", "b wa");
+      wa.href = "https://wa.me/" + w;
+      wa.target = "_blank"; wa.rel = "noopener";
+      wa.title = t("wa") + " " + name;
+      wa.setAttribute("aria-label", t("wa") + " " + name);
+      wa.appendChild(svg(P.wa));
+      acts.appendChild(wa);
+    }
+    // Calling must not also open the details behind it.
+    acts.addEventListener("click", function (ev) { ev.stopPropagation(); });
+    return acts;
+  }
+
+  /* One line: who they are and the two ways to reach them. Everything else is
+     a tap away, which is what keeps forty trades scannable. */
+  function row(r) {
+    var name = pick(r, COL.name) || "—";
+    var b = el("button", "row");
+    b.setAttribute("type", "button");
+    b.setAttribute("aria-label", t("details") + ": " + name);
+
+    var who = el("div", "who");
+    var l1 = el("div", "line1");
+    l1.appendChild(el("span", "nm", name));
+    var role = pick(r, COL.role);
+    if (role && role !== name) l1.appendChild(el("span", "role", role));
+    who.appendChild(l1);
+    var info = pick(r, COL.info);
+    if (info) who.appendChild(el("span", "info", info));
+    b.appendChild(who);
+
+    var rate = pick(r, COL.rate);
+    if (rate) b.appendChild(el("span", "rate", rate));
+
+    b.appendChild(callButtons(r, name));
+    var chev = svg("M9 6l6 6-6 6");
+    chev.setAttribute("class", "chev");
+    chev.setAttribute("fill", "none");
+    chev.setAttribute("stroke", "currentColor");
+    chev.setAttribute("stroke-width", "2.2");
+    b.appendChild(chev);
+
+    b.addEventListener("click", function () { openSheet(r, name); });
+    return b;
+  }
+
+  function closeSheet() {
+    var w = $("sheet");
+    w.hidden = true;
+    w.textContent = "";
+    document.documentElement.classList.remove("noscroll");
+  }
+
+  function openSheet(r, name) {
+    var w = $("sheet");
+    w.textContent = "";
+    var back = el("div", "sheet-back");
+    back.addEventListener("click", closeSheet);
+    w.appendChild(back);
+
+    var box = el("div", "sheet");
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", name);
+
+    var x = el("button", "sheet-x");
+    x.setAttribute("type", "button");
+    x.setAttribute("aria-label", t("close"));
+    x.appendChild(svg("M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"));
+    x.addEventListener("click", closeSheet);
+    box.appendChild(x);
+
+    box.appendChild(el("h2", null, name));
+    var role = pick(r, COL.role), cat = pick(r, COL.cat);
+    var sub = [role, cat].filter(function (v) { return v && v !== name; }).join(" · ");
+    if (sub) box.appendChild(el("div", "srole", sub));
+
+    var line = function (label, value, href) {
+      if (!value) return;
+      var d = el("div", "sline");
+      d.appendChild(el("b", null, label + ": "));
+      if (href) { var a = el("a", null, value); a.href = href; d.appendChild(a); }
+      else d.appendChild(document.createTextNode(value));
+      box.appendChild(d);
+    };
+    var ph = pick(r, COL.phone);
+    line(t("phone"), ph, ph ? tel(ph) : null);
+    line(t("charges"), pick(r, COL.rate));
+    line(t("timings"), pick(r, COL.time));
+    line(t("covers"), pick(r, COL.info));
+    line(t("notes"), pick(r, COL.notes));
+
+    // Anything the sheet carries that has no column of its own here.
+    var known = {};
+    ["name", "role", "cat", "rate", "time", "phone", "notes", "info"].forEach(function (k) {
+      for (var c in r) if (COL[k].test(c.toLowerCase().replace(/[^a-z]/g, ""))) known[c] = 1;
+    });
+    for (var c2 in r) {
+      if (known[c2]) continue;
+      var v = String(r[c2] || "").trim();
+      if (v) line(c2, v);
+    }
+
+    var acts = callButtons(r, name);
+    acts.className = "sacts";
+    var sh = el("button", "b alt");
+    sh.setAttribute("type", "button");
+    sh.title = t("share") + " " + name;
+    sh.setAttribute("aria-label", t("share") + " " + name);
+    sh.appendChild(svg(P.share));
+    sh.addEventListener("click", function () {
+      var txt = shareText(r);
+      if (navigator.share) navigator.share({ title: name, text: txt })["catch"](function () {});
+      else if (navigator.clipboard)
+        navigator.clipboard.writeText(txt).then(function () { toast(t("copied")); });
+    });
+    acts.appendChild(sh);
+    box.appendChild(acts);
+
+    w.appendChild(box);
+    w.hidden = false;
+    document.documentElement.classList.add("noscroll");
+    x.focus();
+  }
+
+  function bucket(rows, rx) {
+    var order = [], by = {};
+    rows.forEach(function (r) {
+      var raw = pick(r, rx);
+      var k = raw.toLowerCase() || " other";
+      if (!by[k]) { by[k] = { key: k, label: raw || t("other"), rows: [] }; order.push(by[k]); }
+      by[k].rows.push(r);
+    });
+    return order.filter(function (g) { return g.key !== " other"; })
+      .concat(order.filter(function (g) { return g.key === " other"; }));
+  }
+  /* Category first, then the trade within it, so "Repairs & Maintenance" opens
+     into Plumber, Electrician, Carpenter — each of which can hold several
+     people. A trade with only one name still gets its heading: the point is to
+     be able to find "plumbers" without reading every card. */
+  function groupsOf(rows) {
+    return bucket(rows, COL.cat).map(function (g) {
+      var subs = bucket(g.rows, COL.role);
+      // If every card in a category has the same trade, the sub-heading would
+      // only repeat the category — so it is left off.
+      g.subs = subs.length > 1 ? subs : [{ key: "", label: "", rows: g.rows }];
+      return g;
+    });
+  }
+
+  function build() {
+    var list = $("list");
+    list.textContent = "";
+    built = [];
+    var gs = groupsOf(data.rows);
+    var many = gs.length > 1;
+
+    var chips = $("chips");
+    chips.textContent = "";
+    if (many) {
+      [{ key: "", label: t("all"), n: data.rows.length }]
+        .concat(gs.map(function (g) { return { key: g.key, label: g.label, n: g.rows.length }; }))
+        .forEach(function (c) {
+          var b = el("button", "chip" + (c.key === group ? " on" : ""));
+          b.setAttribute("type", "button");
+          b.appendChild(el("span", null, c.label));
+          b.appendChild(el("span", "n", String(c.n)));
+          b.addEventListener("click", function () { group = c.key; build(); filter(); });
+          chips.appendChild(b);
+        });
+    }
+
+    gs.forEach(function (g) {
+      var head = el("div", "gsub");
+      head.appendChild(el("span", null, g.label));
+      head.appendChild(el("span", "n", String(g.rows.length)));
+      if (many) list.appendChild(head);
+
+      var items = [];
+      var subs = g.subs.map(function (sb) {
+        var sh = null;
+        if (sb.key) {
+          sh = el("div", "gsub2");
+          sh.appendChild(el("span", null, sb.label));
+          sh.appendChild(el("span", "n", String(sb.rows.length)));
+          list.appendChild(sh);
+        }
+        var grid = el("div", "rows");
+        sb.rows.forEach(function (r) {
+          var c = row(r);
+          grid.appendChild(c);
+          items.push({ el: c, group: g.key, sub: sb.key,
+            hay: Object.keys(r).map(function (k) { return r[k]; })
+              .filter(Boolean).join(" ").toLowerCase() });
+        });
+        list.appendChild(grid);
+        return { key: sb.key, head: sh, grid: grid };
+      });
+      built.push({ key: g.key, head: many ? head : null, subs: subs, items: items });
+    });
+
+    var none = el("div", "empty", t("none"));
+    none.id = "none";
+    none.hidden = true;
+    list.appendChild(none);
+  }
+
+  function filter() {
+    var term = $("q").value.trim().toLowerCase();
+    $("qx").hidden = !term;
+    var total = 0;
+    built.forEach(function (b) {
+      var shown = 0;
+      b.items.forEach(function (it) {
+        // Searching looks at the whole list; the chips only narrow browsing.
+        var hit = term ? it.hay.indexOf(term) !== -1 : (!group || it.group === group);
+        it.el.hidden = !hit;
+        if (hit) shown++;
+      });
+      total += shown;
+      // A trade heading with nothing under it is noise; the category heading
+      // goes too when its chip is the one selected.
+      b.subs.forEach(function (sb) {
+        var any = b.items.some(function (it) {
+          return it.sub === sb.key && !it.el.hidden;
+        });
+        sb.grid.hidden = !any;
+        if (sb.head) sb.head.hidden = !any;
+      });
+      if (b.head) b.head.hidden = !shown || (!term && !!group);
+    });
+    var none = $("none");
+    if (none) none.hidden = total !== 0;
+  }
+
+  function paint() {
+    document.documentElement.lang = lang;
+    document.title = data.title;
+    $("title").textContent = data.title;
+    $("sub").textContent = [data.tagline, data.city].filter(Boolean).join(" · ");
+    $("lang").textContent = t("swap");
+    $("q").placeholder = t("search");
+    var note = noteText();
+    $("caution").hidden = !note;
+    $("cautionText").textContent = note;
+    $("upd").textContent = data.updated ? t("updated") + " " + data.updated : "";
+    build();
+    filter();
+  }
+
+  $("lang").addEventListener("click", function () {
+    lang = lang === "hi" ? "en" : "hi";
+    try { localStorage.setItem("svc-lang", lang); } catch (e) {}
+    paint();
+  });
+  $("q").addEventListener("input", filter);
+  addEventListener("keydown", function (e) {
+    if (!$("sheet").hidden && (e.key === "Escape" || e.key === "Esc")) closeSheet();
+  });
+  $("qx").addEventListener("click", function () {
+    $("q").value = ""; filter(); $("q").focus();
+  });
+
+  try {
+    var saved = localStorage.getItem("svc-lang");
+    if (saved === "hi" || saved === "en") lang = saved;
+    else if (String(navigator.language || "").toLowerCase().indexOf("hi") === 0) lang = "hi";
+  } catch (e) {}
+
+  fetch("services.json?v=" + Date.now())
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (j) {
+      data = j;
+      if (j.theme) document.documentElement.setAttribute("data-theme", j.theme);
+      var tc = document.querySelector('meta[name=theme-color]');
+      if (tc) tc.setAttribute("content", {civic:"#FBF7F0",slate:"#12161C",paper:"#F5F7FB"}[j.theme] || "#FBF7F0");
+      paint();
+    })
+    ["catch"](function () {
+      $("list").innerHTML = "";
+      $("list").appendChild(el("div", "empty", t("fail")));
+    });
+})();
+</script>
+</body>
+</html>
