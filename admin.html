@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit the services list</title>
+<meta name="robots" content="noindex">
+<!-- Public, like every file here, and harmless on its own: it can read the
+     list but cannot change anything without a GitHub token, which is typed in
+     each session and never written into the page or the repository. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230F766E'/%3E%3Cpath d='M21 10l-3 3-2-2 3-3a5 5 0 00-7 6l-6 6v3h3l6-6a5 5 0 006-7z' fill='%23FBF7F0'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#FBF7F0; --card:#FFFFFF; --alt:#F3ECE1;
+    --line:rgba(60,42,20,.18); --ink:#1C1611; --ink-2:#4A3F33; --muted:#6B5B47;
+    --accent:#0F766E; --accent-ink:#FFFFFF;
+    --warn:#8A4B0B; --warn-bg:rgba(180,83,9,.10);
+    --bad:#B42318; --bad-bg:rgba(180,35,24,.09);
+    --ok:#15803D; --r:10px; --tap:42px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{background:var(--bg);color:var(--ink);
+    font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+  h1{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  h2{font-size:16px;font-weight:650;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:13.5px;margin-top:3px}
+  .hint{color:var(--muted);font-size:13px;margin:6px 0 12px;max-width:78ch}
+  code{background:var(--alt);padding:1px 5px;border-radius:4px;font-size:12.5px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px;margin-top:16px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>div{flex:1;min-width:190px}
+  label{display:block;font-size:12px;font-weight:650;letter-spacing:.03em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  input,select,textarea{width:100%;font:inherit;font-size:14px;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;min-height:var(--tap)}
+  textarea{min-height:66px;resize:vertical;line-height:1.5}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  button{font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    min-height:var(--tap);padding:0 15px;border-radius:9px;
+    background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent)}
+  button.ghost{background:none;color:var(--ink-2);border-color:var(--line)}
+  button.ghost:hover{border-color:var(--accent);color:var(--accent)}
+  button:disabled{opacity:.55;cursor:default}
+  button.del{min-height:30px;width:30px;padding:0;border-radius:7px;
+    background:none;border-color:var(--line);color:var(--muted);font-size:17px;line-height:1}
+  button.del:hover{color:var(--bad);border-color:var(--bad)}
+
+  .tablewrap{overflow-x:auto;margin-top:6px;border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border-bottom:1px solid var(--line);padding:0;text-align:left;vertical-align:middle}
+  th{background:var(--alt);font-size:11.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--muted);padding:8px 9px;white-space:nowrap;
+    position:sticky;top:0;z-index:1}
+  td input{border:0;border-radius:0;min-height:38px;background:none;padding:6px 9px}
+  td input:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--card)}
+  tr:nth-child(even) td{background:rgba(60,42,20,.025)}
+  td.num{color:var(--muted);text-align:right;padding:0 8px;width:38px;font-size:12px}
+  td.act{width:44px;text-align:center}
+
+  .note{padding:10px 12px;border-radius:9px;font-size:13.5px;line-height:1.5;margin-top:10px}
+  .note.warn{background:var(--warn-bg);color:var(--warn);border:1px solid rgba(180,83,9,.3)}
+  .note.bad{background:var(--bad-bg);color:var(--bad);border:1px solid rgba(180,35,24,.3)}
+  .note.ok{background:rgba(21,128,61,.09);color:var(--ok);border:1px solid rgba(21,128,61,.3)}
+  #say{position:sticky;bottom:12px;z-index:5}
+  .count{font-size:12.5px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Edit the services list</h1>
+  <p class="sub">Changes here go nowhere until you press <b>Publish</b>. The live page is
+    <a href="index.html" target="_blank" rel="noopener">Local Services &amp; Help ↗</a>.</p>
+
+  <div class="card">
+    <h2>The list</h2>
+    <p class="hint">
+      Only <b>Name</b> has to be filled in. <b>Category</b> is the big heading a contact sits
+      under, <b>Role</b> is the trade and becomes a smaller heading inside it, and
+      <b>Covers</b> is the two or three words shown under the name — “small works”,
+      “routine jobs”, the areas they serve.
+    </p>
+    <div class="tablewrap"><table>
+      <thead id="head"></thead>
+      <tbody id="body"></tbody>
+    </table></div>
+    <p class="count" id="count"></p>
+    <div class="btns">
+      <button id="addRow">Add a contact</button>
+      <button class="ghost" id="expBtn">Download as Excel</button>
+      <button class="ghost" id="impBtn">Upload an Excel or CSV…</button>
+      <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+      <button class="ghost" id="reloadBtn">Discard my edits</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>How the page looks</h2>
+    <div class="row">
+      <div><label for="fTitle">Title</label><input id="fTitle"></div>
+      <div><label for="fCity">City</label><input id="fCity"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div style="flex:2"><label for="fTag">Tagline</label><input id="fTag"></div>
+      <div style="flex:0;min-width:130px"><label for="fTheme">Theme</label>
+        <select id="fTheme">
+          <option value="civic">Civic — warm</option>
+          <option value="slate">Slate — dark</option>
+          <option value="paper">Paper — light</option>
+        </select></div>
+      <div style="flex:0;min-width:120px"><label for="fCountry">Country code</label>
+        <input id="fCountry" inputmode="numeric"></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div><label for="fNote">Caution shown at the top</label><textarea id="fNote"></textarea></div>
+      <div><label for="fNoteHi">The same in Hindi</label><textarea id="fNoteHi"></textarea></div>
+    </div>
+    <p class="hint" style="margin-top:8px">The caution is also attached to every contact
+      anyone shares from the page, so the warning travels with the number.</p>
+  </div>
+
+  <div class="card">
+    <h2>Publish</h2>
+    <p class="hint">
+      Needs a GitHub <b>fine-grained personal access token</b> with
+      <b>Contents: Read and write</b> on this repository. The token is kept for this browser
+      tab only — never saved to the page or the repository.
+      <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create one ↗</a>
+    </p>
+    <div class="row">
+      <div><label for="repo">Repository</label><input id="repo" placeholder="hedaprateek/town-services"></div>
+      <div><label for="tok">Token</label><input id="tok" type="password" placeholder="github_pat_…"></div>
+    </div>
+    <div class="btns">
+      <button id="pubBtn">Publish</button>
+      <button class="ghost" id="checkBtn">Check the token</button>
+    </div>
+    <div id="checkOut"></div>
+  </div>
+
+  <div id="say"></div>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* services.json is what the page reads, so it is what this edits. The
+     spreadsheet is kept in step on publish rather than being a second source
+     of truth that can disagree with it. */
+  var DATA = "services.json";
+  var SHEET = "services.xlsx";
+  var COLS = ["Name", "Role", "Category", "Phone", "Covers", "Charges", "Timings", "Notes"];
+
+  var data = null, cols = COLS.slice(), dirty = false;
+
+  function say(msg, kind) {
+    $("say").innerHTML = '<div class="note ' + (kind || "ok") + '"></div>';
+    $("say").firstChild.textContent = msg;
+  }
+
+  /* ---------- load ---------- */
+  function load() {
+    fetch(DATA + "?v=" + Date.now())
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (j) {
+        data = j;
+        cols = (j.columns && j.columns.length ? j.columns.slice() : COLS.slice());
+        COLS.forEach(function (c) { if (cols.indexOf(c) < 0) cols.push(c); });
+        fillSettings();
+        render();
+        dirty = false;
+        say("Loaded " + data.rows.length + " contacts from the live list.", "ok");
+      })
+      ["catch"](function (e) {
+        data = { title: "Local Services & Help", tagline: "", city: "", theme: "civic",
+                 country: "91", note: "", noteHi: "", columns: cols.slice(), rows: [] };
+        fillSettings(); render();
+        say("Could not read " + DATA + " (" + e.message + "). Starting an empty list.", "warn");
+      });
+  }
+
+  function fillSettings() {
+    $("fTitle").value = data.title || "";
+    $("fTag").value = data.tagline || "";
+    $("fCity").value = data.city || "";
+    $("fTheme").value = data.theme || "civic";
+    $("fCountry").value = data.country || "91";
+    $("fNote").value = data.note || "";
+    $("fNoteHi").value = data.noteHi || "";
+  }
+  ["fTitle","fTag","fCity","fTheme","fCountry","fNote","fNoteHi"].forEach(function (id) {
+    $(id).addEventListener("input", function () { dirty = true; });
+    $(id).addEventListener("change", function () { dirty = true; });
+  });
+
+  function settings() {
+    return {
+      title: $("fTitle").value.trim() || "Local Services & Help",
+      tagline: $("fTag").value.trim(),
+      city: $("fCity").value.trim(),
+      theme: $("fTheme").value,
+      country: $("fCountry").value.trim() || "91",
+      note: $("fNote").value.trim(),
+      noteHi: $("fNoteHi").value.trim()
+    };
+  }
+
+  /* ---------- the table ---------- */
+  function render() {
+    var head = $("head"), body = $("body");
+    head.textContent = ""; body.textContent = "";
+
+    var hr = document.createElement("tr");
+    hr.appendChild(document.createElement("th"));
+    cols.forEach(function (c) {
+      var th = document.createElement("th");
+      th.textContent = c;
+      hr.appendChild(th);
+    });
+    hr.appendChild(document.createElement("th"));
+    head.appendChild(hr);
+
+    data.rows.forEach(function (row, i) {
+      var tr = document.createElement("tr");
+      var n = document.createElement("td");
+      n.className = "num"; n.textContent = i + 1;
+      tr.appendChild(n);
+
+      cols.forEach(function (c) {
+        var td = document.createElement("td");
+        var inp = document.createElement("input");
+        inp.value = row[c] == null ? "" : row[c];
+        inp.setAttribute("aria-label", c + ", row " + (i + 1));
+        if (/phone/i.test(c)) inp.inputMode = "tel";
+        inp.addEventListener("input", function () { row[c] = inp.value; dirty = true; });
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+
+      var last = document.createElement("td");
+      last.className = "act";
+      var del = document.createElement("button");
+      del.className = "del"; del.type = "button";
+      del.textContent = "×";
+      del.title = "Delete this contact";
+      del.setAttribute("aria-label", "Delete row " + (i + 1));
+      del.addEventListener("click", function () {
+        if (!confirm('Delete "' + (row[cols[0]] || "this row") + '"?')) return;
+        data.rows.splice(i, 1); dirty = true; render();
+      });
+      last.appendChild(del);
+      tr.appendChild(last);
+      body.appendChild(tr);
+    });
+
+    var noPhone = data.rows.filter(function (r) {
+      return !String(r.Phone || "").trim();
+    }).length;
+    $("count").textContent = data.rows.length + " contact" +
+      (data.rows.length === 1 ? "" : "s") +
+      (noPhone ? " · " + noPhone + " with no phone number, so nothing to call or message" : "");
+  }
+
+  $("addRow").addEventListener("click", function () {
+    var r = {};
+    cols.forEach(function (c) { r[c] = ""; });
+    data.rows.push(r);
+    dirty = true;
+    render();
+    var last = $("body").querySelector("tr:last-child input");
+    if (last) last.focus();
+  });
+
+  $("reloadBtn").addEventListener("click", function () {
+    if (dirty && !confirm("Throw away your edits and reload the live list?")) return;
+    load();
+  });
+
+  /* ---------- excel in and out ---------- */
+  function workbook() {
+    var wb = XLSX.utils.book_new();
+    var s = settings();
+    var about = [
+      ["Title", s.title], ["Tagline", s.tagline], ["City", s.city],
+      ["Theme", s.theme], ["Country Code", s.country],
+      ["Note", s.note], ["Note HI", s.noteHi]
+    ].map(function (p) { return { Field: p[0], Value: p[1] }; });
+
+    var text = function (ws) {
+      var rng = XLSX.utils.decode_range(ws["!ref"]);
+      for (var R = rng.s.r; R <= rng.e.r; R++)
+        for (var C = rng.s.c; C <= rng.e.c; C++) {
+          var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+          // Text, or Excel eats a leading zero and turns +91 into a number.
+          if (cell && cell.v != null) { cell.t = "s"; cell.v = String(cell.v); }
+        }
+      return ws;
+    };
+
+    var wsA = text(XLSX.utils.json_to_sheet(about, { header: ["Field", "Value"] }));
+    wsA["!cols"] = [{ wch: 18 }, { wch: 60 }];
+    XLSX.utils.book_append_sheet(wb, wsA, "About");
+
+    var rows = data.rows.map(function (r) {
+      var o = {};
+      cols.forEach(function (c) { o[c] = r[c] == null ? "" : String(r[c]); });
+      return o;
+    });
+    var wsS = text(XLSX.utils.json_to_sheet(rows, { header: cols }));
+    wsS["!cols"] = cols.map(function (c) { return { wch: Math.max(14, c.length + 6) }; });
+    wsS["!freeze"] = { xSplit: 0, ySplit: 1 };
+    XLSX.utils.book_append_sheet(wb, wsS, "Services");
+    return wb;
+  }
+
+  $("expBtn").addEventListener("click", function () {
+    try {
+      XLSX.writeFile(workbook(), SHEET);
+      say("Downloaded " + SHEET + ". Edit it, then upload it back here.", "ok");
+    } catch (e) { say("Could not build the file: " + e.message, "bad"); }
+  });
+
+  $("impBtn").addEventListener("click", function () { $("file").click(); });
+  $("file").addEventListener("change", function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    e.target.value = "";
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      try {
+        var wb = XLSX.read(new Uint8Array(ev.target.result), { type: "array" });
+
+        // The settings sheet is optional; a plain one-sheet list is fine.
+        var aName = wb.SheetNames.filter(function (n) { return /^about$/i.test(n.trim()); })[0];
+        if (aName) {
+          var about = {};
+          XLSX.utils.sheet_to_json(wb.Sheets[aName], { defval: "", raw: false })
+            .forEach(function (r) {
+              var k = Object.keys(r);
+              about[String(r[k[0]]).trim().toLowerCase()] = String(r[k[1]]).trim();
+            });
+          if (about["title"]) $("fTitle").value = about["title"];
+          if (about["tagline"]) $("fTag").value = about["tagline"];
+          if (about["city"]) $("fCity").value = about["city"];
+          if (about["theme"]) $("fTheme").value = about["theme"];
+          if (about["country code"]) $("fCountry").value = about["country code"];
+          if (about["note"]) $("fNote").value = about["note"];
+          if (about["note hi"]) $("fNoteHi").value = about["note hi"];
+        }
+
+        var rows = [], got = [];
+        wb.SheetNames.forEach(function (n) {
+          if (rows.length || /^about$/i.test(n.trim()) || n.trim().charAt(0) === "_") return;
+          var r = XLSX.utils.sheet_to_json(wb.Sheets[n], { defval: "", raw: false })
+            .filter(function (x) {
+              return Object.keys(x).some(function (k) { return String(x[k] || "").trim(); });
+            });
+          if (r.length) { rows = r; got = Object.keys(r[0]); }
+        });
+        if (!rows.length) return say("That file has no contacts in it.", "bad");
+        if (!got.some(function (c) { return /^name$|^person$|^service$/i.test(c.trim()); }))
+          return say("That list needs a Name column. It has: " + got.join(", "), "bad");
+
+        var add = confirm(
+          "Bring in " + rows.length + " contact(s) from \"" + f.name + "\"?\n\n" +
+          "OK  —  ADD them to the list already here.\n\n" +
+          "Cancel  —  REPLACE the whole list with this file.");
+
+        got.forEach(function (c) { if (cols.indexOf(c) < 0) cols.push(c); });
+        if (!add) data.rows = [];
+        rows.forEach(function (r) {
+          var o = {};
+          cols.forEach(function (c) { o[c] = r[c] == null ? "" : String(r[c]); });
+          data.rows.push(o);
+        });
+        dirty = true;
+        render();
+        say((add ? "Added " : "Replaced the list with ") + rows.length +
+            " contact(s) from " + f.name + ". Press Publish to put it live.", "warn");
+      } catch (err) { say("Could not read that file: " + err.message, "bad"); }
+    };
+    fr.readAsArrayBuffer(f);
+  });
+
+  /* ---------- publish ---------- */
+  try {
+    var savedRepo = localStorage.getItem("ts-repo");
+    if (savedRepo) $("repo").value = savedRepo;
+    else $("repo").value = guessRepo();
+    var savedTok = sessionStorage.getItem("ts-tok");
+    if (savedTok) $("tok").value = savedTok;
+  } catch (e) {}
+
+  /** On GitHub Pages the address already says which repository this is. */
+  function guessRepo() {
+    var m = location.hostname.match(/^([^.]+)\.github\.io$/);
+    if (!m) return "";
+    var seg = location.pathname.split("/").filter(Boolean);
+    return seg.length ? m[1] + "/" + seg[0] : m[1] + "/" + m[1] + ".github.io";
+  }
+
+  function creds() {
+    var repo = $("repo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "");
+    var tok = $("tok").value.trim();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { say("Repository should look like owner/name.", "bad"); return null; }
+    if (!tok) { say("Paste a token to publish.", "bad"); return null; }
+    try { localStorage.setItem("ts-repo", repo); sessionStorage.setItem("ts-tok", tok); } catch (e) {}
+    return { repo: repo, tok: tok,
+      H: { Authorization: "Bearer " + tok, Accept: "application/vnd.github+json" } };
+  }
+
+  // btoa cannot take anything above Latin-1, and these lists carry Devanagari.
+  function b64(bytes) {
+    var bin = "", a = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    for (var i = 0; i < a.length; i++) bin += String.fromCharCode(a[i]);
+    return btoa(bin);
+  }
+  function b64text(str) { return b64(new TextEncoder().encode(str)); }
+
+  function putFile(c, path, content, message) {
+    var url = "https://api.github.com/repos/" + c.repo + "/contents/" + path;
+    return fetch(url + "?ref=main", { headers: c.H })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (info) {
+        return fetch(url, {
+          method: "PUT", headers: c.H,
+          body: JSON.stringify({
+            message: message, content: content, branch: "main",
+            sha: info && info.sha ? info.sha : undefined
+          })
+        });
+      })
+      .then(function (r) {
+        if (r.ok) return r.json();
+        return r.json().then(function (j) {
+          throw new Error((j && j.message) || ("HTTP " + r.status));
+        });
+      });
+  }
+
+  $("checkBtn").addEventListener("click", function () {
+    var c = creds();
+    if (!c) return;
+    $("checkOut").innerHTML = '<div class="note warn">Checking…</div>';
+    fetch("https://api.github.com/repos/" + c.repo, { headers: c.H })
+      .then(function (r) {
+        return r.json().then(function (j) { return { status: r.status, body: j }; });
+      })
+      .then(function (res) {
+        var out = $("checkOut");
+        if (res.status === 404) {
+          out.innerHTML = '<div class="note bad">The token cannot see ' + c.repo +
+            '. When creating it, Repository access must be “Only select repositories” ' +
+            'with this one ticked — “Public repositories” is read-only.</div>';
+          return;
+        }
+        if (res.status !== 200) {
+          out.innerHTML = '<div class="note bad">GitHub said ' + res.status + ': ' +
+            (res.body.message || "") + '</div>';
+          return;
+        }
+        if (!(res.body.permissions || {}).push) {
+          out.innerHTML = '<div class="note bad">' + c.repo + ' is visible but read-only. ' +
+            'Edit the token → Repository permissions → Contents: Read and write.</div>';
+          return;
+        }
+        out.innerHTML = '<div class="note ok">Token is good — write access to ' +
+          c.repo + ' confirmed.</div>';
+      })
+      ["catch"](function (e) {
+        $("checkOut").innerHTML = '<div class="note bad">' + e.message + '</div>';
+      });
+  });
+
+  $("pubBtn").addEventListener("click", function () {
+    var c = creds();
+    if (!c) return;
+
+    var s = settings();
+    var rows = data.rows
+      .filter(function (r) { return cols.some(function (k) { return String(r[k] || "").trim(); }); })
+      .map(function (r) {
+        var o = {};
+        cols.forEach(function (k) { o[k] = r[k] == null ? "" : String(r[k]); });
+        return o;
+      });
+
+    // The same rule the build script uses: a nameless row helps nobody.
+    var nameCol = cols.filter(function (k) { return /^name$|^person$|^service$/i.test(k.trim()); })[0]
+      || cols[0];
+    var bad = rows.filter(function (r) { return !String(r[nameCol] || "").trim(); }).length;
+    if (bad) return say(bad + " row(s) have no name. Fill them in or delete them.", "bad");
+    if (!rows.length) return say("The list is empty — nothing to publish.", "bad");
+
+    var out = {
+      title: s.title, tagline: s.tagline, city: s.city, theme: s.theme, country: s.country,
+      note: s.note, noteHi: s.noteHi,
+      updated: new Date().toISOString().slice(0, 10),
+      sheets: ["Services"], columns: cols.slice(), rows: rows
+    };
+
+    $("pubBtn").disabled = true;
+    $("pubBtn").textContent = "Publishing…";
+    say("Publishing " + rows.length + " contacts…", "warn");
+
+    putFile(c, DATA, b64text(JSON.stringify(out, null, 2) + "\n"),
+            "Update the services list (" + rows.length + " contacts)")
+      .then(function () {
+        // Keep the spreadsheet in step, so a later Excel edit starts from what
+        // is actually live rather than from whatever it held before.
+        var bytes = XLSX.write(workbook(), { type: "array", bookType: "xlsx" });
+        return putFile(c, SHEET, b64(bytes), "Update the services spreadsheet")
+          ["catch"](function (e) {
+            say("The list published, but the spreadsheet copy did not: " + e.message +
+                " — the live page is correct.", "warn");
+            return null;
+          });
+      })
+      .then(function () {
+        dirty = false;
+        say("Published. The live page updates within a minute — reload it to check.", "ok");
+      })
+      ["catch"](function (e) { say("Publish failed: " + e.message, "bad"); })
+      .then(function () {
+        $("pubBtn").disabled = false;
+        $("pubBtn").textContent = "Publish";
+      });
+  });
+
+  addEventListener("beforeunload", function (e) {
+    if (dirty) { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

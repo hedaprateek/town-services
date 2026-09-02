@@ -7,6 +7,24 @@ call and a WhatsApp button against each. Anyone can open it; there is no sign-in
 
 ---
 
+## Filling in the list
+
+Two ways, and they stay in step with each other.
+
+**The admin page** — open `admin.html`, edit the table, press Publish. It needs a GitHub
+fine-grained token with **Contents: Read and write** on this repository; the token is kept
+for that browser tab only and is never written into the page or the repo. Publishing writes
+both `services.json` (what the page reads) and `services.xlsx` (so a later spreadsheet edit
+starts from what is actually live).
+
+**The spreadsheet** — *Download as Excel* from the admin page, edit it, upload it back; it
+asks whether to add to the list or replace it. Or edit `services.xlsx` directly, run
+`node scripts/make-services.js` and commit — same result, no token needed.
+
+Either way, a row without a name is refused rather than half-published.
+
+---
+
 ## How it works
 
 There is no database and no backend. `services.xlsx` is the source of truth, a build
