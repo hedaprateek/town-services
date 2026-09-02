@@ -14,6 +14,10 @@
      services.json, which is built to contain the services sheet and nothing
      else — see scripts/make-services.js. -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230EA5C8'/%3E%3Cpath d='M21 10l-3 3-2-2 3-3a5 5 0 00-7 6l-6 6v3h3l6-6a5 5 0 006-7z' fill='%230A1628'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Services">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
@@ -45,11 +49,18 @@
     --fg:#0F172A; --fg-2:#334155; --on-accent:#FFFFFF;
     --warn-fg:#8A4B0B; --warn-tint:rgba(180,83,9,.08); --warn-line:rgba(180,83,9,.30);
   }
+  /* Text size. Three steps, remembered per device. Unfashionable, and the
+     single most useful thing on the page for anyone reading it outdoors or
+     without their glasses. */
+  :root{--t:1}
+  html[data-text="l"]{--t:1.13}
+  html[data-text="xl"]{--t:1.28}
+
   *{margin:0;padding:0;box-sizing:border-box}
   [hidden]{display:none!important}
   body{background:var(--navy);color:var(--fg);
     font-family:Inter,'Noto Sans Devanagari',system-ui,-apple-system,sans-serif;
-    font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+    font-size:calc((15px) * var(--t));line-height:1.5;-webkit-font-smoothing:antialiased}
   html[lang="hi"] body{font-family:'Noto Sans Devanagari',Inter,system-ui,sans-serif}
   a{color:inherit;text-decoration:none}
   .wrap{max-width:900px;margin:0 auto;
@@ -71,30 +82,47 @@
   .mark{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;
     background:linear-gradient(135deg,var(--teal),var(--gold));color:var(--on-accent)}
   .mark svg{width:18px;height:18px}
-  .place{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  .place{font-size:calc((12px) * var(--t));font-weight:700;letter-spacing:.13em;text-transform:uppercase;
     color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .hactions{margin-left:auto;display:flex;gap:7px;flex:none}
   .ghost-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;
     border-radius:999px;background:var(--navy);border:1px solid var(--line);color:var(--fg-2);
-    font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;
+    font:inherit;font-size:calc((12.5px) * var(--t));font-weight:650;cursor:pointer;
     -webkit-tap-highlight-color:transparent}
   .ghost-btn:hover{border-color:var(--teal);color:var(--teal-bright)}
   .ghost-btn svg{width:14px;height:14px;flex:none}
-  @media(max-width:430px){ #shareLbl{display:none} .ghost-btn{padding:0 11px} }
+  @media(max-width:430px){ #shareLbl{display:none  .place{display:none} } .ghost-btn{padding:0 11px} }
 
-  h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:clamp(27px,7.5vw,42px);
+  /* Two A's of different sizes says what it does without a word of copy. */
+  #tsize{gap:1px;padding:0 11px;align-items:baseline}
+  .tsA{font-size:calc(12px * var(--t));font-weight:700;line-height:1}
+  .tsB{font-size:calc(16px * var(--t));font-weight:700;line-height:1}
+  html[data-text="l"] #tsize,html[data-text="xl"] #tsize{border-color:var(--teal);color:var(--teal-bright)}
+
+  /* A native select rather than a cycling button: every option is visible on
+     tap, which matters more than looking bespoke. */
+  .langsel{min-height:36px;padding:0 30px 0 12px;border-radius:999px;cursor:pointer;
+    background:var(--navy);border:1px solid var(--line);color:var(--fg-2);
+    font:inherit;font-size:calc(12.5px * var(--t));font-weight:650;
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236B5B47'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 8px center;background-size:15px}
+  .langsel:hover{border-color:var(--teal)}
+  .langsel:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+
+  h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:calc((clamp(27px,7.5vw,42px)) * var(--t));
     font-weight:700;line-height:1.08;letter-spacing:-.022em;max-width:18ch}
-  .sub{color:var(--fg-2);font-size:clamp(14.5px,3.4vw,17px);margin-top:9px;max-width:52ch;
+  .sub{color:var(--fg-2);font-size:calc((clamp(14.5px,3.4vw,17px)) * var(--t));margin-top:9px;max-width:52ch;
     line-height:1.5}
   /* What the list actually holds — the first honest thing a stranger wants. */
-  .stats{margin-top:13px;font-size:13px;color:var(--muted);
+  .stats{margin-top:13px;font-size:calc((13px) * var(--t));color:var(--muted);
     display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .stats b{color:var(--fg);font-weight:700;font-variant-numeric:tabular-nums}
   .stats i{width:3px;height:3px;border-radius:50%;background:var(--line);
     display:inline-block;font-style:normal}
 
   .caution{display:flex;gap:10px;margin-top:18px;padding:12px 14px;border-radius:12px;
-    font-size:13px;line-height:1.55;color:var(--warn-fg);max-width:70ch;
+    font-size:calc((13px) * var(--t));line-height:1.55;color:var(--warn-fg);max-width:70ch;
     background:var(--warn-tint);border:1px solid var(--warn-line)}
   .caution svg{width:17px;height:17px;flex:none;margin-top:1px}
 
@@ -114,8 +142,8 @@
   .ticon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;
     background:color-mix(in srgb,var(--teal) 13%,transparent);color:var(--teal-bright)}
   .ticon svg{width:17px;height:17px}
-  .tname{font-size:13px;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
-  .tn{margin-top:auto;font-size:11.5px;font-weight:700;color:var(--muted);
+  .tname{font-size:calc((13px) * var(--t));font-weight:650;line-height:1.3;overflow-wrap:anywhere}
+  .tn{margin-top:auto;font-size:calc((11.5px) * var(--t));font-weight:700;color:var(--muted);
     font-variant-numeric:tabular-nums}
   @media(hover:none){ .tile:hover{transform:none;border-color:var(--line)} }
 
@@ -123,7 +151,7 @@
     border-bottom:1px solid var(--line);padding:11px 0}
   .sfield{position:relative;display:flex;align-items:center}
   .sfield>svg{position:absolute;left:13px;width:16px;height:16px;color:var(--muted);pointer-events:none}
-  .sfield input{width:100%;font:inherit;font-size:16px;color:var(--fg);min-height:var(--tap);
+  .sfield input{width:100%;font:inherit;font-size:calc((16px) * var(--t));color:var(--fg);min-height:var(--tap);
     background:var(--navy-2);border:1px solid var(--line);border-radius:10px;
     padding:10px 44px 10px 40px}
   .sfield input:focus{outline:none;border-color:var(--teal)}
@@ -135,27 +163,27 @@
     scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .chips::-webkit-scrollbar{display:none}
   .chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 13px;
-    border-radius:999px;white-space:nowrap;cursor:pointer;font:inherit;font-size:12.5px;
+    border-radius:999px;white-space:nowrap;cursor:pointer;font:inherit;font-size:calc((12.5px) * var(--t));
     font-weight:600;color:var(--fg-2);background:var(--navy-2);border:1px solid var(--line);
     -webkit-tap-highlight-color:transparent}
   .chip.on{color:var(--on-accent);background:var(--teal);border-color:var(--teal)}
-  .chip .n{font-size:11px;font-weight:700;opacity:.7}
+  .chip .n{font-size:calc((11px) * var(--t));font-weight:700;opacity:.7}
   @media(max-width:700px){ .chip{min-height:var(--tap)} }
 
   main{padding:18px 0 44px}
   /* Category, then the trade inside it: "Repairs & Maintenance" holds
      plumbers, electricians and carpenters, and there can be several of each. */
   .gsub{display:flex;align-items:center;gap:9px;margin:22px 0 4px;
-    font-family:'Space Grotesk',Inter,sans-serif;font-size:17px;font-weight:700;
+    font-family:'Space Grotesk',Inter,sans-serif;font-size:calc((17px) * var(--t));font-weight:700;
     letter-spacing:-.01em;color:var(--fg)}
   .gsub:first-child{margin-top:0}
-  .gsub .n{font-family:Inter,sans-serif;font-size:11.5px;font-weight:700;
+  .gsub .n{font-family:Inter,sans-serif;font-size:calc((11.5px) * var(--t));font-weight:700;
     color:var(--on-accent);background:var(--teal);border-radius:999px;padding:2px 8px}
   .gsub::after{content:"";flex:1;height:1px;background:var(--line)}
   .gsub2{display:flex;align-items:center;gap:7px;margin:14px 0 7px;
-    font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    font-size:calc((11.5px) * var(--t));font-weight:700;letter-spacing:.09em;text-transform:uppercase;
     color:var(--muted)}
-  .gsub2 .n{font-size:11px;font-weight:700;color:var(--teal-bright)}
+  .gsub2 .n{font-size:calc((11px) * var(--t));font-weight:700;color:var(--teal-bright)}
   .gsub2::before{content:"";width:12px;height:1px;background:var(--line);flex:none}
   /* One line per contact. A list you can run your eye down beats a grid of
      boxes when there are forty trades; everything else opens on a tap. */
@@ -170,16 +198,16 @@
   .row:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
   .who{flex:1;min-width:0}
   .line1{display:flex;align-items:baseline;gap:7px;min-width:0}
-  .nm{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;
+  .nm{font-size:calc((14.5px) * var(--t));font-weight:600;white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis;flex:0 1 auto}
-  .role{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;
+  .role{font-size:calc((12px) * var(--t));color:var(--muted);white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis;flex:0 1 auto}
   /* Two or three words on what they actually do — "small works", "routine
      jobs", the areas they cover. Only appears when the sheet has a column for
      it, so a row without one stays a single line. */
-  .info{display:block;font-size:12px;color:var(--fg-2);margin-top:2px;
+  .info{display:block;font-size:calc((12px) * var(--t));color:var(--fg-2);margin-top:2px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rate{flex:none;font-size:11.5px;font-weight:700;color:var(--gold);white-space:nowrap}
+  .rate{flex:none;font-size:calc((11.5px) * var(--t));font-weight:700;color:var(--gold);white-space:nowrap}
   @media(max-width:430px){ .rate{display:none} }
   .acts{display:flex;gap:6px;flex:none}
   .b{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
@@ -203,10 +231,10 @@
     display:grid;place-items:center;background:none;border:0;cursor:pointer;
     color:var(--muted);border-radius:10px}
   .sheet-x svg{width:18px;height:18px}
-  .sheet h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:20px;font-weight:700;
+  .sheet h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:calc((20px) * var(--t));font-weight:700;
     line-height:1.25;padding-right:40px;overflow-wrap:anywhere}
-  .sheet .srole{font-size:13px;color:var(--muted);margin-top:3px}
-  .sline{font-size:13.5px;color:var(--fg-2);line-height:1.55;margin-top:8px;overflow-wrap:anywhere}
+  .sheet .srole{font-size:calc((13px) * var(--t));color:var(--muted);margin-top:3px}
+  .sline{font-size:calc((13.5px) * var(--t));color:var(--fg-2);line-height:1.55;margin-top:8px;overflow-wrap:anywhere}
   .sline b{color:var(--muted);font-weight:600}
   .sline a{color:var(--teal-bright)}
   .sacts{display:flex;gap:8px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
@@ -218,10 +246,10 @@
       padding-bottom:calc(16px + env(safe-area-inset-bottom))}
   }
 
-  .empty{padding:34px 14px;text-align:center;color:var(--muted);font-size:14px}
+  .empty{padding:34px 14px;text-align:center;color:var(--muted);font-size:calc((14px) * var(--t))}
   footer{border-top:1px solid var(--line);background:var(--navy-2);
     padding:20px 0 calc(24px + env(safe-area-inset-bottom));
-    color:var(--muted);font-size:12.5px}
+    color:var(--muted);font-size:calc((12.5px) * var(--t))}
   /* The caution again at the bottom: someone who scrolled the whole list has
      left the top one far behind. */
   .fnote{max-width:70ch;line-height:1.55;margin-bottom:14px;color:var(--muted)}
@@ -229,7 +257,7 @@
   footer .credit{margin-left:auto}
   footer b{color:var(--fg-2);font-weight:600}
   .toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
-    top:auto;z-index:60;padding:11px 13px;border-radius:11px;font-size:13px;
+    top:auto;z-index:60;padding:11px 13px;border-radius:11px;font-size:calc((13px) * var(--t));
     background:var(--navy-3);color:var(--fg);border:1px solid var(--line);
     box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:520px;margin:0 auto}
 </style>
@@ -248,7 +276,10 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.1c-.8 0-1.4.3-1.9.8l-6.9-4a2.5 2.5 0 000-1.7l6.8-4a2.9 2.9 0 10-.9-2.1v.4L8.2 9.5a2.9 2.9 0 100 4.9l6.9 4.1-.1.4a2.9 2.9 0 102.9-2.9z"/></svg>
           <span id="shareLbl">Share</span>
         </button>
-        <button class="ghost-btn" id="lang" type="button">हिं</button>
+        <button class="ghost-btn" id="tsize" type="button" aria-label="Text size">
+          <span class="tsA">A</span><span class="tsB">A</span>
+        </button>
+        <select class="langsel" id="lang" aria-label="Language"></select>
       </div>
     </div>
 
@@ -256,10 +287,6 @@
     <p class="sub" id="sub"></p>
     <p class="stats" id="stats"></p>
 
-    <div class="caution" id="caution" hidden>
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2zm0 5 7.5 12.9h-15L12 7zm-1 4v4h2v-4h-2zm0 5v2h2v-2h-2z"/></svg>
-      <div id="cautionText"></div>
-    </div>
   </div>
 </header>
 
@@ -312,7 +339,14 @@
           details:"विवरण", close:"बंद करें", phone:"फ़ोन",
           none:"कुछ नहीं मिला।", updated:"अपडेट", swap:"EN",
           listing:"सूची", listings:"सूचियाँ", categories:"श्रेणियाँ", withPhone:"जिन्हें कॉल कर सकते हैं",
-          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" }
+          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" },
+    mr: { search:"काम किंवा नाव शोधा…", all:"सर्व", other:"इतर",
+          call:"कॉल", wa:"व्हॉट्सॲप", share:"शेअर करा", copied:"क्लिपबोर्डवर कॉपी झाले",
+          details:"तपशील", close:"बंद करा", phone:"फोन",
+          none:"काहीही सापडले नाही.", updated:"अद्ययावत", swap:"मराठी",
+          listing:"नोंद", listings:"नोंदी", categories:"श्रेणी", withPhone:"ज्यांना कॉल करता येईल",
+          charges:"दर", timings:"वेळ", notes:"टीप", covers:"क्षेत्र / काम",
+          fail:"यादी लोड होऊ शकली नाही. कृपया नंतर पहा." }
   };
   var lang = "en", data = null, group = "", built = [];
   function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
@@ -387,7 +421,11 @@
   }
   function noteText() {
     if (!data) return "";
-    return (lang === "hi" && data.noteHi) || data.note || "";
+    // Falls back to English rather than showing nothing when a translation
+    // has not been filled in yet.
+    if (lang === "mr" && data.noteMr) return data.noteMr;
+    if (lang === "hi" && data.noteHi) return data.noteHi;
+    return data.note || "";
   }
 
   function toast(msg) {
@@ -727,14 +765,13 @@
     $("title").textContent = data.title;
     $("place").textContent = data.city || data.title;
     $("sub").textContent = data.tagline || "";
-    $("lang").textContent = t("swap");
+    $("lang").value = lang;
     $("shareLbl").textContent = t("share");
     $("q").placeholder = t("search");
 
-    var note = noteText();
-    $("caution").hidden = !note;
-    $("cautionText").textContent = note;
-    $("fnote").textContent = note;
+    // The caution lives in the footer only: four lines of warning ahead of
+    // any content teaches people to scroll past warnings.
+    $("fnote").textContent = noteText();
     $("upd").textContent = data.updated ? t("updated") + " " + data.updated : "";
     build();
     filter();
@@ -754,11 +791,41 @@
     });
   })();
 
-  $("lang").addEventListener("click", function () {
-    lang = lang === "hi" ? "en" : "hi";
-    try { localStorage.setItem("svc-lang", lang); } catch (e) {}
-    paint();
-  });
+  var LANGS = [["en", "English"], ["hi", "हिंदी"], ["mr", "मराठी"]];
+  (function () {
+    var sel = $("lang");
+    LANGS.forEach(function (l) {
+      var o = document.createElement("option");
+      o.value = l[0];
+      o.textContent = l[1];
+      sel.appendChild(o);
+    });
+    sel.addEventListener("change", function () {
+      lang = sel.value;
+      try { localStorage.setItem("svc-lang", lang); } catch (e) {}
+      paint();
+    });
+  })();
+  /* Three steps, remembered per device. */
+  (function () {
+    var STEPS = ["", "l", "xl"];
+    var at = 0;
+    try { at = Math.max(0, STEPS.indexOf(localStorage.getItem("svc-text") || "")); } catch (e) {}
+    var apply = function () {
+      var v = STEPS[at];
+      if (v) document.documentElement.setAttribute("data-text", v);
+      else document.documentElement.removeAttribute("data-text");
+      $("tsize").setAttribute("aria-label",
+        "Text size: " + ["normal", "large", "largest"][at] + ". Tap to change.");
+    };
+    apply();
+    $("tsize").addEventListener("click", function () {
+      at = (at + 1) % STEPS.length;
+      try { localStorage.setItem("svc-text", STEPS[at]); } catch (e) {}
+      apply();
+    });
+  })();
+
   $("q").addEventListener("input", filter);
   addEventListener("keydown", function (e) {
     if (!$("sheet").hidden && (e.key === "Escape" || e.key === "Esc")) closeSheet();
@@ -769,9 +836,22 @@
 
   try {
     var saved = localStorage.getItem("svc-lang");
-    if (saved === "hi" || saved === "en") lang = saved;
-    else if (String(navigator.language || "").toLowerCase().indexOf("hi") === 0) lang = "hi";
+    if (saved === "hi" || saved === "en" || saved === "mr") lang = saved;
+    else {
+      var nav = String(navigator.language || "").toLowerCase();
+      if (nav.indexOf("mr") === 0) lang = "mr";
+      else if (nav.indexOf("hi") === 0) lang = "hi";
+    }
   } catch (e) {}
+
+  /* Registered late and guarded: a browser without service workers, or the
+     page opened straight off a disk, simply carries on without one. */
+  if ("serviceWorker" in navigator &&
+      (location.protocol === "https:" || location.hostname === "localhost")) {
+    addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js")["catch"](function () {});
+    });
+  }
 
   fetch("services.json?v=" + Date.now())
     .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })

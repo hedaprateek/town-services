@@ -1,0 +1,21 @@
+{
+  "name": "Local Services & Help",
+  "short_name": "Services",
+  "description": "Plumbers, electricians, help at home — local numbers, with charges where known.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FBF7F0",
+  "theme_color": "#FBF7F0",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

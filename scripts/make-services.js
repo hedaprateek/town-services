@@ -78,6 +78,7 @@ function build(bytes) {
     // in the data rather than in the markup.
     note: about["note"] || "",
     noteHi: about["note hi"] || about["note hindi"] || "",
+    noteMr: about["note mr"] || about["note marathi"] || "",
     updated: new Date().toISOString().slice(0, 10),
     sheets: names,
     columns: columns,
@@ -99,7 +100,7 @@ function build(bytes) {
     if (!name || !String(r[name] || "").trim())
       problems.push("row " + (i + 1) + " has no name");
   });
-  const SHAPE = ["title", "tagline", "city", "theme", "country", "note", "noteHi",
+  const SHAPE = ["title", "tagline", "city", "theme", "country", "note", "noteHi", "noteMr",
                  "updated", "sheets", "columns", "rows"];
   Object.keys(out).filter(k => SHAPE.indexOf(k) < 0)
     .forEach(k => problems.push("unexpected field: " + k));

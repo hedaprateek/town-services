@@ -122,6 +122,7 @@
     <div class="row" style="margin-top:10px">
       <div><label for="fNote">Caution shown at the top</label><textarea id="fNote"></textarea></div>
       <div><label for="fNoteHi">The same in Hindi</label><textarea id="fNoteHi"></textarea></div>
+      <div><label for="fNoteMr">The same in Marathi</label><textarea id="fNoteMr"></textarea></div>
     </div>
     <p class="hint" style="margin-top:8px">The caution is also attached to every contact
       anyone shares from the page, so the warning travels with the number.</p>
@@ -198,8 +199,9 @@
     $("fCountry").value = data.country || "91";
     $("fNote").value = data.note || "";
     $("fNoteHi").value = data.noteHi || "";
+    $("fNoteMr").value = data.noteMr || "";
   }
-  ["fTitle","fTag","fCity","fTheme","fCountry","fNote","fNoteHi"].forEach(function (id) {
+  ["fTitle","fTag","fCity","fTheme","fCountry","fNote","fNoteHi","fNoteMr"].forEach(function (id) {
     $(id).addEventListener("input", function () { dirty = true; });
     $(id).addEventListener("change", function () { dirty = true; });
   });
@@ -212,7 +214,8 @@
       theme: $("fTheme").value,
       country: $("fCountry").value.trim() || "91",
       note: $("fNote").value.trim(),
-      noteHi: $("fNoteHi").value.trim()
+      noteHi: $("fNoteHi").value.trim(),
+      noteMr: $("fNoteMr").value.trim()
     };
   }
 
@@ -294,7 +297,7 @@
     var about = [
       ["Title", s.title], ["Tagline", s.tagline], ["City", s.city],
       ["Theme", s.theme], ["Country Code", s.country],
-      ["Note", s.note], ["Note HI", s.noteHi]
+      ["Note", s.note], ["Note HI", s.noteHi], ["Note MR", s.noteMr]
     ].map(function (p) { return { Field: p[0], Value: p[1] }; });
 
     var text = function (ws) {
@@ -357,6 +360,7 @@
           if (about["country code"]) $("fCountry").value = about["country code"];
           if (about["note"]) $("fNote").value = about["note"];
           if (about["note hi"]) $("fNoteHi").value = about["note hi"];
+          if (about["note mr"]) $("fNoteMr").value = about["note mr"];
         }
 
         var rows = [], got = [];
@@ -505,7 +509,7 @@
 
     var out = {
       title: s.title, tagline: s.tagline, city: s.city, theme: s.theme, country: s.country,
-      note: s.note, noteHi: s.noteHi,
+      note: s.note, noteHi: s.noteHi, noteMr: s.noteMr,
       updated: new Date().toISOString().slice(0, 10),
       sheets: ["Services"], columns: cols.slice(), rows: rows
     };
