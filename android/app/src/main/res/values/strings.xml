@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- app_name is set per flavour in build.gradle, so it is deliberately not here. -->
+<resources>
+  <string name="no_app_for_that">No app on this phone can open that.</string>
+  <string name="offline_title">No connection</string>
+  <string name="offline_body">This list needs the internet the first time it opens. Once it has loaded, it works without a signal.</string>
+</resources>

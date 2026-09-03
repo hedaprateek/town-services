@@ -4,3 +4,15 @@ node_modules/
 ~$*.xlsx
 Thumbs.db
 .DS_Store
+
+# The Android build. Both the staged copy of the site and the launcher icons
+# are generated — `node android/stage-site.js` and
+# `node android/make-launcher-icons.js` — so neither belongs in the repo.
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/town/assets/
+android/app/src/*/res/mipmap-*/
+local.properties
+*.jks
+*.keystore

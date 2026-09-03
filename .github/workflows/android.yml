@@ -1,0 +1,126 @@
+# Builds the two APKs.
+#
+# Built here rather than on a laptop because an Android build needs the SDK,
+# Gradle and a JDK 17, and the runner already has all three.
+#
+# The finished APKs are attached to a GitHub Release, so the download link can
+# be sent to anyone — fetching it needs no GitHub account, unlike a build
+# artifact.
+name: Android APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+      - 'index.html'
+      - 'services.json'
+      - 'manifest.webmanifest'
+      - 'icons/**'
+
+permissions:
+  contents: write          # to publish the release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Empty unless the signing secrets have been added — see
+      # android/README.md. Without them the build falls back to a debug key.
+      KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Put the site inside the app
+        run: node android/stage-site.js
+
+      - name: Draw the launcher icons
+        run: node android/make-launcher-icons.js
+
+      - name: Nothing private may ship inside an APK
+        run: |
+          cd android/app/src/town/assets
+          echo "staged files:"
+          find . -type f | sort
+          if find . -type f \( -name 'admin.html' -o -name '*.xlsx' \
+               -o -name 'access-codes*' -o -name 'member-codes*' \
+               -o -name 'code-slips*' \) | grep -q .; then
+            echo "::error::a file that must not be distributed was staged"
+            exit 1
+          fi
+
+      - name: Unpack the signing key
+        if: env.KEYSTORE_B64 != ''
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          echo "KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10'
+
+      - name: Build
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: gradle --no-daemon assembleRelease
+
+      - name: Name them something a person can read
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/town/release/*.apk \
+             "out/Local-Services-v${{ github.run_number }}.apk"
+          cp android/app/build/outputs/apk/society/release/*.apk \
+             "out/Society-Directory-v${{ github.run_number }}.apk"
+          ls -la out
+
+      - name: Write the release notes
+        run: |
+          cat > notes.md <<'EOF'
+          Two Android apps. Open the `.apk` link below on the phone and tap the
+          downloaded file; Android asks once for permission to install from
+          this source, and that is the whole install.
+
+          **Local Services** — the public town list. The list travels inside
+          the app, so it opens with no signal, and it quietly picks up new
+          listings whenever the phone is online. Safe to forward to anyone.
+
+          **Society Directory** — opens the members-only directory. Everyone
+          still enters their own access code once, on their own phone. No
+          resident data is inside the file, so the download on its own is worth
+          nothing without a code.
+
+          No iPhone version: only Android can install an app from a file. On an
+          iPhone, open the site in Safari and use Share → Add to Home Screen,
+          which gives the same icon and the same full-screen app.
+          EOF
+          if [ -z "$KEYSTORE_B64" ]; then
+            cat >> notes.md <<'EOF'
+
+          ---
+          Signed with a throwaway debug key, because no signing secrets are set
+          on this repository yet. These install and run fine, but a later build
+          will not install over this one — it has to be uninstalled first. See
+          `android/README.md` to fix that permanently.
+          EOF
+          fi
+          cat notes.md
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "apk-v${{ github.run_number }}" out/*.apk \
+            --title "Apps — build ${{ github.run_number }}" \
+            --notes-file notes.md

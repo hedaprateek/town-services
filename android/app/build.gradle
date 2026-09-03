@@ -1,0 +1,95 @@
+plugins {
+  id 'com.android.application'
+}
+
+/* The build number from CI, so a later APK installs over an earlier one.
+   Locally it is 1, which is fine for a one-off test build. */
+def buildNo = (System.getenv("VERSION_CODE") ?: "1") as Integer
+def keystore = System.getenv("KEYSTORE_PATH")
+
+android {
+  namespace 'io.github.hedaprateek.directory'
+  compileSdk 34
+
+  defaultConfig {
+    // Android 5 and up. Below that there is no WebViewAssetLoader, and the
+    // system WebView is too old to run the page anyway.
+    minSdk 21
+    targetSdk 34
+    versionCode buildNo
+    versionName "1.0." + buildNo
+  }
+
+  buildFeatures {
+    buildConfig true
+  }
+
+  flavorDimensions += "site"
+  productFlavors {
+    /* The public list. Everything ships inside the APK, so it opens with no
+       signal the first time it is ever run, and the newest listings are
+       fetched in the background whenever there is a connection. */
+    town {
+      dimension "site"
+      applicationId "io.github.hedaprateek.townservices"
+      resValue "string", "app_name", "Local Services"
+      buildConfigField "boolean", "BUNDLED", "true"
+      buildConfigField "String", "START_URL",
+        '"https://appassets.androidplatform.net/assets/index.html"'
+      buildConfigField "String", "REMOTE_BASE",
+        '"https://hedaprateek.github.io/town-services/"'
+      buildConfigField "String", "DATA_FILES", '"services.json"'
+      buildConfigField "String", "UA_TAG", '"TownServicesApp/1"'
+    }
+    /* The society directory. Deliberately NOT bundled: an APK is a zip that
+       anyone it is passed to can open, and the resident list is the one thing
+       on this project that must never travel like that. The app opens the
+       gated site, and the site's own service worker keeps it working offline
+       after the first sign-in. */
+    society {
+      dimension "site"
+      applicationId "io.github.hedaprateek.societydirectory"
+      resValue "string", "app_name", "Society Directory"
+      buildConfigField "boolean", "BUNDLED", "false"
+      buildConfigField "String", "START_URL",
+        '"https://society-info.hedaprateek.workers.dev/"'
+      buildConfigField "String", "REMOTE_BASE",
+        '"https://society-info.hedaprateek.workers.dev/"'
+      buildConfigField "String", "DATA_FILES", '""'
+      buildConfigField "String", "UA_TAG", '"SocietyDirectoryApp/1"'
+    }
+  }
+
+  signingConfigs {
+    release {
+      if (keystore) {
+        storeFile file(keystore)
+        storePassword System.getenv("KEYSTORE_PASSWORD")
+        keyAlias System.getenv("KEY_ALIAS")
+        keyPassword System.getenv("KEY_PASSWORD")
+      }
+    }
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      /* With no key configured this falls back to the debug key so a build
+         still produces something installable. Those are fine to try, but each
+         build signs with a different identity, so one will not install over
+         another — see android/README.md for the four secrets that fix that. */
+      signingConfig keystore ? signingConfigs.release : signingConfigs.debug
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+}
+
+dependencies {
+  // WebViewAssetLoader: serves the bundled copy over a real https origin, so
+  // fetch() and relative URLs behave exactly as they do on the web.
+  implementation 'androidx.webkit:webkit:1.11.0'
+}

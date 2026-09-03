@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The town page's paper background, so the launch screen is the page. -->
+<resources>
+  <color name="launch_bg">#FBF7F0</color>
+  <bool name="light_status">true</bool>
+</resources>

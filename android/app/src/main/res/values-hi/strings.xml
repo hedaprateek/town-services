@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="no_app_for_that">इस फ़ोन में कोई ऐप इसे नहीं खोल सकता।</string>
+  <string name="offline_title">कनेक्शन नहीं है</string>
+  <string name="offline_body">पहली बार खोलने के लिए इंटरनेट चाहिए। एक बार सूची आ जाने के बाद यह बिना नेटवर्क के भी चलती है।</string>
+</resources>
