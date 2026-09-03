@@ -95,7 +95,9 @@
      three controls and nothing else. */
   @media(max-width:430px){
     #shareLbl,.place{display:none}
-    .ghost-btn{padding:0 11px}
+    /* With the word gone this is a 14px icon, and padding alone left it 38px
+       across. Square it off instead. */
+    .ghost-btn{padding:0 11px;min-width:44px;justify-content:center}
   }
 
   /* Two A's of different sizes says what it does without a word of copy. */
@@ -148,6 +150,16 @@
   /* The shape of the whole list, before any scrolling. Each is a shortcut into
      its own section. */
   .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:18px 0 4px}
+  /* One sideways row on a phone rather than three stacked: it saves about
+     200px, which is the difference between the first listing being on the
+     first screen and being on the second. */
+  @media(max-width:559px){
+    .tiles{display:flex;overflow-x:auto;scroll-snap-type:x proximity;
+      margin:16px -16px 4px;padding:0 16px 2px;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .tiles::-webkit-scrollbar{display:none}
+    .tile{flex:0 0 152px;min-height:0;scroll-snap-align:start}
+  }
   @media(min-width:560px){ .tiles{grid-template-columns:repeat(3,1fr)} }
   @media(min-width:820px){ .tiles{grid-template-columns:repeat(6,1fr);gap:11px} }
   .tile{display:flex;flex-direction:column;gap:9px;min-height:96px;padding:13px;
@@ -262,6 +274,13 @@
   .acts{display:flex;gap:6px;flex:none}
   .b{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
     flex:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  /* Missing one of these opens the details sheet instead, so on a phone they
+     get the full 44px. */
+  @media(max-width:700px){
+    .b{width:var(--tap);height:var(--tap)}
+    .ghost-btn,.langsel{min-height:40px}
+    .vswitch button{width:40px;height:40px}
+  }
   .b svg{width:17px;height:17px}
   .b.call{background:var(--teal);color:var(--on-accent)}
   .b.wa{background:#25D366;color:#06301A}
