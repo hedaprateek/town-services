@@ -91,7 +91,12 @@
     -webkit-tap-highlight-color:transparent}
   .ghost-btn:hover{border-color:var(--teal);color:var(--teal-bright)}
   .ghost-btn svg{width:14px;height:14px;flex:none}
-  @media(max-width:430px){ #shareLbl{display:none  .place{display:none} } .ghost-btn{padding:0 11px} }
+  /* Below 430px the word Share and the city name both go: the mark, the
+     three controls and nothing else. */
+  @media(max-width:430px){
+    #shareLbl,.place{display:none}
+    .ghost-btn{padding:0 11px}
+  }
 
   /* Two A's of different sizes says what it does without a word of copy. */
   #tsize{gap:1px;padding:0 11px;align-items:baseline}
@@ -120,6 +125,19 @@
   .stats b{color:var(--fg);font-weight:700;font-variant-numeric:tabular-nums}
   .stats i{width:3px;height:3px;border-radius:50%;background:var(--line);
     display:inline-block;font-style:normal}
+  /* Wide enough for two columns: the counts move out of the tagline's way
+     and stand as a panel on the right, which is otherwise dead space. The
+     dot separators belong to a single line, so they go. */
+  @media(min-width:900px){
+    .hrow{display:flex;align-items:flex-end;gap:44px}
+    .hhead{flex:1 1 auto;min-width:0}
+    .stats{flex:0 0 auto;margin-top:0;flex-direction:column;align-items:flex-start;
+      gap:12px;padding:2px 0 2px 28px;border-left:1px solid var(--line)}
+    .stats i{display:none}
+    .stats span{display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+    .stats b{font-family:'Space Grotesk',Inter,sans-serif;
+      font-size:calc((23px) * var(--t));line-height:1}
+  }
 
   .caution{display:flex;gap:10px;margin-top:18px;padding:12px 14px;border-radius:12px;
     font-size:calc((13px) * var(--t));line-height:1.55;color:var(--warn-fg);max-width:70ch;
@@ -208,6 +226,38 @@
   .info{display:block;font-size:calc((12px) * var(--t));color:var(--fg-2);margin-top:2px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rate{flex:none;font-size:calc((11.5px) * var(--t));font-weight:700;color:var(--gold);white-space:nowrap}
+  /* Grid is the same row in several columns, not a different card: on a wide
+     screen one 866px row holds thirty characters and a pair of buttons and
+     the rest is gap.
+
+     A whole category shares one grid rather than each trade having its own,
+     because nearly every trade holds a single listing and a one-item grid is
+     just a row again. The trade headings go with it — the row already names
+     the trade beside the name — and the .rows boxes step out of the way with
+     display:contents so their rows become items of the category's grid.
+
+     Each row draws its own border here. Spacing them with a coloured gap
+     instead would paint every empty cell — any category with an odd count —
+     as a solid slab. */
+  html[data-cards="grid"] .gwrap{display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:9px}
+  html[data-cards="grid"] .rows{display:contents}
+  html[data-cards="grid"] .gsub2{display:none}
+  html[data-cards="grid"] .row{border:1px solid var(--line);border-radius:12px;
+    background:var(--navy-2)}
+  html[data-cards="grid"] .row:hover{background:var(--navy-3);border-color:var(--teal)}
+
+  /* The switch, beside the search box. */
+  .sfield-row{display:flex;gap:9px;align-items:center}
+  .sfield-row .sfield{flex:1;min-width:0}
+  .vswitch{display:flex;gap:2px;flex:none;padding:3px;border-radius:10px;
+    background:var(--navy-2);border:1px solid var(--line)}
+  .vswitch button{width:36px;height:36px;display:grid;place-items:center;cursor:pointer;
+    border:0;border-radius:8px;background:none;color:var(--muted);
+    -webkit-tap-highlight-color:transparent}
+  .vswitch button svg{width:17px;height:17px}
+  .vswitch button.on{background:var(--teal);color:var(--on-accent)}
+  .vswitch button:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
   @media(max-width:430px){ .rate{display:none} }
   .acts{display:flex;gap:6px;flex:none}
   .b{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
@@ -252,8 +302,21 @@
     color:var(--muted);font-size:calc((12.5px) * var(--t))}
   /* The caution again at the bottom: someone who scrolled the whole list has
      left the top one far behind. */
-  .fnote{max-width:70ch;line-height:1.55;margin-bottom:14px;color:var(--muted)}
-  .fbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  /* Who this is and what to be careful of, side by side rather than stacked
+     down the full width. Below 760px they stack, which is the right shape
+     for a phone anyway. */
+  .fgrid{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:flex-start;margin-bottom:18px}
+  .fbrand{flex:0 1 230px;display:flex;align-items:center;gap:10px;min-width:0}
+  .fbrand .mark{width:30px;height:30px;border-radius:8px}
+  .fbrand .mark svg{width:16px;height:16px}
+  .fname{min-width:0;line-height:1.35}
+  .fname b{display:block;color:var(--fg-2);font-weight:650;
+    font-size:calc((13.5px) * var(--t));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fname span{font-size:calc((11.5px) * var(--t));letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted)}
+  .fnote{flex:1 1 330px;max-width:70ch;line-height:1.55;margin:0;color:var(--muted)}
+  .fbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    border-top:1px solid var(--line);padding-top:14px}
   footer .credit{margin-left:auto}
   footer b{color:var(--fg-2);font-weight:600}
   .toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
@@ -283,9 +346,13 @@
       </div>
     </div>
 
-    <h1 id="title">Local Services &amp; Help</h1>
-    <p class="sub" id="sub"></p>
-    <p class="stats" id="stats"></p>
+    <div class="hrow">
+      <div class="hhead">
+        <h1 id="title">Local Services &amp; Help</h1>
+        <p class="sub" id="sub"></p>
+      </div>
+      <p class="stats" id="stats"></p>
+    </div>
 
   </div>
 </header>
@@ -295,6 +362,7 @@
 
 <div class="tools" id="tools">
   <div class="wrap">
+    <div class="sfield-row">
     <div class="sfield">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg>
       <input id="q" type="search" placeholder="Search a trade or a name…"
@@ -303,6 +371,11 @@
       <button class="qx" id="qx" hidden type="button" aria-label="Clear">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>
       </button>
+    </div>
+      <div class="vswitch" id="vswitch" role="group">
+        <button type="button" data-cards="list"></button>
+        <button type="button" data-cards="grid"></button>
+      </div>
     </div>
     <div class="chips" id="chips"></div>
   </div>
@@ -314,7 +387,18 @@
 
 <footer>
   <div class="wrap">
-    <p class="fnote" id="fnote"></p>
+    <div class="fgrid">
+      <div class="fbrand">
+        <div class="mark">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.7 5.6 18 8.3l-2.3-2.3 2.7-2.7A5 5 0 0011.6 9L4 16.6V20h3.4L15 12.4a5 5 0 005.7-6.8z"/></svg>
+        </div>
+        <div class="fname">
+          <b id="fTitle"></b>
+          <span id="fPlace"></span>
+        </div>
+      </div>
+      <p class="fnote" id="fnote"></p>
+    </div>
     <div class="fbar">
       <span id="upd"></span>
       <span class="credit"><b>Stunity Tech</b> · by Prateek</span>
@@ -333,19 +417,19 @@
           details:"Details", close:"Close", phone:"Phone",
           none:"Nothing matches that.", updated:"Updated", swap:"हिं",
           listing:"listing", listings:"listings", categories:"categories", withPhone:"you can call",
-          charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", fail:"Could not load the list. Please try again later." },
+          charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", vlist:"One line each", vgrid:"Two columns", fail:"Could not load the list. Please try again later." },
     hi: { search:"काम या नाम खोजें…", all:"सभी", other:"अन्य",
           call:"कॉल", wa:"व्हाट्सएप", share:"साझा करें", copied:"क्लिपबोर्ड पर कॉपी हो गया",
           details:"विवरण", close:"बंद करें", phone:"फ़ोन",
           none:"कुछ नहीं मिला।", updated:"अपडेट", swap:"EN",
           listing:"सूची", listings:"सूचियाँ", categories:"श्रेणियाँ", withPhone:"जिन्हें कॉल कर सकते हैं",
-          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" },
+          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", vlist:"एक पंक्ति में", vgrid:"दो कॉलम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" },
     mr: { search:"काम किंवा नाव शोधा…", all:"सर्व", other:"इतर",
           call:"कॉल", wa:"व्हॉट्सॲप", share:"शेअर करा", copied:"क्लिपबोर्डवर कॉपी झाले",
           details:"तपशील", close:"बंद करा", phone:"फोन",
           none:"काहीही सापडले नाही.", updated:"अद्ययावत", swap:"मराठी",
           listing:"नोंद", listings:"नोंदी", categories:"श्रेणी", withPhone:"ज्यांना कॉल करता येईल",
-          charges:"दर", timings:"वेळ", notes:"टीप", covers:"क्षेत्र / काम",
+          charges:"दर", timings:"वेळ", notes:"टीप", covers:"क्षेत्र / काम", vlist:"एका ओळीत", vgrid:"दोन स्तंभ",
           fail:"यादी लोड होऊ शकली नाही. कृपया नंतर पहा." }
   };
   var lang = "en", data = null, group = "", built = [];
@@ -646,6 +730,10 @@
       head.appendChild(el("span", "n", String(g.rows.length)));
       if (many) list.appendChild(head);
 
+      // Everything in this category, so grid mode can lay it out as one.
+      var wrap = el("div", "gwrap");
+      list.appendChild(wrap);
+
       var items = [];
       var subs = g.subs.map(function (sb) {
         var sh = null;
@@ -653,7 +741,7 @@
           sh = el("div", "gsub2");
           sh.appendChild(el("span", null, sb.label));
           sh.appendChild(el("span", "n", String(sb.rows.length)));
-          list.appendChild(sh);
+          wrap.appendChild(sh);
         }
         var grid = el("div", "rows");
         sb.rows.forEach(function (r) {
@@ -663,10 +751,11 @@
             hay: Object.keys(r).map(function (k) { return r[k]; })
               .filter(Boolean).join(" ").toLowerCase() });
         });
-        list.appendChild(grid);
+        wrap.appendChild(grid);
         return { key: sb.key, head: sh, grid: grid };
       });
-      built.push({ key: g.key, head: many ? head : null, subs: subs, items: items });
+      built.push({ key: g.key, head: many ? head : null, wrap: wrap,
+                   subs: subs, items: items });
     });
 
     var none = el("div", "empty", t("none"));
@@ -697,6 +786,9 @@
         sb.grid.hidden = !any;
         if (sb.head) sb.head.hidden = !any;
       });
+      // Not the same test as the heading below: a chip hides the heading
+      // while its rows stay on screen.
+      b.wrap.hidden = !shown;
       if (b.head) b.head.hidden = !shown || (!term && !!group);
     });
     var none = $("none");
@@ -789,6 +881,9 @@
     // The caution lives in the footer only: four lines of warning ahead of
     // any content teaches people to scroll past warnings.
     $("fnote").textContent = noteText();
+    $("fTitle").textContent = data.title;
+    $("fPlace").textContent = data.city || "";
+    vswitch();
     $("upd").textContent = data.updated ? t("updated") + " " + data.updated : "";
     build();
     filter();
@@ -841,6 +936,43 @@
       try { localStorage.setItem("svc-text", STEPS[at]); } catch (e) {}
       apply();
     });
+  })();
+
+  /* One column or several, remembered per device. A phone has room for one
+     and a laptop for three, so that is the default until someone says
+     otherwise; after that their choice wins on every screen. */
+  var vswitch = (function () {
+    var box = $("vswitch"), mode = null;
+    function set(v, save) {
+      mode = v === "grid" ? "grid" : "list";
+      document.documentElement.setAttribute("data-cards", mode);
+      var b = box.children;
+      for (var i = 0; i < b.length; i++)
+        b[i].className = b[i].getAttribute("data-cards") === mode ? "on" : "";
+      if (save) { try { localStorage.setItem("town-cards", mode); } catch (e) {} }
+    }
+    var b = box.children;
+    for (var i = 0; i < b.length; i++) (function (btn) {
+      btn.addEventListener("click", function () { set(btn.getAttribute("data-cards"), true); });
+    })(b[i]);
+    var saved = null;
+    try { saved = localStorage.getItem("town-cards"); } catch (e) {}
+    set(saved || (matchMedia("(min-width:820px)").matches ? "grid" : "list"), false);
+    /* Called again on every repaint, because the labels are translated. If the
+       list never loads, the buttons still have their icons from this first
+       call rather than sitting there empty. */
+    var label = function () {
+      var icons = { list: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2.6H3V5zm0 5.7h18v2.6H3v-2.6zM3 16.4h18V19H3v-2.6z"/></svg>',
+                    grid: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>' };
+      var n = box.children;
+      for (var j = 0; j < n.length; j++) {
+        var k = n[j].getAttribute("data-cards");
+        n[j].innerHTML = icons[k];
+        n[j].setAttribute("aria-label", t(k === "grid" ? "vgrid" : "vlist"));
+      }
+    };
+    label();
+    return label;
   })();
 
   $("q").addEventListener("input", filter);
