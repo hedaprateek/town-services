@@ -198,7 +198,12 @@
     -webkit-tap-highlight-color:transparent}
   .chip.on{color:var(--on-accent);background:var(--teal);border-color:var(--teal)}
   .chip .n{font-size:calc((11px) * var(--t));font-weight:700;opacity:.7}
-  @media(max-width:700px){ .chip{min-height:var(--tap)} }
+  /* The trades sit a step below the categories they belong to, and read that
+     way: a smaller chip on a second line. */
+  .chips + .chips{margin-top:6px}
+  .chips.sub .chip{min-height:32px;padding:0 11px;font-size:calc((11.5px) * var(--t))}
+  .chips.sub .chip.on{background:var(--navy-2);color:var(--teal);border-color:var(--teal)}
+  @media(max-width:700px){ .chip{min-height:var(--tap)} .chips.sub .chip{min-height:36px} }
 
   main{padding:18px 0 44px}
   /* Category, then the trade inside it: "Repairs & Maintenance" holds
@@ -287,6 +292,86 @@
   .b.alt{background:none;border:1px solid var(--line);color:var(--muted)}
   .chev{width:14px;height:14px;flex:none;color:var(--muted);margin-left:2px}
 
+  /* ── Sponsored slots ──
+     A list the whole city opens is worth something to the shops in it, and
+     these slots are how it gets paid for. Two rules keep them honest, and both
+     are load-bearing: every one carries its label, and not one of them is ever
+     counted, searched, grouped or shared as though a neighbour had put it
+     there. They are drawn as a card of a different shape to the rows on
+     purpose. A paid placement that imitates a listing is a lie told in CSS,
+     and on a page whose whole worth is that the numbers came from neighbours,
+     it is the one lie that would cost the page its reason to exist. */
+  .adslot{margin:22px 0}
+  .adslot:first-child{margin-top:0}
+  .adtag{display:inline-flex;align-items:center;gap:6px;margin-bottom:7px;
+    font-size:calc((10.5px) * var(--t));font-weight:700;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--muted)}
+  .adtag::before{content:"";width:14px;height:1px;background:var(--gold);flex:none}
+  .ad{position:relative;display:flex;align-items:center;gap:13px;padding:14px;
+    border-radius:14px;background:var(--navy-2);border:1px solid var(--line);overflow:hidden}
+  /* The rail down the edge is the tell: no row on this page has one. */
+  .ad::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;
+    background:linear-gradient(var(--gold),var(--teal))}
+  /* The slot above the list gets the masthead's wash. It is the one that sells
+     first and it should look like it. */
+  .ad.feature{padding:17px 16px}
+  .ad.feature::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;
+    background:radial-gradient(72% 140% at 100% 0%,
+      color-mix(in srgb,var(--gold) 12%, transparent), transparent 70%);
+    pointer-events:none}
+  /* A monogram rather than a logo: an image would want hosting, would break
+     the offline promise the rest of the page keeps, and would let one
+     advertiser's artwork set the height of everybody's slot. */
+  .admono{width:46px;height:46px;border-radius:12px;flex:none;display:grid;place-items:center;
+    font-family:'Space Grotesk',Inter,sans-serif;font-weight:700;
+    font-size:calc((17px) * var(--t));color:var(--on-accent);position:relative;z-index:1;
+    background:linear-gradient(135deg,var(--gold),var(--teal))}
+  .ad.feature .admono{width:54px;height:54px;font-size:calc((20px) * var(--t))}
+  .adwho{flex:1;min-width:0;position:relative;z-index:1}
+  .adname{font-family:'Space Grotesk',Inter,sans-serif;font-weight:700;
+    font-size:calc((15.5px) * var(--t));letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ad.feature .adname{font-size:calc((18px) * var(--t))}
+  .adline{font-size:calc((12.5px) * var(--t));color:var(--fg-2);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .adoffer{display:inline-block;margin-top:7px;padding:2px 9px;border-radius:999px;
+    font-size:calc((11.5px) * var(--t));font-weight:700;color:var(--warn-fg);
+    background:var(--warn-tint);border:1px solid var(--warn-line)}
+  .adacts{display:flex;gap:6px;flex:none;position:relative;z-index:1}
+  .b.visit{background:var(--navy-3);border:1px solid var(--line);color:var(--fg-2)}
+  .b.visit:hover{border-color:var(--teal);color:var(--teal-bright)}
+
+  /* An unsold slot says so. Dashed, quiet, and the only thing on the page
+     that is asking for money rather than offering a number. */
+  .ad.vacant{flex-direction:column;align-items:center;text-align:center;gap:3px;
+    padding:19px 16px;background:none;border-style:dashed}
+  .ad.vacant::before{display:none}
+  .ad.vacant .adname{color:var(--fg-2)}
+  .ad.vacant .adline{white-space:normal}
+  .adask{margin-top:9px}
+
+  /* Down in the footer: the ones paying for the page, named once, together. */
+  .adstrip{display:flex;flex-wrap:wrap;align-items:center;gap:9px 12px;
+    padding-top:15px;margin-bottom:15px;border-top:1px solid var(--line)}
+  .adstrip .lbl{font-size:calc((11px) * var(--t));font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted)}
+  .adchip{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;
+    border-radius:999px;background:var(--navy-2);border:1px solid var(--line);
+    font-size:calc((12.5px) * var(--t));font-weight:650;color:var(--fg-2)}
+  .adchip:hover{border-color:var(--teal);color:var(--teal-bright)}
+  .adchip .m{width:23px;height:23px;border-radius:7px;flex:none;display:grid;place-items:center;
+    font-size:calc((10px) * var(--t));font-weight:700;color:var(--on-accent);
+    background:linear-gradient(135deg,var(--gold),var(--teal))}
+
+  /* On a narrow phone the buttons and the name are what matter; the strapline
+     is the first thing that can go. */
+  @media(max-width:430px){
+    .ad{gap:11px;padding:12px}
+    .admono{width:40px;height:40px;font-size:calc((15px) * var(--t))}
+    .ad.feature .admono{width:46px;height:46px;font-size:calc((17px) * var(--t))}
+    .ad:not(.feature):not(.vacant) .adline{display:none}
+  }
+
   /* ── Details, on a tap ── */
   /* Every inset written out: a fixed box that sets only three of them inherits
      the fourth and stretches over the whole screen. */
@@ -342,6 +427,97 @@
     top:auto;z-index:60;padding:11px 13px;border-radius:11px;font-size:calc((13px) * var(--t));
     background:var(--navy-3);color:var(--fg);border:1px solid var(--line);
     box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:520px;margin:0 auto}
+  /* The number, as text. On screen it lives only inside the tel: link behind
+     the call button, which is fine until the page is printed — a sheet of
+     names with no numbers on it is not a directory. */
+  .tel{display:none}
+
+  /* ── Print ──
+     A list like this ends up pinned to a noticeboard or kept in a drawer, so
+     paper is a real destination, not an afterthought.
+
+     Three things have to happen. The colours: this is pale text on dark panels
+     under two of the three themes, and browsers leave background graphics off
+     by default, so printing it untouched gives white text on white paper.
+     Rather than flatten everything with a universal !important, the theme's
+     own custom properties are re-pointed at ink on paper — the page keeps its
+     structure and its hierarchy, it just stops being backlit.
+
+     The numbers: the call and WhatsApp buttons mean nothing on paper, so they
+     go and the number itself comes out from behind them.
+
+     And the credit, which becomes a running footer. A fixed element in paged
+     media is not pinned to a viewport — it repeats on every sheet. It is held
+     16mm below the content box and the page keeps a 24mm bottom margin, so it
+     sits under the copy rather than on top of it, which is what `bottom:0`
+     inside a plain 14mm margin would have done. */
+  @media print{
+    @page{margin:14mm 14mm 24mm}
+
+    :root,html[data-theme="civic"],html[data-theme="slate"],html[data-theme="paper"]{
+      --navy:#fff; --navy-2:#fff; --navy-3:#fff;
+      --fg:#000; --fg-2:#222; --muted:#555; --line:#bbb;
+      --teal:#000; --teal-bright:#000; --gold:#444; --on-accent:#000;
+      --warn-fg:#333; --warn-tint:transparent; --warn-line:#bbb;
+      --t:1;
+    }
+    *{box-shadow:none!important;text-shadow:none!important;
+      -webkit-print-color-adjust:economy;print-color-adjust:economy}
+    body{background:#fff}
+    a{text-decoration:none;color:inherit}
+
+    /* Anything that only answers to a tap. */
+    header::before,.tools,.tiles,.toast,.sheet-wrap,.hactions,.chev,
+    .acts,.adacts,.b,.qx{display:none!important}
+
+    /* Painted pills and tiles are shapes the printer will not fill, so they
+       are redrawn as outlines instead of vanishing into the paper. */
+    .gsub .n,.adoffer,.adchip{background:none!important;color:#000!important;border:.5pt solid #bbb;border-radius:999px;
+      padding:0 6px;font-weight:700}
+    .admono,.adchip .m{border:.5pt solid #999;background:none}
+
+    /* The whole point of printing it. */
+    .tel{display:inline;font-weight:700;white-space:nowrap;
+      font-variant-numeric:tabular-nums;margin-left:auto;padding-left:10px}
+    .row{min-height:0;padding:5px 2px}
+    .rows{border:0;border-top:.5pt solid #ddd}
+    .row+.row{border-top:.5pt solid #eee}
+
+    /* Keep a person, and a heading with the names under it, on one sheet. */
+    .row,.adslot,.caution{break-inside:avoid}
+    .gsub,.gsub2{break-after:avoid}
+    /* Grid view is a screen idea; on paper one line each reads better and
+       wastes less of the page. */
+    html[data-cards="grid"] .gwrap{display:block}
+    html[data-cards="grid"] .rows{display:block}
+
+    main{padding-top:0}
+    footer{border-top:.5pt solid #bbb;margin-top:10mm}
+
+    /* The running footer. */
+    .credit{position:fixed;left:0;right:0;bottom:-16mm;margin:0;
+      padding-top:2.5mm;border-top:.4pt solid #bbb;text-align:right;
+      font-size:9pt;color:#555}
+  }
+</style>
+<style>
+.sc-link{
+  position:relative;margin-left:4px;padding-left:17px;
+  text-transform:none;letter-spacing:.02em;white-space:nowrap;
+  color:inherit;text-decoration:none;opacity:.78;
+  border-bottom:1px solid transparent;
+  transition:opacity .18s ease,border-color .18s ease;
+}
+.sc-link::before{content:"";position:absolute;left:0;top:50%;
+  width:9px;height:1px;background:currentColor;opacity:.5}
+.sc-link:hover{opacity:1;border-bottom-color:currentColor}
+.sc-link:focus-visible{outline:1px solid currentColor;outline-offset:3px;
+  border-radius:2px;opacity:1}
+@media (max-width:460px){
+  .sc-link{white-space:normal;margin-left:0;padding-left:0}
+  .sc-link::before{display:none}
+}
+@media print{ .sc-link{display:none!important} }
 </style>
 </head>
 <body>
@@ -397,10 +573,14 @@
       </div>
     </div>
     <div class="chips" id="chips"></div>
+    <div class="chips sub" id="chips2" hidden></div>
   </div>
 </div>
 
-<main><div class="wrap" id="list"></div></main>
+<main>
+  <div class="wrap"><div id="adtop"></div></div>
+  <div class="wrap" id="list"></div>
+</main>
 
 <div class="sheet-wrap" id="sheet" hidden></div>
 
@@ -418,9 +598,15 @@
       </div>
       <p class="fnote" id="fnote"></p>
     </div>
+    <div class="adstrip" id="adstrip" hidden></div>
     <div class="fbar">
       <span id="upd"></span>
-      <span class="credit"><b>Stunity Tech</b> · by Prateek</span>
+      <!-- ── Standard footer ──────────────────────────────────────────────
+           Stunity Tech's credit, and the one copy of it on this page. In print
+           this same element lifts out of the footer and becomes a running
+           footer on every sheet (see @media print), rather than a second copy
+           that would sooner or later say something different. -->
+      <span class="credit">Stunity Tech — by Prateek <a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">stunity-tech.hedaprateek.workers.dev</a></span>
     </div>
   </div>
 </footer>
@@ -431,27 +617,42 @@
 (function () {
   "use strict";
   var T = {
-    en: { search:"Search a trade or a name…", all:"All", other:"Other",
+    en: { search:"Search a trade or a name…", all:"All", allTrades:"All trades", other:"Other",
           call:"Call", wa:"WhatsApp", share:"Share", copied:"Copied to the clipboard",
           details:"Details", close:"Close", phone:"Phone",
           none:"Nothing matches that.", updated:"Updated", swap:"हिं",
           listing:"listing", listings:"listings", categories:"categories", withPhone:"you can call",
-          charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", vlist:"One line each", vgrid:"Two columns", fail:"Could not load the list. Please try again later." },
-    hi: { search:"काम या नाम खोजें…", all:"सभी", other:"अन्य",
+          charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", vlist:"One line each", vgrid:"Two columns", fail:"Could not load the list. Please try again later.",
+          sponsored:"Sponsored", visit:"Website", supportedBy:"Supported by",
+          advertise:"Advertise here", advertiseSub:"Reach every home that keeps this list on their phone.",
+          adsAsk:"Ask about this space",
+          adNote:"Slots marked Sponsored are paid for. They are not checked or recommended, and they are not part of the neighbours' list." },
+    hi: { search:"काम या नाम खोजें…", all:"सभी", allTrades:"सभी काम", other:"अन्य",
           call:"कॉल", wa:"व्हाट्सएप", share:"साझा करें", copied:"क्लिपबोर्ड पर कॉपी हो गया",
           details:"विवरण", close:"बंद करें", phone:"फ़ोन",
           none:"कुछ नहीं मिला।", updated:"अपडेट", swap:"EN",
           listing:"सूची", listings:"सूचियाँ", categories:"श्रेणियाँ", withPhone:"जिन्हें कॉल कर सकते हैं",
-          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", vlist:"एक पंक्ति में", vgrid:"दो कॉलम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।" },
-    mr: { search:"काम किंवा नाव शोधा…", all:"सर्व", other:"इतर",
+          charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", vlist:"एक पंक्ति में", vgrid:"दो कॉलम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।",
+          sponsored:"प्रायोजित", visit:"वेबसाइट", supportedBy:"सहयोग",
+          advertise:"यहाँ विज्ञापन दें", advertiseSub:"जिन घरों के फ़ोन में यह सूची है, उन सब तक पहुँचें।",
+          adsAsk:"इस जगह के बारे में पूछें",
+          adNote:"जिन पर “प्रायोजित” लिखा है, वे भुगतान करके लगाए गए हैं। उनकी जाँच या सिफ़ारिश नहीं की गई है, और वे पड़ोसियों की सूची का हिस्सा नहीं हैं।" },
+    mr: { search:"काम किंवा नाव शोधा…", all:"सर्व", allTrades:"सर्व कामे", other:"इतर",
           call:"कॉल", wa:"व्हॉट्सॲप", share:"शेअर करा", copied:"क्लिपबोर्डवर कॉपी झाले",
           details:"तपशील", close:"बंद करा", phone:"फोन",
           none:"काहीही सापडले नाही.", updated:"अद्ययावत", swap:"मराठी",
           listing:"नोंद", listings:"नोंदी", categories:"श्रेणी", withPhone:"ज्यांना कॉल करता येईल",
           charges:"दर", timings:"वेळ", notes:"टीप", covers:"क्षेत्र / काम", vlist:"एका ओळीत", vgrid:"दोन स्तंभ",
-          fail:"यादी लोड होऊ शकली नाही. कृपया नंतर पहा." }
+          fail:"यादी लोड होऊ शकली नाही. कृपया नंतर पहा.",
+          sponsored:"प्रायोजित", visit:"वेबसाइट", supportedBy:"सहयोग",
+          advertise:"इथे जाहिरात द्या", advertiseSub:"ज्यांच्या फोनमध्ये ही यादी आहे, त्या प्रत्येक घरापर्यंत पोहोचा.",
+          adsAsk:"या जागेबद्दल विचारा",
+          adNote:"“प्रायोजित” असे लिहिलेल्या जागा पैसे देऊन घेतलेल्या आहेत. त्यांची पडताळणी किंवा शिफारस केलेली नाही, आणि त्या शेजाऱ्यांच्या यादीचा भाग नाहीत." }
   };
-  var lang = "en", data = null, group = "", built = [];
+  /* What is chosen, not what is chosen singular: someone wanting a plumber and
+     an electrician for the same job should not have to look twice. `cats` holds
+     category keys, `trades` the trades inside them; empty means no narrowing. */
+  var lang = "en", data = null, cats = [], trades = [], built = [];
   function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
   var $ = function (id) { return document.getElementById(id); };
 
@@ -473,7 +674,8 @@
   var P = {
     phone:"M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z",
     wa:"M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 016.7 12.4l-.3.4.8 2.8-2.9-.8-.4.2A8 8 0 1112 4zm-3.6 4c-.2 0-.5 0-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1.1 2.6c.1.2 1.8 2.8 4.4 3.8 2.1.8 2.6.7 3 .6.6 0 1.6-.6 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.4-1.7c-.1-.3 0-.4.1-.5l.5-.5.3-.5v-.5l-.8-2c-.2-.5-.4-.4-.6-.4h-.4z",
-    share:"M18 16.1c-.8 0-1.4.3-1.9.8l-6.9-4a2.5 2.5 0 000-1.7l6.8-4a2.9 2.9 0 10-.9-2.1v.4L8.2 9.5a2.9 2.9 0 100 4.9l6.9 4.1-.1.4a2.9 2.9 0 102.9-2.9z"
+    share:"M18 16.1c-.8 0-1.4.3-1.9.8l-6.9-4a2.5 2.5 0 000-1.7l6.8-4a2.9 2.9 0 10-.9-2.1v.4L8.2 9.5a2.9 2.9 0 100 4.9l6.9 4.1-.1.4a2.9 2.9 0 102.9-2.9z",
+    ext:"M14 3v2h3.6l-8.3 8.3 1.4 1.4L19 6.4V10h2V3h-7zM5 5h5v2H7v10h10v-3h2v5H5V5z"
   };
 
   /* ---- column meaning, same idea as the main directory ---- */
@@ -603,6 +805,10 @@
     var rate = pick(r, COL.rate);
     if (rate) b.appendChild(el("span", "rate", rate));
 
+    // Carried in the markup but only shown on paper, where the buttons go.
+    var ph = pick(r, COL.phone);
+    if (ph) b.appendChild(el("span", "tel", ph));
+
     b.appendChild(callButtons(r, name));
     var chev = svg("M9 6l6 6-6 6");
     chev.setAttribute("class", "chev");
@@ -719,6 +925,151 @@
     });
   }
 
+  /* ── Sponsored slots ───────────────────────────────────────────────────
+     Paid placements, kept deliberately outside data.rows. Everything that
+     makes this page trustworthy reads from data.rows — the counts in the
+     header, the search, the category chips, the share text, the detail sheet —
+     so keeping sponsors out of it is not tidiness, it is the guarantee. A
+     sponsor cannot be counted as a listing, cannot be returned by a search for
+     "plumber", and cannot be forwarded to somebody as a number a neighbour
+     vouched for, because none of that code can see it.
+
+     Three slots: `top`, one card above the list; `feed`, between the category
+     blocks; `footer`, named together at the bottom. */
+  function today() { return new Date().toISOString().slice(0, 10); }
+  /* Whether this list is selling space at all. With no contact to point an
+     advertiser at, an empty slot is furniture with nothing behind it — so a
+     town that has not set one sees no advertising apparatus whatsoever. */
+  function adsOpen() { return !!String((data && data.adsContact) || "").trim(); }
+  // Set by the top slot when it takes the one invitation going.
+  var vacantShown = false;
+  function adsFor(slot) {
+    var now = today();
+    return (data.sponsors || []).filter(function (s) {
+      if (!s || !String(s.name || "").trim()) return false;
+      if ((String(s.slot || "feed").toLowerCase()) !== slot) return false;
+      /* A slot paid up to March stops in March, even on a phone holding a copy
+         of the file from January. The build checks this too; the page checks it
+         again because the page is what people actually see. */
+      var till = String(s.until || "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(till)) return true;
+      return till >= now;
+    });
+  }
+  /* Where more than one has bought the same slot, they take turns by visit
+     rather than the first one in the sheet taking every impression. */
+  function rotate(list) {
+    if (list.length < 2) return list;
+    var n = Math.floor(Math.random() * list.length);
+    return list.slice(n).concat(list.slice(0, n));
+  }
+  function adActs(s) {
+    var acts = el("div", "adacts");
+    var phone = String(s.phone || "").trim();
+    if (phone) {
+      var call = el("a", "b call");
+      call.href = tel(phone);
+      call.title = t("call") + " " + s.name;
+      call.setAttribute("aria-label", t("call") + " " + s.name);
+      call.appendChild(svg(P.phone));
+      acts.appendChild(call);
+      var w = waNum(phone);
+      if (w) {
+        var wa = el("a", "b wa");
+        wa.href = "https://wa.me/" + w;
+        wa.target = "_blank"; wa.rel = "noopener";
+        wa.title = t("wa") + " " + s.name;
+        wa.setAttribute("aria-label", t("wa") + " " + s.name);
+        wa.appendChild(svg(P.wa));
+        acts.appendChild(wa);
+      }
+    }
+    var link = String(s.link || "").trim();
+    // Only a real web address, and never javascript: or data: dressed as one.
+    if (/^https:\/\/|^http:\/\//i.test(link)) {
+      var a = el("a", "b visit");
+      a.href = link;
+      a.target = "_blank";
+      // The markup search engines ask for on a link that was paid for.
+      a.rel = "noopener noreferrer nofollow sponsored";
+      a.title = t("visit") + " — " + s.name;
+      a.setAttribute("aria-label", t("visit") + " — " + s.name);
+      a.appendChild(svg(P.ext));
+      acts.appendChild(a);
+    }
+    return acts;
+  }
+  function adCard(s, feature) {
+    var card = el("div", "ad" + (feature ? " feature" : ""));
+    card.appendChild(el("div", "admono", initials(s.name)));
+    var who = el("div", "adwho");
+    who.appendChild(el("div", "adname", s.name));
+    if (s.line) who.appendChild(el("div", "adline", s.line));
+    if (s.offer) who.appendChild(el("span", "adoffer", s.offer));
+    card.appendChild(who);
+    // Same reason as the rows: on paper the buttons go and the number stays.
+    if (String(s.phone || "").trim())
+      card.appendChild(el("span", "tel", String(s.phone).trim()));
+    card.appendChild(adActs(s));
+    return card;
+  }
+  /* What an unsold slot looks like. It says what it is and how to buy it,
+     which is the whole point of leaving the space on the page. */
+  function vacantCard() {
+    var card = el("div", "ad vacant");
+    card.appendChild(el("div", "adname", t("advertise")));
+    card.appendChild(el("div", "adline", t("advertiseSub")));
+    var to = String((data && data.adsContact) || "").trim();
+    if (to) {
+      var a = el("a", "ghost-btn adask");
+      a.href = /^https?:\/\//i.test(to) ? to
+        : (/@/.test(to) ? "mailto:" + to : tel(to));
+      if (/^https?:\/\//i.test(to)) { a.target = "_blank"; a.rel = "noopener"; }
+      a.appendChild(document.createTextNode(t("adsAsk")));
+      card.appendChild(a);
+    }
+    return card;
+  }
+  /** A sold slot is labelled, always. An empty one has nothing to declare. */
+  function adBlock(node, sold) {
+    var box = el("div", "adslot");
+    if (sold) box.appendChild(el("div", "adtag", t("sponsored")));
+    box.appendChild(node);
+    return box;
+  }
+
+  /* Selection is a list, so every chip is a toggle: tapping one that is already
+     on takes it back out rather than replacing what was there. */
+  function toggle(list, k) {
+    var i = list.indexOf(k);
+    return i === -1 ? list.concat([k]) : list.slice(0, i).concat(list.slice(i + 1));
+  }
+  function keyOf(r, rx) { return pick(r, rx).toLowerCase() || " other"; }
+  function inCats(r) { return !cats.length || cats.indexOf(keyOf(r, COL.cat)) !== -1; }
+  /* Only the trades you could actually be looking at: picking two categories
+     narrows this strip to what lives inside them. */
+  function tradesInScope() {
+    return bucket(data.rows.filter(inCats), COL.role).map(function (g) {
+      return { key: g.key, label: g.label, n: g.rows.length };
+    });
+  }
+  // Changing categories can strand a trade that is no longer on offer.
+  function keepTrades() {
+    var keys = tradesInScope().map(function (g) { return g.key; });
+    return trades.filter(function (k) { return keys.indexOf(k) !== -1; });
+  }
+  function chipRow(box, items, on, tap) {
+    items.forEach(function (c) {
+      var b = el("button", "chip" + (on(c) ? " on" : ""));
+      b.setAttribute("type", "button");
+      b.setAttribute("aria-pressed", on(c) ? "true" : "false");
+      b.appendChild(el("span", null, c.label));
+      b.appendChild(el("span", "n", String(c.n)));
+      b.addEventListener("click", function () { tap(c); build(); filter(); });
+      box.appendChild(b);
+    });
+  }
+
   function build() {
     var list = $("list");
     list.textContent = "";
@@ -728,25 +1079,42 @@
     drawTiles(gs);
     stats(gs);
 
+    /* Two strips: the categories, and the trades within whatever they leave on
+       screen. Both take more than one — "plumber and electrician" is one job. */
     var chips = $("chips");
     chips.textContent = "";
     if (many) {
-      [{ key: "", label: t("all"), n: data.rows.length }]
-        .concat(gs.map(function (g) { return { key: g.key, label: g.label, n: g.rows.length }; }))
-        .forEach(function (c) {
-          var b = el("button", "chip" + (c.key === group ? " on" : ""));
-          b.setAttribute("type", "button");
-          b.appendChild(el("span", null, c.label));
-          b.appendChild(el("span", "n", String(c.n)));
-          b.addEventListener("click", function () { group = c.key; build(); filter(); });
-          chips.appendChild(b);
+      chipRow(chips,
+        [{ key: "", label: t("all"), n: data.rows.length }].concat(
+          gs.map(function (g) { return { key: g.key, label: g.label, n: g.rows.length }; })),
+        function (c) { return c.key ? cats.indexOf(c.key) !== -1 : !cats.length; },
+        function (c) {
+          if (!c.key) { cats = []; trades = []; return; }
+          cats = toggle(cats, c.key);
+          trades = keepTrades();
         });
+    }
+
+    var box2 = $("chips2");
+    box2.textContent = "";
+    var ts = tradesInScope();
+    // One trade is not a choice between trades.
+    box2.hidden = ts.length < 2;
+    if (!box2.hidden) {
+      chipRow(box2,
+        [{ key: "", label: t("allTrades"),
+           n: ts.reduce(function (a, g) { return a + g.n; }, 0) }].concat(ts),
+        function (c) { return c.key ? trades.indexOf(c.key) !== -1 : !trades.length; },
+        function (c) { trades = c.key ? toggle(trades, c.key) : []; });
     }
 
     gs.forEach(function (g) {
       var head = el("div", "gsub");
       head.appendChild(el("span", null, g.label));
-      head.appendChild(el("span", "n", String(g.rows.length)));
+      // Held on to: once a chip can narrow a heading that stays on screen, the
+      // number beside it has to be what is under it, not what the sheet holds.
+      var hn = el("span", "n", String(g.rows.length));
+      head.appendChild(hn);
       if (many) list.appendChild(head);
 
       // Everything in this category, so grid mode can lay it out as one.
@@ -755,27 +1123,52 @@
 
       var items = [];
       var subs = g.subs.map(function (sb) {
-        var sh = null;
+        var sh = null, sn = null;
         if (sb.key) {
           sh = el("div", "gsub2");
           sh.appendChild(el("span", null, sb.label));
-          sh.appendChild(el("span", "n", String(sb.rows.length)));
+          sn = el("span", "n", String(sb.rows.length));
+          sh.appendChild(sn);
           wrap.appendChild(sh);
         }
         var grid = el("div", "rows");
         sb.rows.forEach(function (r) {
           var c = row(r);
           grid.appendChild(c);
-          items.push({ el: c, group: g.key, sub: sb.key,
+          // `sub` is empty where the heading was left off; `role` never is,
+          // so the trade chips work in either shape.
+          items.push({ el: c, group: g.key, sub: sb.key, role: keyOf(r, COL.role),
             hay: Object.keys(r).map(function (k) { return r[k]; })
               .filter(Boolean).join(" ").toLowerCase() });
         });
         wrap.appendChild(grid);
-        return { key: sb.key, head: sh, grid: grid };
+        return { key: sb.key, head: sh, n: sn, grid: grid };
       });
-      built.push({ key: g.key, head: many ? head : null, wrap: wrap,
-                   subs: subs, items: items });
+      built.push({ key: g.key, head: many ? head : null, n: hn, wrap: wrap,
+                   subs: subs, items: items, ad: null });
     });
+
+    /* A feed slot belongs to the block above it, so that when a chip hides that
+       block the advert goes with it instead of being left stranded between two
+       unrelated headings. */
+    var feed = rotate(adsFor("feed"));
+    if (feed.length || (adsOpen() && !vacantShown)) {
+      built.forEach(function (b, i) {
+        if (i % 3 !== 0) return;                        // after the 1st, 4th, 7th…
+        var n = Math.floor(i / 3);
+        /* One appearance each. Cycling a short list to fill every position
+           would print the same advert twice on one screen, which reads as a
+           page padded with advertising rather than a page carrying two. */
+        if (n >= feed.length && feed.length) return;
+        var s = feed.length ? feed[n] : null;
+        // A page with no sponsors at all shows the invitation once, not once
+        // per category.
+        if (!s && (n > 0 || vacantShown)) return;
+        var slot = adBlock(s ? adCard(s) : vacantCard(), !!s);
+        list.insertBefore(slot, b.wrap.nextSibling);
+        b.ad = slot;
+      });
+    }
 
     var none = el("div", "empty", t("none"));
     none.id = "none";
@@ -791,7 +1184,11 @@
       var shown = 0;
       b.items.forEach(function (it) {
         // Searching looks at the whole list; the chips only narrow browsing.
-        var hit = term ? it.hay.indexOf(term) !== -1 : (!group || it.group === group);
+        // Across the strips it reads as "these categories, and of those, these
+        // trades"; within a strip the picks add up rather than fight.
+        var hit = term ? it.hay.indexOf(term) !== -1
+          : (!cats.length || cats.indexOf(it.group) !== -1) &&
+            (!trades.length || trades.indexOf(it.role) !== -1);
         it.el.hidden = !hit;
         if (hit) shown++;
       });
@@ -799,16 +1196,24 @@
       // A trade heading with nothing under it is noise; the category heading
       // goes too when its chip is the one selected.
       b.subs.forEach(function (sb) {
-        var any = b.items.some(function (it) {
-          return it.sub === sb.key && !it.el.hidden;
+        var n = 0;
+        b.items.forEach(function (it) {
+          if (it.sub === sb.key && !it.el.hidden) n++;
         });
-        sb.grid.hidden = !any;
-        if (sb.head) sb.head.hidden = !any;
+        sb.grid.hidden = !n;
+        if (sb.head) sb.head.hidden = !n;
+        if (sb.n) sb.n.textContent = String(n);
       });
       // Not the same test as the heading below: a chip hides the heading
-      // while its rows stay on screen.
+      // while its rows stay on screen. With two categories picked the headings
+      // earn their place again — they are what tells the two apart.
       b.wrap.hidden = !shown;
-      if (b.head) b.head.hidden = !shown || (!term && !!group);
+      if (b.n) b.n.textContent = String(shown);
+      if (b.head) b.head.hidden = !shown || (!term && cats.length === 1);
+      /* Advertising goes when the block it sits under goes, and it goes
+         entirely while somebody is searching: a person who typed "plumber" is
+         looking for a plumber, and the results are not the place to sell. */
+      if (b.ad) b.ad.hidden = !shown || !!term;
     });
     var none = $("none");
     if (none) none.hidden = total !== 0;
@@ -857,6 +1262,41 @@
     });
   }
 
+  /* The slot above the list, and the row of names in the footer. Neither sits
+     inside the list, so neither is touched by the chips or the search. */
+  function drawTopAd() {
+    var box = $("adtop");
+    box.textContent = "";
+    var top = rotate(adsFor("top"));
+    if (top.length) { box.appendChild(adBlock(adCard(top[0], true), true)); return; }
+    // Asking for advertisers twice on one page reads as a page with no
+    // advertisers, so the invitation is shown once and this is its first
+    // refusal: the slot at the top is the one worth offering.
+    if (adsOpen()) { box.appendChild(adBlock(vacantCard(), false)); vacantShown = true; }
+  }
+  function drawFooterAds() {
+    var box = $("adstrip");
+    box.textContent = "";
+    var list = adsFor("footer");
+    box.hidden = !list.length;
+    if (!list.length) return;
+    // "Sponsored · Supported by" — the word that makes the footer note apply
+    // to this row too, said before the names rather than trailing after them.
+    box.appendChild(el("span", "lbl", t("sponsored") + " · " + t("supportedBy")));
+    list.forEach(function (s) {
+      var link = String(s.link || "").trim();
+      var isLink = /^https?:\/\//i.test(link);
+      var chip = el(isLink ? "a" : "span", "adchip");
+      if (isLink) {
+        chip.href = link; chip.target = "_blank";
+        chip.rel = "noopener noreferrer nofollow sponsored";
+      }
+      chip.appendChild(el("span", "m", initials(s.name)));
+      chip.appendChild(document.createTextNode(s.name));
+      box.appendChild(chip);
+    });
+  }
+
   /** Shortcuts into each section, and the shape of the list at a glance. */
   function drawTiles(gs) {
     var box = $("tiles");
@@ -865,9 +1305,10 @@
     if (gs.length < 2) { box.hidden = true; return; }
     box.hidden = false;
     gs.forEach(function (g) {
-      var b = el("button", "tile" + (g.key === group ? " on" : ""));
+      var on = cats.indexOf(g.key) !== -1;
+      var b = el("button", "tile" + (on ? " on" : ""));
       b.setAttribute("type", "button");
-      b.setAttribute("aria-pressed", g.key === group ? "true" : "false");
+      b.setAttribute("aria-pressed", on ? "true" : "false");
       var ic = el("div", "ticon");
       ic.appendChild(svg(catIcon(g.label)));
       b.appendChild(ic);
@@ -875,8 +1316,10 @@
       b.appendChild(el("div", "tn", g.rows.length + " " +
         (g.rows.length === 1 ? t("listing") : t("listings"))));
       b.addEventListener("click", function () {
-        // Tapping the one already chosen clears it, so there is always a way back.
-        group = (group === g.key) ? "" : g.key;
+        // Tapping one already chosen takes it back out, so there is always a
+        // way back — and tapping a second adds to the first.
+        cats = toggle(cats, g.key);
+        trades = keepTrades();
         $("q").value = "";
         build();
         filter();
@@ -899,11 +1342,18 @@
 
     // The caution lives in the footer only: four lines of warning ahead of
     // any content teaches people to scroll past warnings.
-    $("fnote").textContent = noteText();
+    // Where money is involved the caution has a second half — said once, in
+    // the same breath as the first, rather than in small print of its own.
+    var anyAds = adsOpen() || adsFor("top").length || adsFor("feed").length ||
+                 adsFor("footer").length;
+    $("fnote").textContent = [noteText(), anyAds ? t("adNote") : ""]
+      .filter(Boolean).join(" ");
     $("fTitle").textContent = data.title;
     $("fPlace").textContent = data.city || "";
     vswitch();
     $("upd").textContent = data.updated ? t("updated") + " " + data.updated : "";
+    drawTopAd();
+    drawFooterAds();
     build();
     filter();
   }

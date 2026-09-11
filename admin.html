@@ -71,6 +71,74 @@
   .note.ok{background:rgba(21,128,61,.09);color:var(--ok);border:1px solid rgba(21,128,61,.3)}
   #say{position:sticky;bottom:12px;z-index:5}
   .count{font-size:12.5px;color:var(--muted);margin-top:8px}
+  /* ── Standard footer ──
+     The same credit the public page carries, and the same single-element
+     approach: on screen it sits under the panel, in print it becomes a running
+     footer on every sheet. */
+  .sitefoot{max-width:1100px;margin:0 auto;padding:18px 16px 28px;
+    border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;
+    display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .sitefoot .credit{margin-left:auto}
+
+  /* ── Print ──
+     This panel is a working tool rather than something anyone sets out to
+     print, but a form filled in and printed as a record is a real thing to
+     want, so it is made to behave: the controls go, the values they hold stay
+     readable, and the credit repeats on every sheet.
+
+     The footer is held 16mm below the content box against a 24mm bottom page
+     margin, so it clears the copy instead of printing across it. */
+  @media print{
+    @page{margin:14mm 14mm 24mm}
+    :root{--bg:#fff;--card:#fff;--alt:#fff;--line:#bbb;
+          --ink:#000;--ink-2:#222;--muted:#555;--accent:#000;--accent-ink:#000}
+    *{box-shadow:none!important;text-shadow:none!important;
+      -webkit-print-color-adjust:economy;print-color-adjust:economy}
+    body{background:#fff}
+    a{text-decoration:none;color:inherit}
+    /* Buttons do nothing on paper; the fields they sit beside still say what
+       the list holds, so inputs are kept and flattened to plain text. */
+    button,input[type=file],#say,.btns{display:none!important}
+    input,select,textarea{border:0;padding:0;min-height:0;background:none;
+      color:#000;font-weight:600;appearance:none;-webkit-appearance:none}
+    .card{border:.5pt solid #bbb;border-radius:0;padding:10px;margin-top:10px;
+          break-inside:avoid}
+    .tablewrap{overflow:visible;border:0}
+    table{font-size:9pt}
+    th{position:static;background:none;border-bottom:.5pt solid #999}
+    td{border-bottom:.5pt solid #e4e4e4}
+    tr{break-inside:avoid}
+    .hint,.sub{color:#444}
+
+    /* `.credit` is the running footer on every page of every site — the same
+       hook and the same offsets as the public page, so the pattern can be
+       lifted wholesale rather than reinvented per project. The line beside it
+       on screen is for whoever is at the keyboard, not for the paper. */
+    .sitefoot{display:block;border:0;margin:0;padding:0}
+    .sitefoot>:not(.credit){display:none}
+    .credit{position:fixed;left:0;right:0;bottom:-16mm;margin:0;
+      padding-top:2.5mm;border-top:.4pt solid #bbb;text-align:right;
+      font-size:9pt;color:#555}
+  }
+</style>
+<style>
+.sc-link{
+  position:relative;margin-left:4px;padding-left:17px;
+  text-transform:none;letter-spacing:.02em;white-space:nowrap;
+  color:inherit;text-decoration:none;opacity:.78;
+  border-bottom:1px solid transparent;
+  transition:opacity .18s ease,border-color .18s ease;
+}
+.sc-link::before{content:"";position:absolute;left:0;top:50%;
+  width:9px;height:1px;background:currentColor;opacity:.5}
+.sc-link:hover{opacity:1;border-bottom-color:currentColor}
+.sc-link:focus-visible{outline:1px solid currentColor;outline-offset:3px;
+  border-radius:2px;opacity:1}
+@media (max-width:460px){
+  .sc-link{white-space:normal;margin-left:0;padding-left:0}
+  .sc-link::before{display:none}
+}
+@media print{ .sc-link{display:none!important} }
 </style>
 </head>
 <body>
@@ -129,6 +197,35 @@
   </div>
 
   <div class="card">
+    <h2>Sponsored slots</h2>
+    <p class="hint">
+      Paid placements. They are kept out of the list itself — a sponsor is never
+      counted in the header, never returned by a search, and never shared as a
+      number a neighbour gave — and every one is labelled <b>Sponsored</b> on the
+      page. <b>Slot</b> is where it appears: <code>top</code> above the list,
+      <code>feed</code> between the sections, <code>footer</code> as a name at the
+      bottom. <b>Link</b> must start with <code>https://</code>. <b>Until</b> is the
+      date the slot is paid up to (<code>YYYY-MM-DD</code>) — after it, the slot
+      stops showing on its own.
+    </p>
+    <div class="tablewrap"><table>
+      <thead id="spHead"></thead>
+      <tbody id="spBody"></tbody>
+    </table></div>
+    <p class="count" id="spCount"></p>
+    <div class="btns">
+      <button id="addSp">Add a sponsor</button>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div><label for="fAds">Who to contact about buying a slot</label>
+        <input id="fAds" placeholder="a phone number, an email, or a link — blank to sell nothing"></div>
+    </div>
+    <p class="hint" style="margin-top:8px">Leave that blank and the page shows no
+      advertising of any kind. Fill it in and any slot nobody has bought yet becomes a
+      quiet “Advertise here” card pointing at you.</p>
+  </div>
+
+  <div class="card">
     <h2>Publish</h2>
     <p class="hint">
       Needs a GitHub <b>fine-grained personal access token</b> with
@@ -162,6 +259,19 @@
   var DATA = "services.json";
   var SHEET = "services.xlsx";
   var COLS = ["Name", "Role", "Category", "Phone", "Covers", "Charges", "Timings", "Notes"];
+  /* Sponsors have a fixed, short set of fields, unlike the contacts. An
+     advertiser filling in whatever columns they like is how a paid slot ends
+     up looking like one of the neighbours' listings. */
+  var SP_COLS = [
+    { k: "name",  h: "Name",    w: "170px" },
+    { k: "line",  h: "Tagline", w: "230px" },
+    { k: "offer", h: "Offer",   w: "140px" },
+    { k: "phone", h: "Phone",   w: "120px" },
+    { k: "link",  h: "Link",    w: "180px" },
+    { k: "slot",  h: "Slot",    w: "90px"  },
+    { k: "until", h: "Until",   w: "115px" }
+  ];
+  var SP_SLOTS = ["top", "feed", "footer"];
 
   var data = null, cols = COLS.slice(), dirty = false;
 
@@ -176,17 +286,22 @@
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (j) {
         data = j;
+        if (!data.sponsors) data.sponsors = [];
         cols = (j.columns && j.columns.length ? j.columns.slice() : COLS.slice());
         COLS.forEach(function (c) { if (cols.indexOf(c) < 0) cols.push(c); });
         fillSettings();
         render();
+        renderSponsors();
         dirty = false;
-        say("Loaded " + data.rows.length + " contacts from the live list.", "ok");
+        say("Loaded " + data.rows.length + " contacts" +
+            (data.sponsors.length ? " and " + data.sponsors.length + " sponsored slot(s)" : "") +
+            " from the live list.", "ok");
       })
       ["catch"](function (e) {
         data = { title: "Local Services & Help", tagline: "", city: "", theme: "civic",
-                 country: "91", note: "", noteHi: "", columns: cols.slice(), rows: [] };
-        fillSettings(); render();
+                 country: "91", note: "", noteHi: "", adsContact: "",
+                 columns: cols.slice(), rows: [], sponsors: [] };
+        fillSettings(); render(); renderSponsors();
         say("Could not read " + DATA + " (" + e.message + "). Starting an empty list.", "warn");
       });
   }
@@ -200,8 +315,9 @@
     $("fNote").value = data.note || "";
     $("fNoteHi").value = data.noteHi || "";
     $("fNoteMr").value = data.noteMr || "";
+    $("fAds").value = data.adsContact || "";
   }
-  ["fTitle","fTag","fCity","fTheme","fCountry","fNote","fNoteHi","fNoteMr"].forEach(function (id) {
+  ["fTitle","fTag","fCity","fTheme","fCountry","fNote","fNoteHi","fNoteMr","fAds"].forEach(function (id) {
     $(id).addEventListener("input", function () { dirty = true; });
     $(id).addEventListener("change", function () { dirty = true; });
   });
@@ -215,9 +331,124 @@
       country: $("fCountry").value.trim() || "91",
       note: $("fNote").value.trim(),
       noteHi: $("fNoteHi").value.trim(),
-      noteMr: $("fNoteMr").value.trim()
+      noteMr: $("fNoteMr").value.trim(),
+      adsContact: $("fAds").value.trim()
     };
   }
+
+  /* ---------- sponsored slots ---------- */
+  function renderSponsors() {
+    var head = $("spHead"), body = $("spBody");
+    head.textContent = ""; body.textContent = "";
+
+    var hr = document.createElement("tr");
+    hr.appendChild(document.createElement("th"));
+    SP_COLS.forEach(function (c) {
+      var th = document.createElement("th");
+      th.textContent = c.h;
+      th.style.minWidth = c.w;
+      hr.appendChild(th);
+    });
+    hr.appendChild(document.createElement("th"));
+    head.appendChild(hr);
+
+    data.sponsors.forEach(function (s, i) {
+      var tr = document.createElement("tr");
+      var num = document.createElement("td");
+      num.className = "num";
+      num.textContent = String(i + 1);
+      tr.appendChild(num);
+
+      SP_COLS.forEach(function (c) {
+        var td = document.createElement("td");
+        // Slot is a fixed choice, so it cannot be typed wrong.
+        var inp = document.createElement(c.k === "slot" ? "select" : "input");
+        if (c.k === "slot") {
+          SP_SLOTS.forEach(function (v) {
+            var o = document.createElement("option");
+            o.value = v; o.textContent = v;
+            inp.appendChild(o);
+          });
+          inp.value = SP_SLOTS.indexOf(s.slot) < 0 ? "feed" : s.slot;
+          inp.style.border = "0";
+          inp.style.borderRadius = "0";
+          inp.style.minHeight = "38px";
+          inp.style.background = "none";
+        } else {
+          inp.value = s[c.k] == null ? "" : s[c.k];
+          if (c.k === "until") inp.placeholder = "2027-03-31";
+          if (c.k === "link") inp.placeholder = "https://";
+        }
+        // The count below carries the warnings, so it is refreshed on every
+        // keystroke. Redrawing the whole table instead would take the cursor
+        // out of the field being typed into.
+        var touch = function () { s[c.k] = inp.value; dirty = true; spCount(); };
+        inp.addEventListener("input", touch);
+        inp.addEventListener("change", touch);
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+
+      var act = document.createElement("td");
+      act.className = "act";
+      var del = document.createElement("button");
+      del.className = "del";
+      del.type = "button";
+      del.title = "Remove this sponsor";
+      del.textContent = "×";
+      del.addEventListener("click", function () {
+        if (!confirm("Remove the sponsored slot for " + (s.name || "this row") + "?")) return;
+        data.sponsors.splice(i, 1);
+        dirty = true;
+        renderSponsors();
+      });
+      act.appendChild(del);
+      tr.appendChild(act);
+      body.appendChild(tr);
+    });
+
+    spCount();
+  }
+
+  function spCount() {
+    var n = data.sponsors.length;
+    var live = spProblems().length;
+    $("spCount").textContent = !n
+      ? ($("fAds").value.trim()
+          ? "No slots sold. The page will show one “Advertise here” card pointing at you."
+          : "No slots, and no contact set — the page shows no advertising at all.")
+      : n + " sponsored slot(s)" +
+        (live ? " · " + live + " to fix before publishing" : " · ready to publish");
+  }
+
+  /** The same rules the build script applies, checked before anything is sent. */
+  function spProblems() {
+    var out = [];
+    (data && data.sponsors ? data.sponsors : []).forEach(function (s, i) {
+      var at = "Sponsor " + (i + 1) + " ";
+      var name = String(s.name || "").trim();
+      if (!name) { out.push(at + "has no name"); return; }
+      var link = String(s.link || "").trim();
+      if (link && !/^https?:\/\//i.test(link))
+        out.push(at + "(" + name + "): the link must start with https://");
+      var until = String(s.until || "").trim();
+      if (until && !/^\d{4}-\d{2}-\d{2}$/.test(until))
+        out.push(at + "(" + name + "): Until must look like 2027-03-31");
+      if (SP_SLOTS.indexOf(String(s.slot || "feed")) < 0)
+        out.push(at + "(" + name + "): slot must be top, feed or footer");
+    });
+    return out;
+  }
+
+  $("addSp").addEventListener("click", function () {
+    data.sponsors.push({ name: "", line: "", offer: "", phone: "", link: "",
+                         slot: "feed", until: "" });
+    dirty = true;
+    renderSponsors();
+    var last = $("spBody").lastChild;
+    if (last) last.querySelector("input").focus();
+  });
+  $("fAds").addEventListener("input", spCount);
 
   /* ---------- the table ---------- */
   function render() {
@@ -297,7 +528,8 @@
     var about = [
       ["Title", s.title], ["Tagline", s.tagline], ["City", s.city],
       ["Theme", s.theme], ["Country Code", s.country],
-      ["Note", s.note], ["Note HI", s.noteHi], ["Note MR", s.noteMr]
+      ["Note", s.note], ["Note HI", s.noteHi], ["Note MR", s.noteMr],
+      ["Ads Contact", s.adsContact]
     ].map(function (p) { return { Field: p[0], Value: p[1] }; });
 
     var text = function (ws) {
@@ -324,6 +556,20 @@
     wsS["!cols"] = cols.map(function (c) { return { wch: Math.max(14, c.length + 6) }; });
     wsS["!freeze"] = { xSplit: 0, ySplit: 1 };
     XLSX.utils.book_append_sheet(wb, wsS, "Services");
+
+    /* Its own sheet, so the spreadsheet keeps the same separation the page
+       does. Written even when empty — a missing sheet on the way back in
+       would quietly delete every slot that was sold. */
+    var spHead = SP_COLS.map(function (c) { return c.h; });
+    var sp = data.sponsors.map(function (s) {
+      var o = {};
+      SP_COLS.forEach(function (c) { o[c.h] = s[c.k] == null ? "" : String(s[c.k]); });
+      return o;
+    });
+    var wsP = text(XLSX.utils.json_to_sheet(sp, { header: spHead }));
+    wsP["!cols"] = SP_COLS.map(function (c) { return { wch: Math.max(14, c.h.length + 8) }; });
+    wsP["!freeze"] = { xSplit: 0, ySplit: 1 };
+    XLSX.utils.book_append_sheet(wb, wsP, "Sponsors");
     return wb;
   }
 
@@ -404,9 +650,44 @@
           return false;
         }
 
+        /* Read before the contacts loop, and excluded from it: a workbook that
+           happens to list Sponsors first would otherwise import a page of
+           advertisements as though they were the neighbours' contacts. */
+        var SP_SHEET = /^(sponsors|sponsor|ads|adverts|advertisers)$/i;
+        var spName = wb.SheetNames.filter(function (n) {
+          return n.trim().charAt(0) !== "_" && SP_SHEET.test(n.trim());
+        })[0];
+        var brought = null;
+        if (spName) {
+          var g = function (r, rx) {
+            for (var k in r) {
+              if (!Object.prototype.hasOwnProperty.call(r, k)) continue;
+              if (isHidden(k) || !rx.test(normKey(k))) continue;
+              var v = String(r[k] == null ? "" : r[k]).trim();
+              if (v) return isHidden(v) ? "" : v;
+            }
+            return "";
+          };
+          brought = XLSX.utils.sheet_to_json(wb.Sheets[spName], { defval: "", raw: false })
+            .filter(function (r) { return !rowHidden(r); })
+            .map(function (r) {
+              return {
+                name: g(r, /^(name|business|shop|sponsor|advertiser)$/),
+                line: g(r, /^(tagline|line|about|description|desc|says|blurb)$/),
+                offer: g(r, /^(offer|deal|discount|highlight)$/),
+                phone: g(r, /^(phone|mobile|cell|tel|contactno|number)$/),
+                link: g(r, /^(link|url|website|web|site)$/),
+                slot: (g(r, /^(slot|placement|position|where)$/) || "feed").toLowerCase(),
+                until: g(r, /^(until|expires|expiry|till|ends|paidupto|paiduntil)$/)
+              };
+            })
+            .filter(function (s) { return s.name; });
+        }
+
         var rows = [], got = [];
         wb.SheetNames.forEach(function (n) {
-          if (rows.length || /^about$/i.test(n.trim()) || n.trim().charAt(0) === "_") return;
+          if (rows.length || /^about$/i.test(n.trim()) || n.trim().charAt(0) === "_" ||
+              SP_SHEET.test(n.trim())) return;
           var r = XLSX.utils.sheet_to_json(wb.Sheets[n], { defval: "", raw: false })
             .filter(function (x) {
               return Object.keys(x).some(function (k) { return String(x[k] || "").trim(); });
@@ -432,10 +713,21 @@
           cols.forEach(function (c) { o[c] = r[c] == null ? "" : String(r[c]); });
           data.rows.push(o);
         });
+        // Sponsors follow whichever choice was made for the contacts, so an
+        // import never half-replaces the page.
+        var spWord = "";
+        if (brought) {
+          if (!add) data.sponsors = [];
+          brought.forEach(function (s) { data.sponsors.push(s); });
+          spWord = " and " + brought.length + " sponsored slot(s)";
+          renderSponsors();
+        }
+        if (about && about["ads contact"]) { $("fAds").value = about["ads contact"]; renderSponsors(); }
+
         dirty = true;
         render();
         say((add ? "Added " : "Replaced the list with ") + rows.length +
-            " contact(s) from " + f.name + ". Press Publish to put it live.", "warn");
+            " contact(s)" + spWord + " from " + f.name + ". Press Publish to put it live.", "warn");
       } catch (err) { say("Could not read that file: " + err.message, "bad"); }
     };
     fr.readAsArrayBuffer(f);
@@ -551,11 +843,35 @@
     if (bad) return say(bad + " row(s) have no name. Fill them in or delete them.", "bad");
     if (!rows.length) return say("The list is empty — nothing to publish.", "bad");
 
+    var spBad = spProblems();
+    if (spBad.length) return say(spBad.join(" · "), "bad");
+
+    /* Slots whose date has passed are dropped here rather than published and
+       hidden later, so the file the town downloads holds only what is live. */
+    var stamp = new Date().toISOString().slice(0, 10);
+    var lapsed = 0;
+    var sponsors = data.sponsors
+      .filter(function (p) { return String(p.name || "").trim(); })
+      .filter(function (p) {
+        var u = String(p.until || "").trim();
+        if (u && u < stamp) { lapsed++; return false; }
+        return true;
+      })
+      .map(function (p) {
+        return { name: String(p.name).trim(), line: String(p.line || "").trim(),
+                 offer: String(p.offer || "").trim(), phone: String(p.phone || "").trim(),
+                 link: String(p.link || "").trim(),
+                 slot: SP_SLOTS.indexOf(String(p.slot)) < 0 ? "feed" : String(p.slot),
+                 until: String(p.until || "").trim() };
+      });
+    if (lapsed && !confirm(lapsed + " sponsored slot(s) are past their Until date and will " +
+        "not be published.\n\nOK to carry on?")) return;
+
     var out = {
       title: s.title, tagline: s.tagline, city: s.city, theme: s.theme, country: s.country,
-      note: s.note, noteHi: s.noteHi, noteMr: s.noteMr,
-      updated: new Date().toISOString().slice(0, 10),
-      sheets: ["Services"], columns: cols.slice(), rows: rows
+      note: s.note, noteHi: s.noteHi, noteMr: s.noteMr, adsContact: s.adsContact,
+      updated: stamp,
+      sheets: ["Services"], columns: cols.slice(), rows: rows, sponsors: sponsors
     };
 
     $("pubBtn").disabled = true;
@@ -593,5 +909,11 @@
   load();
 })();
 </script>
+<!-- ── Standard footer ── one copy, shown on screen and repeated on every
+     printed sheet by the @media print rules above. -->
+<footer class="sitefoot">
+  <span>Edit the list, then Publish.</span>
+  <span class="credit">Stunity Tech — by Prateek <a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">stunity-tech.hedaprateek.workers.dev</a></span>
+</footer>
 </body>
 </html>
