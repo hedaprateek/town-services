@@ -7,14 +7,34 @@ call and a WhatsApp button against each. Anyone can open it; there is no sign-in
 
 To preview local changes on Windows, double-click `start.cmd` (requires Node.js).
 It opens **http://localhost:8799/**. Keep the launcher window open while testing.
-The local preview serves only public directory files; it does not expose the admin
-page, spreadsheet or Git files.
+Double-click `edit.cmd` to open the contact editor instead. The local preview serves
+the website and editor; it does not expose the working spreadsheet or Git files.
 
 ---
 
 ## Filling in the list
 
 Two ways, and they stay in step with each other.
+
+### Simple upload process
+
+Open [Manage town contacts](https://hedaprateek.github.io/town-services/admin.html).
+
+1. For one contact, choose **Add a contact**, fill the form and **Add to draft**.
+   For corrections, search the contact and choose **Edit**.
+2. For several contacts, **Download blank template**, fill its Services sheet, save it,
+   then **Upload an Excel or CSV**. Review the file and choose **Add / update contacts**.
+   Matches use name, trade and category; filled fields update matches, blanks preserve
+   existing values. Replace entire list is a separate option with confirmation.
+3. Choose **Review changes**, then **Publish**. Publishing needs an owner GitHub token
+   with Contents read/write for this repository, kept only for this browser tab.
+
+Uploads remain drafts until published. Cancel upload leaves contacts and page settings
+unchanged. Page settings/sponsors from an uploaded workbook are optional, unchecked by
+default. Phone numbers should be text in Excel, especially numbers starting with `+` or `0`.
+The JSON directory and Excel copy publish together in one commit. Newer remote changes
+block publishing so they cannot be overwritten by an older draft. Download the draft
+as Excel before reloading if this happens. The editor is not included in offline caches.
 
 **The admin page** — open `admin.html`, edit the table, press Publish. It needs a GitHub
 fine-grained token with **Contents: Read and write** on this repository; the token is kept

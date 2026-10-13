@@ -79,6 +79,20 @@
     border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;
     display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
   .sitefoot .credit{margin-left:auto}
+  summary{cursor:pointer;min-height:44px;padding:10px 0;color:var(--ink-2);font-weight:600}
+  #contactForm{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+  #contactForm .row{margin:10px 0}
+  .manage-contact{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .manage-contact>div{flex:1;min-width:0;overflow-wrap:anywhere}
+  .manage-contact small{display:block;color:var(--muted);margin-top:3px}
+  #contactList{max-height:340px;overflow-y:auto;margin-top:8px}
+  #draftReview{white-space:pre-wrap;overflow-wrap:anywhere}
+  @media(max-width:480px){.row>div{min-width:100%}button{white-space:normal;padding:8px 12px}}
+  .stunity-credit{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 0;padding:18px 16px 28px;
+    border-top:1px solid var(--line);color:var(--muted);font-size:11px;letter-spacing:.1em}
+  .sc-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex:none}
+  @media print{.stunity-credit{position:fixed;left:0;right:0;bottom:-16mm;padding:3mm 0 0;background:#fff;font-size:7.5pt}
+    #contactForm,#contactList,#manageSearch,label[for="manageSearch"],#importReview{display:none!important}}
 
   /* ── Print ──
      This panel is a working tool rather than something anyone sets out to
@@ -116,9 +130,7 @@
        on screen is for whoever is at the keyboard, not for the paper. */
     .sitefoot{display:block;border:0;margin:0;padding:0}
     .sitefoot>:not(.credit){display:none}
-    .credit{position:fixed;left:0;right:0;bottom:-16mm;margin:0;
-      padding-top:2.5mm;border-top:.4pt solid #bbb;text-align:right;
-      font-size:9pt;color:#555}
+    .stunity-credit .credit{position:static;margin:0;padding:0;border:0;font:inherit}
   }
 </style>
 <style>
@@ -205,34 +217,61 @@
 <body>
 <div class="wrap">
 
-  <h1>Edit the services list</h1>
+  <h1>Manage town contacts</h1>
   <p class="sub">Changes here go nowhere until you press <b>Publish</b>. The live page is
     <a href="index.html" target="_blank" rel="noopener">Local Services &amp; Help ↗</a>.</p>
 
   <div class="card">
-    <h2>The list</h2>
+    <h2>1. Add or update contacts</h2>
+    <p class="hint">Add one contact below, or upload a filled Excel/CSV file. Review your changes, then publish them.</p>
+    <div class="btns"><button id="newContact" type="button">Add a contact</button><button class="ghost" id="impBtn" type="button">Upload Excel / CSV</button><button id="templateBtn" class="ghost" type="button">Download blank template</button><input type="file" id="file" accept=".xlsx,.xls,.csv" hidden></div>
+    <form id="contactForm" hidden>
+      <h3 id="formTitle">New contact</h3>
+      <div class="row">
+        <div><label for="contactName">Name *</label><input id="contactName" required maxlength="160"></div>
+        <div><label for="contactPhone">Phone</label><input id="contactPhone" inputmode="tel" type="tel"></div>
+      </div>
+      <div class="row">
+        <div><label for="contactRole">Service / trade</label><input id="contactRole" list="roleOptions" placeholder="Plumber, Cook…"><datalist id="roleOptions"></datalist></div>
+        <div><label for="contactCategory">Category</label><input id="contactCategory" list="categoryOptions" placeholder="Repairs &amp; Maintenance…"><datalist id="categoryOptions"></datalist></div>
+      </div>
+      <details><summary>Area, hours, charges and notes</summary>
+        <div class="row"><div><label for="contactCovers">Area / work covered</label><input id="contactCovers"></div><div><label for="contactTimings">Hours / availability</label><input id="contactTimings"></div></div>
+        <div class="row"><div><label for="contactCharges">Charges</label><input id="contactCharges"></div><div><label for="contactNotes">Notes</label><textarea id="contactNotes"></textarea></div></div>
+      </details>
+      <div class="btns"><button id="saveContact" type="submit">Add to draft</button><button id="cancelContact" type="button" class="ghost">Cancel</button></div>
+      <p class="hint">Saved changes stay in this page until you publish. Nothing is added to the live directory yet.</p>
+    </form>
+    <label for="manageSearch" style="margin-top:16px">Find a contact to edit</label><input id="manageSearch" type="search" placeholder="Search name, service or phone">
+    <div id="contactList"></div>
+  </div>
+  <div class="card">
+    <h2>Spreadsheet tools</h2>
     <p class="hint">
       Only <b>Name</b> has to be filled in. <b>Category</b> is the big heading a contact sits
-      under, <b>Role</b> is the trade and becomes a smaller heading inside it, and
-      <b>Covers</b> is the two or three words shown under the name — “small works”,
-      “routine jobs”, the areas they serve.
+      under, <b>Role</b> is the trade, and <b>Covers</b> describes work or areas served.
+      Other fields are optional. Download your full draft as Excel to keep a backup.
     </p>
-    <div class="tablewrap"><table>
+    <details id="tableEditor"><summary>Edit all fields in a table</summary><div class="tablewrap"><table>
       <thead id="head"></thead>
       <tbody id="body"></tbody>
-    </table></div>
+    </table></div></details>
     <p class="count" id="count"></p>
     <div class="btns">
       <button id="addRow">Add a contact</button>
       <button class="ghost" id="expBtn">Download as Excel</button>
-      <button class="ghost" id="impBtn">Upload an Excel or CSV…</button>
-      <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
       <button class="ghost" id="reloadBtn">Discard my edits</button>
+    </div>
+    <div id="importReview" class="note warn" hidden>
+      <h3>Review this upload</h3><p id="importSummary"></p>
+      <label style="text-transform:none"><input id="importSettings" type="checkbox" style="width:auto;min-height:0"> Also import page settings and sponsors, if included</label>
+      <div class="btns"><button id="importAdd" type="button">Add / update contacts</button><button id="importReplace" type="button" class="ghost">Replace entire list</button><button id="importCancel" type="button" class="ghost">Cancel upload</button></div>
+      <p class="hint">Add keeps existing contacts and updates matching name, trade and category using filled fields. Blank fields keep existing values. Replace removes the current list from this draft. Neither choice publishes.</p>
     </div>
   </div>
 
-  <div class="card">
-    <h2>How the page looks</h2>
+  <details class="card">
+    <summary>Page settings</summary>
     <div class="row">
       <div><label for="fTitle">Title</label><input id="fTitle"></div>
       <div><label for="fCity">City</label><input id="fCity"></div>
@@ -249,16 +288,16 @@
         <input id="fCountry" inputmode="numeric"></div>
     </div>
     <div class="row" style="margin-top:10px">
-      <div><label for="fNote">Caution shown at the top</label><textarea id="fNote"></textarea></div>
+      <div><label for="fNote">Caution in the footer and shared contacts</label><textarea id="fNote"></textarea></div>
       <div><label for="fNoteHi">The same in Hindi</label><textarea id="fNoteHi"></textarea></div>
       <div><label for="fNoteMr">The same in Marathi</label><textarea id="fNoteMr"></textarea></div>
     </div>
     <p class="hint" style="margin-top:8px">The caution is also attached to every contact
       anyone shares from the page, so the warning travels with the number.</p>
-  </div>
+  </details>
 
-  <div class="card">
-    <h2>Sponsored slots</h2>
+  <details class="card">
+    <summary>Sponsored slots</summary>
     <p class="hint">
       Paid placements. They are kept out of the list itself — a sponsor is never
       counted in the header, never returned by a search, and never shared as a
@@ -284,10 +323,12 @@
     <p class="hint" style="margin-top:8px">Leave that blank and the page shows no
       advertising of any kind. Fill it in and any slot nobody has bought yet becomes a
       quiet “Advertise here” card pointing at you.</p>
-  </div>
+  </details>
 
   <div class="card">
-    <h2>Publish</h2>
+    <h2>2. Review and publish</h2>
+    <p id="draftSummary" class="hint"></p>
+    <button id="reviewBtn" type="button" class="ghost">Review changes</button><div id="draftReview" class="note" hidden></div>
     <p class="hint">
       Needs a GitHub <b>fine-grained personal access token</b> with
       <b>Contents: Read and write</b> on this repository. The token is kept for this browser
@@ -309,6 +350,8 @@
 </div>
 
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="directory-core.js"></script>
+<script src="admin-publish.js"></script>
 <script>
 (function () {
   "use strict";
@@ -334,7 +377,66 @@
   ];
   var SP_SLOTS = ["top", "feed", "footer"];
 
-  var data = null, cols = COLS.slice(), dirty = false;
+  var data = null, cols = COLS.slice(), dirty = false, baseline=null,editIndex=-1,editRow=null,pendingImport=null;
+  var contactFields={Name:'contactName',Phone:'contactPhone',Role:'contactRole',Category:'contactCategory',
+    Covers:'contactCovers',Timings:'contactTimings',Charges:'contactCharges',Notes:'contactNotes'};
+  function identity(r){return ServiceDirectory.contactId({id:r.ID||r.id,name:r.Name,role:r.Role,category:r.Category});}
+  function changedSummary(){
+    if(!data || !baseline)return 'Load the directory before making changes.';
+    var before=new Map(baseline.rows.map(function(r){return [identity(r),r];})),added=0,updated=0;
+    data.rows.forEach(function(r){var previous=before.get(identity(r));if(!previous)added++;else if(JSON.stringify(previous)!==JSON.stringify(r))updated++;});
+    var after=new Set(data.rows.map(identity)),removed=baseline.rows.filter(function(r){return !after.has(identity(r));}).length;
+    return data.rows.length+' contacts in draft · '+added+' new · '+updated+' changed · '+removed+' removed.\n'+
+      'Page settings and sponsors are included when you publish. Existing public contact details stay public.';
+  }
+  function renderContactList(){
+    var box=$('contactList');box.textContent='';var term=$('manageSearch').value.trim().toLowerCase();
+    data.rows.forEach(function(r,index){
+      if(term && Object.values(r).join(' ').toLowerCase().indexOf(term)<0)return;
+      var item=document.createElement('div');item.className='manage-contact';var text=document.createElement('div');
+      var name=document.createElement('b');name.textContent=r.Name||'Unnamed contact';text.appendChild(name);
+      var sub=document.createElement('small');sub.textContent=[r.Role,r.Phone||'No phone number'].filter(Boolean).join(' · ');text.appendChild(sub);item.appendChild(text);
+      var edit=document.createElement('button');edit.type='button';edit.className='ghost';edit.textContent='Edit';edit.setAttribute('aria-label','Edit '+(r.Name||'contact'));
+      edit.addEventListener('click',function(){openContact(index);});item.appendChild(edit);box.appendChild(item);
+    });
+    if(!box.children.length)box.textContent='No matching contacts.';
+    ['Role','Category'].forEach(function(field){var options=$(field==='Role'?'roleOptions':'categoryOptions');options.textContent='';
+      Array.from(new Set(data.rows.map(function(r){return r[field];}).filter(Boolean))).sort().forEach(function(value){var option=document.createElement('option');option.value=value;options.appendChild(option);});});
+    $('draftSummary').textContent=changedSummary();
+  }
+  function openContact(index){
+    if($('contactForm').dataset.changed==='true' && !confirm('Discard the unsaved contact form and open another contact?'))return;
+    editIndex=index;var row=index>=0?data.rows[index]:{};
+    editRow=index>=0?row:null;
+    Object.keys(contactFields).forEach(function(key){$(contactFields[key]).value=row[key]||'';});
+    $('formTitle').textContent=index>=0?'Edit contact':'New contact';$('saveContact').textContent=index>=0?'Save to draft':'Add to draft';
+    $('contactForm').hidden=false;$('contactName').focus();$('contactForm').scrollIntoView({block:'nearest',behavior:'smooth'});
+    $('contactForm').dataset.changed='false';
+  }
+  $('newContact').addEventListener('click',function(){openContact(-1);});
+  $('cancelContact').addEventListener('click',function(){$('contactForm').hidden=true;$('contactForm').dataset.changed='false';});
+  $('contactForm').addEventListener('input',function(){$('contactForm').dataset.changed='true';});
+  $('manageSearch').addEventListener('input',renderContactList);
+  $('reviewBtn').addEventListener('click',function(){$('draftReview').textContent=changedSummary();$('draftReview').hidden=false;});
+  $('contactForm').addEventListener('submit',function(event){
+    event.preventDefault();
+    if(editRow){editIndex=data.rows.indexOf(editRow);if(editIndex<0)return say('This contact was removed from the draft. Cancel the form and add it as a new contact if needed.','bad');}
+    var row=Object.assign({},editIndex>=0?data.rows[editIndex]:{});
+    Object.keys(contactFields).forEach(function(key){row[key]=$(contactFields[key]).value.trim();});
+    if(!row.Name)return say('Enter a name.','bad');
+    if(row.Phone && !ServiceDirectory.phone(row.Phone))return say('Enter a valid phone number or leave it blank.','bad');
+    var duplicate=data.rows.some(function(r,index){return index!==editIndex && identity(r)===identity(row);});
+    if(duplicate && !confirm('A contact with this name, trade and category already exists. Add another entry anyway?'))return;
+    if(editIndex>=0)data.rows[editIndex]=row;else data.rows.push(row);
+    dirty=true;$('contactForm').hidden=true;$('contactForm').dataset.changed='false';render();say('Contact saved to draft. Review and publish when ready.','ok');
+  });
+  $('templateBtn').addEventListener('click',function(){
+    if(typeof XLSX==='undefined')return say('Excel tools could not load. Check your internet connection and reload.','bad');
+    var wb=XLSX.utils.book_new(),rows=[COLS];for(var i=0;i<100;i++)rows.push(COLS.map(function(){return '';}));
+    var sheet=XLSX.utils.aoa_to_sheet(rows);Object.keys(sheet).forEach(function(key){if(key.charAt(0)!=='!')sheet[key].z='@';});
+    sheet['!cols']=COLS.map(function(){return {wch:22};});XLSX.utils.book_append_sheet(wb,sheet,'Services');
+    XLSX.writeFile(wb,'town-contacts-template.xlsx');say('Fill the Services sheet, save the file, then Upload it here. Keep phone numbers as text.','ok');
+  });
 
   function say(msg, kind) {
     $("say").innerHTML = '<div class="note ' + (kind || "ok") + '"></div>';
@@ -347,6 +449,9 @@
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (j) {
         data = j;
+        baseline=JSON.parse(JSON.stringify(j));
+        pendingImport=null;$('importReview').hidden=true;
+        $('contactForm').hidden=true;$('contactForm').dataset.changed='false';
         if (!data.sponsors) data.sponsors = [];
         cols = (j.columns && j.columns.length ? j.columns.slice() : COLS.slice());
         COLS.forEach(function (c) { if (cols.indexOf(c) < 0) cols.push(c); });
@@ -359,11 +464,12 @@
             " from the live list.", "ok");
       })
       ["catch"](function (e) {
+        baseline=null;
         data = { title: "Local Services & Help", tagline: "", city: "", theme: "civic",
                  country: "91", note: "", noteHi: "", adsContact: "",
                  columns: cols.slice(), rows: [], sponsors: [] };
         fillSettings(); render(); renderSponsors();
-        say("Could not read " + DATA + " (" + e.message + "). Starting an empty list.", "warn");
+        say("Could not read " + DATA + " (" + e.message + "). Reload before publishing; the live list has not been changed.", "bad");
       });
   }
 
@@ -513,6 +619,7 @@
 
   /* ---------- the table ---------- */
   function render() {
+    renderContactList();
     var head = $("head"), body = $("body");
     head.textContent = ""; body.textContent = "";
 
@@ -538,7 +645,7 @@
         inp.value = row[c] == null ? "" : row[c];
         inp.setAttribute("aria-label", c + ", row " + (i + 1));
         if (/phone/i.test(c)) inp.inputMode = "tel";
-        inp.addEventListener("input", function () { row[c] = inp.value; dirty = true; });
+        inp.addEventListener("input", function () { row[c] = inp.value; dirty = true; renderContactList(); });
         td.appendChild(inp);
         tr.appendChild(td);
       });
@@ -568,13 +675,7 @@
   }
 
   $("addRow").addEventListener("click", function () {
-    var r = {};
-    cols.forEach(function (c) { r[c] = ""; });
-    data.rows.push(r);
-    dirty = true;
-    render();
-    var last = $("body").querySelector("tr:last-child input");
-    if (last) last.focus();
+    openContact(-1);
   });
 
   $("reloadBtn").addEventListener("click", function () {
@@ -660,14 +761,6 @@
               var k = Object.keys(r);
               about[String(r[k[0]]).trim().toLowerCase()] = String(r[k[1]]).trim();
             });
-          if (about["title"]) $("fTitle").value = about["title"];
-          if (about["tagline"]) $("fTag").value = about["tagline"];
-          if (about["city"]) $("fCity").value = about["city"];
-          if (about["theme"]) $("fTheme").value = about["theme"];
-          if (about["country code"]) $("fCountry").value = about["country code"];
-          if (about["note"]) $("fNote").value = about["note"];
-          if (about["note hi"]) $("fNoteHi").value = about["note hi"];
-          if (about["note mr"]) $("fNoteMr").value = about["note mr"];
         }
 
         /* ── Kept in the sheet, off the page ──
@@ -759,40 +852,48 @@
           if (r.length) { rows = r; got = Object.keys(r[0]); }
         });
         if (!rows.length) return say("That file has no contacts in it.", "bad");
-        if (!got.some(function (c) { return /^name$|^person$|^service$/i.test(c.trim()); }))
+        if (!got.some(function (c) { return /^name$|^person$|^service$|^contact$/i.test(c.trim()); }))
           return say("That list needs a Name column. It has: " + got.join(", "), "bad");
 
-        var add = confirm(
-          "Bring in " + rows.length + " contact(s) from \"" + f.name + "\"?\n\n" +
-          "OK  —  ADD them to the list already here.\n\n" +
-          "Cancel  —  REPLACE the whole list with this file.");
-
-        got.forEach(function (c) { if (cols.indexOf(c) < 0) cols.push(c); });
-        if (!add) data.rows = [];
-        rows.forEach(function (r) {
-          var o = {};
-          cols.forEach(function (c) { o[c] = r[c] == null ? "" : String(r[c]); });
-          data.rows.push(o);
-        });
-        // Sponsors follow whichever choice was made for the contacts, so an
-        // import never half-replaces the page.
-        var spWord = "";
-        if (brought) {
-          if (!add) data.sponsors = [];
-          brought.forEach(function (s) { data.sponsors.push(s); });
-          spWord = " and " + brought.length + " sponsored slot(s)";
-          renderSponsors();
-        }
-        if (about && about["ads contact"]) { $("fAds").value = about["ads contact"]; renderSponsors(); }
-
-        dirty = true;
-        render();
-        say((add ? "Added " : "Replaced the list with ") + rows.length +
-            " contact(s)" + spWord + " from " + f.name + ". Press Publish to put it live.", "warn");
+        var aliases={name:'Name',person:'Name',contact:'Name',service:'Name',role:'Role',trade:'Role',category:'Category',
+          phone:'Phone',mobile:'Phone',tel:'Phone',covers:'Covers',area:'Covers',charges:'Charges',timings:'Timings',hours:'Timings',notes:'Notes'};
+        rows=rows.map(function(r){var clean={};Object.keys(r).forEach(function(key){clean[aliases[normKey(key)]||key]=String(r[key]||'').trim();});return clean;});
+        if(rows.some(function(r){return !r.Name;}))return say('Every contact needs a name. Fill in missing names and upload again.','bad');
+        pendingImport={rows:rows,about:about,sponsors:brought};
+        $('importSettings').checked=false;
+        $('importSummary').textContent=f.name+' — '+rows.length+' contacts ready. '+rows.filter(function(r){return !r.Phone;}).length+' without phone numbers. Your current draft has '+data.rows.length+' contacts.';
+        $('importReview').hidden=false;$('importAdd').focus();
+        say('Choose how to use this upload. Your current draft has not changed.','warn');
       } catch (err) { say("Could not read that file: " + err.message, "bad"); }
     };
     fr.readAsArrayBuffer(f);
   });
+
+  $('importCancel').addEventListener('click',function(){pendingImport=null;$('importReview').hidden=true;say('Upload cancelled. Your draft is unchanged.','ok');});
+  function applyImport(replace){
+    if(!pendingImport)return;
+    if(!$('contactForm').hidden)return say('Save or cancel the contact form before applying an upload.','warn');
+    if(replace && !confirm('Replace all '+data.rows.length+' contacts in this draft with '+pendingImport.rows.length+' uploaded contacts?'))return;
+    var added=0,updated=0;
+    if(replace)data.rows=[];
+    pendingImport.rows.forEach(function(r){
+      Object.keys(r).forEach(function(key){if(cols.indexOf(key)<0)cols.push(key);});
+      var match=replace?null:data.rows.find(function(current){return identity(current)===identity(r);});
+      if(match){Object.keys(r).forEach(function(key){if(r[key])match[key]=r[key];});updated++;}
+      else {data.rows.push(r);added++;}
+    });
+    if($('importSettings').checked){
+      var about=pendingImport.about||{},fields={'title':'fTitle','tagline':'fTag','city':'fCity','theme':'fTheme','country code':'fCountry',
+        'note':'fNote','note hi':'fNoteHi','note mr':'fNoteMr','ads contact':'fAds'};
+      Object.keys(fields).forEach(function(key){if(Object.prototype.hasOwnProperty.call(about,key))$(fields[key]).value=about[key];});
+      if(pendingImport.sponsors)data.sponsors=replace?pendingImport.sponsors:data.sponsors.concat(pendingImport.sponsors);
+      renderSponsors();
+    }
+    pendingImport=null;$('importReview').hidden=true;dirty=true;render();
+    say(added+' added, '+updated+' matched contacts updated in draft. Review before publishing.','ok');
+  }
+  $('importAdd').addEventListener('click',function(){applyImport(false);});
+  $('importReplace').addEventListener('click',function(){applyImport(true);});
 
   /* ---------- publish ---------- */
   try {
@@ -829,27 +930,6 @@
   }
   function b64text(str) { return b64(new TextEncoder().encode(str)); }
 
-  function putFile(c, path, content, message) {
-    var url = "https://api.github.com/repos/" + c.repo + "/contents/" + path;
-    return fetch(url + "?ref=main", { headers: c.H })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (info) {
-        return fetch(url, {
-          method: "PUT", headers: c.H,
-          body: JSON.stringify({
-            message: message, content: content, branch: "main",
-            sha: info && info.sha ? info.sha : undefined
-          })
-        });
-      })
-      .then(function (r) {
-        if (r.ok) return r.json();
-        return r.json().then(function (j) {
-          throw new Error((j && j.message) || ("HTTP " + r.status));
-        });
-      });
-  }
-
   $("checkBtn").addEventListener("click", function () {
     var c = creds();
     if (!c) return;
@@ -885,6 +965,10 @@
   });
 
   $("pubBtn").addEventListener("click", function () {
+    if(!baseline)return say('Reload the directory successfully before publishing.','bad');
+    if(!$('contactForm').hidden)return say('Save or cancel the open contact form first.','warn');
+    if(pendingImport)return say('Choose Add, Replace or Cancel for the pending upload first.','warn');
+    if(typeof XLSX==='undefined')return say('Excel tools did not load. Check your connection and reload; nothing has been published.','bad');
     var c = creds();
     if (!c) return;
 
@@ -928,43 +1012,39 @@
     if (lapsed && !confirm(lapsed + " sponsored slot(s) are past their Until date and will " +
         "not be published.\n\nOK to carry on?")) return;
 
-    var out = {
+    var out = Object.assign({},data,{
       title: s.title, tagline: s.tagline, city: s.city, theme: s.theme, country: s.country,
       note: s.note, noteHi: s.noteHi, noteMr: s.noteMr, adsContact: s.adsContact,
       updated: stamp,
       sheets: ["Services"], columns: cols.slice(), rows: rows, sponsors: sponsors
-    };
+    });
+    if(!confirm(changedSummary()+'\n\nPublish this draft to '+c.repo+'?'))return;
+    var bytes;
+    try{bytes=XLSX.write(workbook(),{type:'array',bookType:'xlsx'});}catch(error){return say('Could not prepare the spreadsheet: '+error.message,'bad');}
 
     $("pubBtn").disabled = true;
     $("pubBtn").textContent = "Publishing…";
     say("Publishing " + rows.length + " contacts…", "warn");
 
-    putFile(c, DATA, b64text(JSON.stringify(out, null, 2) + "\n"),
-            "Update the services list (" + rows.length + " contacts)")
+    var locked=Array.from(document.querySelectorAll('input,select,textarea,button')).filter(function(field){return !field.disabled;});
+    locked.forEach(function(field){field.disabled=true;});
+    DirectoryPublisher.publish({repo:c.repo,token:c.tok,baseline:baseline,files:[
+      {path:DATA,content:b64text(JSON.stringify(out,null,2)+'\n')},{path:SHEET,content:b64(bytes)}]})
       .then(function () {
-        // Keep the spreadsheet in step, so a later Excel edit starts from what
-        // is actually live rather than from whatever it held before.
-        var bytes = XLSX.write(workbook(), { type: "array", bookType: "xlsx" });
-        return putFile(c, SHEET, b64(bytes), "Update the services spreadsheet")
-          ["catch"](function (e) {
-            say("The list published, but the spreadsheet copy did not: " + e.message +
-                " — the live page is correct.", "warn");
-            return null;
-          });
-      })
-      .then(function () {
+        data=out;baseline=JSON.parse(JSON.stringify(out));render();renderSponsors();
         dirty = false;
         say("Published. The live page updates within a minute — reload it to check.", "ok");
       })
       ["catch"](function (e) { say("Publish failed: " + e.message, "bad"); })
       .then(function () {
+        locked.forEach(function(field){field.disabled=false;});
         $("pubBtn").disabled = false;
         $("pubBtn").textContent = "Publish";
       });
   });
 
   addEventListener("beforeunload", function (e) {
-    if (dirty) { e.preventDefault(); e.returnValue = ""; }
+    if (dirty || $('contactForm').dataset.changed==='true') { e.preventDefault(); e.returnValue = ""; }
   });
 
   load();
@@ -974,8 +1054,8 @@
      printed sheet by the @media print rules above. -->
 <footer class="sitefoot">
   <span>Edit the list, then Publish.</span>
-  <span class="credit"><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by Prateek</span>
 </footer>
+<div class="stunity-credit" id="stunityCredit"><span class="sc-dot"></span><span class="credit"><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by <b>Prateek</b></span></div>
 <script>
 /* Card portal + positioner.
    The card is moved to <body> while open: position:fixed alone is not enough
