@@ -501,6 +501,68 @@
   }
 </style>
 <style>
+.stunity-credit{display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:26px auto 34px;padding:20px 16px 0;max-width:1180px;border-top:1px solid var(--line,rgba(128,128,128,.22));
+  font-family:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;line-height:1.5;color:var(--muted,#6b7280)}
+.stunity-credit .sc-dot{width:6px;height:6px;border-radius:50%;flex:none;background:currentColor;opacity:.75}
+.stunity-credit b{font-weight:500;color:var(--fg,inherit)}
+header{padding:10px 0 12px}
+.hbar{margin-bottom:10px}
+h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
+.sub{margin-top:5px;font-size:calc(14px * var(--t))}
+.stats{margin-top:7px;font-size:calc(12px * var(--t))}
+.tools{padding:10px 0 8px}
+.result-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:7px}
+.result-bar p{font-size:calc(12px * var(--t));color:var(--muted);margin:0;overflow-wrap:anywhere}
+.reset-filter{min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;
+  color:var(--teal-bright);background:var(--navy-2);font:inherit;font-size:calc(13px * var(--t));cursor:pointer}
+.reset-filter:focus-visible,.more-details:focus-visible,.b:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.result-bar .reset-filter{flex:none}
+.gsub{margin-top:15px}
+.gsub2{display:none}
+.row{cursor:default;min-width:0}
+.more-details{display:block;min-height:44px;padding:0;border:0;background:none;
+  color:inherit;font:inherit;text-align:left;cursor:pointer}
+.more-details .nm{display:block;line-height:1.4}
+.contact-summary{display:flex;align-items:baseline;gap:8px;min-width:0;margin-top:2px}
+.show-more{flex:none;font-size:calc(11px * var(--t));color:var(--teal-bright)}
+.acts:empty{display:none}
+.sacts{flex-wrap:wrap}
+.missing-phone{display:block;font-size:calc(12px * var(--t));color:var(--muted);margin-top:8px}
+.detail-tools,.feedback-links{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:12px}
+.detail-tools button,.detail-tools a,.feedback-links a{display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:none;
+  color:var(--teal-bright);font:inherit;font-size:calc(13px * var(--t));cursor:pointer;text-decoration:none}
+.detail-tools [aria-pressed="true"]{background:var(--teal);color:var(--on-accent);border-color:var(--teal)}
+.detail-tools button:focus-visible,.detail-tools a:focus-visible,.feedback-links a:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.detail-hint{color:var(--muted);font-size:calc(12px * var(--t));margin-top:8px;line-height:1.5}
+.share-fallback textarea{display:block;width:100%;min-height:120px;margin-top:8px;padding:8px;border:1px solid var(--line);
+  border-radius:8px;background:var(--navy);color:var(--fg);font:inherit;resize:vertical}
+.empty h2{font-size:calc(20px * var(--t));margin:0 0 8px}
+.empty p{margin-bottom:14px}
+.empty-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;justify-content:center}
+.category-browse{margin:28px 0 6px;padding-top:16px;border-top:1px solid var(--line)}
+.category-browse summary{cursor:pointer;min-height:44px;color:var(--fg-2);font-weight:650}
+.category-browse .tiles{margin-top:10px;overflow-x:visible;display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
+.category-browse .tile{min-width:0}
+.offline-status{font-size:calc(12px * var(--t));color:var(--muted);margin-top:12px}
+@media(max-width:700px){
+  #vswitch{display:none}
+  html[data-cards="grid"] .gwrap{display:block}
+  html[data-cards="grid"] .gwrap .rows{display:flex;flex-direction:column}
+  .chips{margin-top:8px}
+}
+@media print{
+  .result-bar,.show-more,.category-browse,.offline-status,.feedback-links{display:none!important}
+  .rows .row{padding:7px 2px;border:0;border-bottom:.5pt solid #ddd;background:#fff;border-radius:0}
+  .more-details{min-height:0}
+  .role,.info,.missing-phone{color:#444}
+  html body #stunityCredit.stunity-credit{display:flex!important;position:fixed;left:0;right:0;bottom:-16mm;
+    margin:0;padding:3mm 0 0;max-width:none;border-top:.2mm solid #c9c9c9;background:#fff;color:#5b5b5b;
+    font-size:7.5pt;letter-spacing:.14em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stunity-credit b{color:#111}.stunity-credit .sc-dot{background:#8a8a8a}
+}
 .sc-wrap{position:relative;display:inline-block}
 .sc-link{color:inherit;text-decoration:none;
   border-bottom:1px solid transparent;transition:border-color .18s ease}
@@ -627,9 +689,6 @@
   </div>
 </header>
 
-<!-- What the whole list holds, at a glance. Tapping one narrows the page to it. -->
-<div class="wrap"><div class="tiles" id="tiles"></div></div>
-
 <div class="tools" id="tools">
   <div class="wrap">
     <div class="sfield-row">
@@ -649,12 +708,14 @@
     </div>
     <div class="chips" id="chips"></div>
     <div class="chips sub" id="chips2" hidden></div>
+    <div class="result-bar"><p id="results" role="status" aria-live="polite"></p><button class="reset-filter" id="resetFilters" type="button" hidden></button></div>
   </div>
 </div>
 
 <main>
   <div class="wrap"><div id="adtop"></div></div>
   <div class="wrap" id="list"></div>
+  <div class="wrap"><details class="category-browse"><summary id="browseCategories">Browse by category</summary><div class="tiles" id="tiles"></div></details></div>
 </main>
 
 <div class="sheet-wrap" id="sheet" hidden></div>
@@ -674,6 +735,8 @@
       <p class="fnote" id="fnote"></p>
     </div>
     <div class="adstrip" id="adstrip" hidden></div>
+    <p class="offline-status" id="offlineState" role="status"></p>
+    <div class="feedback-links"><a id="suggestService"></a><a id="reportDirectory"></a></div>
     <div class="fbar">
       <span id="upd"></span>
       <!-- ── Standard footer ──────────────────────────────────────────────
@@ -681,20 +744,23 @@
            this same element lifts out of the footer and becomes a running
            footer on every sheet (see @media print), rather than a second copy
            that would sooner or later say something different. -->
-      <span class="credit"><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by Prateek</span>
+
     </div>
   </div>
 </footer>
+<div class="stunity-credit" id="stunityCredit"><span class="sc-dot"></span><span><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by <b>Prateek</b></span></div>
 
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+<script src="directory-core.js"></script>
 <script>
 (function () {
   "use strict";
+  var Core = ServiceDirectory;
   var T = {
     en: { search:"Search a trade or a name…", all:"All", allTrades:"All trades", other:"Other",
           call:"Call", wa:"WhatsApp", share:"Share", copied:"Copied to the clipboard",
-          details:"Details", close:"Close", phone:"Phone",
+          details:"Details", showMore:"Show more", close:"Close", phone:"Phone",
           none:"Nothing matches that.", updated:"Updated", swap:"हिं",
           listing:"listing", listings:"listings", categories:"categories", withPhone:"you can call",
           charges:"Charges", timings:"Timings", notes:"Notes", covers:"Covers", vlist:"One line each", vgrid:"Two columns", fail:"Could not load the list. Please try again later.",
@@ -704,7 +770,7 @@
           adNote:"Slots marked Sponsored are paid for. They are not checked or recommended, and they are not part of the neighbours' list." },
     hi: { search:"काम या नाम खोजें…", all:"सभी", allTrades:"सभी काम", other:"अन्य",
           call:"कॉल", wa:"व्हाट्सएप", share:"साझा करें", copied:"क्लिपबोर्ड पर कॉपी हो गया",
-          details:"विवरण", close:"बंद करें", phone:"फ़ोन",
+          details:"विवरण", showMore:"और देखें", close:"बंद करें", phone:"फ़ोन",
           none:"कुछ नहीं मिला।", updated:"अपडेट", swap:"EN",
           listing:"सूची", listings:"सूचियाँ", categories:"श्रेणियाँ", withPhone:"जिन्हें कॉल कर सकते हैं",
           charges:"शुल्क", timings:"समय", notes:"टिप्पणी", covers:"क्षेत्र / काम", vlist:"एक पंक्ति में", vgrid:"दो कॉलम", fail:"सूची लोड नहीं हो सकी। बाद में देखें।",
@@ -714,7 +780,7 @@
           adNote:"जिन पर “प्रायोजित” लिखा है, वे भुगतान करके लगाए गए हैं। उनकी जाँच या सिफ़ारिश नहीं की गई है, और वे पड़ोसियों की सूची का हिस्सा नहीं हैं।" },
     mr: { search:"काम किंवा नाव शोधा…", all:"सर्व", allTrades:"सर्व कामे", other:"इतर",
           call:"कॉल", wa:"व्हॉट्सॲप", share:"शेअर करा", copied:"क्लिपबोर्डवर कॉपी झाले",
-          details:"तपशील", close:"बंद करा", phone:"फोन",
+          details:"तपशील", showMore:"अधिक पहा", close:"बंद करा", phone:"फोन",
           none:"काहीही सापडले नाही.", updated:"अद्ययावत", swap:"मराठी",
           listing:"नोंद", listings:"नोंदी", categories:"श्रेणी", withPhone:"ज्यांना कॉल करता येईल",
           charges:"दर", timings:"वेळ", notes:"टीप", covers:"क्षेत्र / काम", vlist:"एका ओळीत", vgrid:"दोन स्तंभ",
@@ -727,7 +793,70 @@
   /* What is chosen, not what is chosen singular: someone wanting a plumber and
      an electrician for the same job should not have to look twice. `cats` holds
      category keys, `trades` the trades inside them; empty means no narrowing. */
-  var lang = "en", data = null, cats = [], trades = [], built = [];
+  Object.assign(T.en, {search:"Search a service, name or problem…", pageTitle:"Local Services & Help",
+    intro:"Find local help. Call or WhatsApp directly.", reset:"Reset filters", contacts:"contacts", showing:"Showing",
+    browse:"Browse by category", noPhone:"Phone number not listed", emptyHelp:"Try a service such as Plumber or Electrician, or reset to see all contacts.",
+    retry:"Try again", online:"Directory available offline after your first online visit.", offline:"You're offline — showing the saved directory.",
+    offlineReady:"Offline copy ready", installing:"Preparing offline copy…", offlineFail:"Offline copy could not be saved. Reopen with internet to try again.",
+    viewMode:"Contact layout", info:"Service / area", titleSize:"Text size"});
+  Object.assign(T.hi, {search:"काम, नाम या समस्या खोजें…",pageTitle:"स्थानीय सेवाएँ और सहायता",intro:"स्थानीय मदद खोजें। सीधे कॉल या व्हाट्सएप करें।",
+    reset:"फ़िल्टर हटाएँ",contacts:"संपर्क",showing:"दिखा रहे हैं",browse:"श्रेणी के अनुसार देखें",noPhone:"फ़ोन नंबर उपलब्ध नहीं है",
+    emptyHelp:"प्लंबर या इलेक्ट्रीशियन जैसा काम खोजें, या सभी संपर्क देखने के लिए फ़िल्टर हटाएँ।",retry:"फिर कोशिश करें",
+    online:"पहली ऑनलाइन विज़िट के बाद सूची ऑफलाइन उपलब्ध है।",offline:"आप ऑफलाइन हैं — सहेजी गई सूची दिखाई जा रही है।",
+    offlineReady:"ऑफलाइन सूची तैयार है",installing:"ऑफलाइन सूची तैयार हो रही है…",offlineFail:"ऑफलाइन सूची सेव नहीं हुई। इंटरनेट के साथ फिर खोलें।",
+    viewMode:"संपर्कों की सूची",info:"काम / क्षेत्र",titleSize:"अक्षरों का आकार"});
+  Object.assign(T.mr, {search:"काम, नाव किंवा समस्या शोधा…",pageTitle:"स्थानिक सेवा व मदत",intro:"स्थानिक मदत शोधा. थेट फोन किंवा व्हॉट्सॲप करा.",
+    reset:"फिल्टर काढा",contacts:"संपर्क",showing:"दाखवत आहोत",browse:"विभागानुसार पहा",noPhone:"फोन क्रमांक उपलब्ध नाही",
+    emptyHelp:"प्लंबर किंवा वीजतंत्री असे काम शोधा, किंवा सर्व संपर्क पाहण्यासाठी फिल्टर काढा.",retry:"पुन्हा प्रयत्न करा",
+    online:"पहिल्या ऑनलाइन भेटीनंतर यादी ऑफलाइन उपलब्ध होते.",offline:"तुम्ही ऑफलाइन आहात — जतन केलेली यादी दिसत आहे.",
+    offlineReady:"ऑफलाइन यादी तयार आहे",installing:"ऑफलाइन यादी तयार होत आहे…",offlineFail:"ऑफलाइन यादी जतन झाली नाही. इंटरनेटसह पुन्हा उघडा.",
+    viewMode:"संपर्कांची मांडणी",info:"काम / परिसर",titleSize:"अक्षरांचा आकार"});
+  Object.assign(T.en,{saved:"Saved",saveContact:"Save to favourites",removeSaved:"Remove from favourites",
+    savedHint:"Saved on this device. Open Saved above the list to find your favourites.",saveFailed:"Could not save on this device. Check your browser storage settings.",
+    savedEmpty:"No saved contacts yet",savedEmptyHelp:"Open a contact's Show more and choose Save to favourites.",
+    downloadContact:"Download contact",copyPhone:"Copy number",copyManually:"Select and copy the text below.",
+    report:"Report incorrect details",suggest:"Suggest a service",emailHint:"Opens an email draft to the directory maintainer.",
+    contactMissing:"This contact is no longer in the directory.",correctDetails:"Details to correct",correctInformation:"Correct information",
+    serviceField:"Service / trade",areaField:"Area served",nameField:"Name"});
+  Object.assign(T.hi,{saved:"सहेजे गए",saveContact:"पसंदीदा में सहेजें",removeSaved:"पसंदीदा से हटाएँ",
+    savedHint:"इस डिवाइस पर सहेजे जाते हैं। सूची के ऊपर सहेजे गए विकल्प में मिलेंगे।",saveFailed:"इस डिवाइस पर सहेज नहीं सके। ब्राउज़र की स्टोरेज सेटिंग देखें।",
+    savedEmpty:"अभी कोई संपर्क सहेजा नहीं है",savedEmptyHelp:"किसी संपर्क का और देखें खोलें और पसंदीदा में सहेजें चुनें।",
+    downloadContact:"संपर्क डाउनलोड करें",copyPhone:"नंबर कॉपी करें",copyManually:"नीचे का टेक्स्ट चुनकर कॉपी करें।",
+    report:"गलत जानकारी बताएँ",suggest:"सेवा सुझाएँ",emailHint:"सूची के संचालक को भेजने के लिए ईमेल ड्राफ़्ट खुलेगा।",
+    contactMissing:"यह संपर्क अब सूची में नहीं है।",correctDetails:"कौन सी जानकारी गलत है",correctInformation:"सही जानकारी",
+    serviceField:"काम / सेवा",areaField:"सेवा का क्षेत्र",nameField:"नाम"});
+  Object.assign(T.mr,{saved:"जतन केलेले",saveContact:"आवडत्यांमध्ये जतन करा",removeSaved:"आवडत्यांमधून काढा",
+    savedHint:"या उपकरणावर जतन होतात. यादीवरील जतन केलेले पर्यायात सापडतील.",saveFailed:"या उपकरणावर जतन करता आले नाही. ब्राउझरची स्टोरेज सेटिंग तपासा.",
+    savedEmpty:"अजून संपर्क जतन केलेले नाहीत",savedEmptyHelp:"संपर्काचे अधिक पहा उघडा आणि आवडत्यांमध्ये जतन करा निवडा.",
+    downloadContact:"संपर्क डाउनलोड करा",copyPhone:"क्रमांक कॉपी करा",copyManually:"खालील मजकूर निवडून कॉपी करा.",
+    report:"चुकीची माहिती कळवा",suggest:"सेवा सुचवा",emailHint:"यादीच्या संचालकाला पाठवण्यासाठी ईमेल मसुदा उघडेल.",
+    contactMissing:"हा संपर्क आता यादीत नाही.",correctDetails:"कोणती माहिती चुकीची आहे",correctInformation:"योग्य माहिती",
+    serviceField:"काम / सेवा",areaField:"सेवेचा परिसर",nameField:"नाव"});
+  var lang = "en", data = null, cats = [], trades = [], built = [], lastSheetFocus = null,lastSheetContactId=null;
+  var savedOnly=false,savedContacts=new Set();
+  var savedKey="town-services:"+new URL('./',location.href).pathname+":favourites";
+  try {var stored=JSON.parse(localStorage.getItem(savedKey)||"[]");
+    if(Array.isArray(stored))stored.filter(function(id){return typeof id==='string';}).forEach(function(id){savedContacts.add(id);});
+  }catch(error){}
+  function contact(r){return {id:r.ID||r.Id||r.id,name:pick(r,COL.name),role:pick(r,COL.role),category:pick(r,COL.cat),phone:pick(r,COL.phone)};}
+  function contactId(r){return Core.contactId(contact(r));}
+  function contactURL(r){var url=new URL('./',location.href);url.hash="contact="+encodeURIComponent(contactId(r));return url.href;}
+  function savedCount(){return data.rows.filter(function(r){return savedContacts.has(contactId(r));}).length;}
+  function feedbackURL(r,suggest){
+    var email=String(data.feedbackEmail||"prateekheda@yahoo.com");
+    if(!/^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email))email="prateekheda@yahoo.com";
+    var subject=(suggest?t("suggest"):t("report"))+" — "+(r?pick(r,COL.name):data.title);
+    var body=suggest ? ["nameField","serviceField","phone","areaField","timings","charges","notes"].map(function(key){return t(key)+":\n";}).join("")+"\n"
+      : (r ? shareText(r)+"\n\n" : new URL('./',location.href).href+"\n\n")+t("correctDetails")+":\n\n"+t("correctInformation")+":\n\n";
+    return "mailto:"+email+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+  }
+  var offlineReady = false, offlineFailed = false, savedResponse = false;
+  function updateConnection(){
+    $("offlineState").textContent = !navigator.onLine || savedResponse ? t("offline")
+      : offlineReady ? t("offlineReady") : offlineFailed ? t("offlineFail") : t("installing");
+  }
+  addEventListener("online",function(){savedResponse=false;updateConnection();});
+  addEventListener("offline",updateConnection);
   function t(k) { return (T[lang] && T[lang][k]) || T.en[k] || k; }
   var $ = function (id) { return document.getElementById(id); };
 
@@ -811,9 +940,11 @@
     var ph = pick(r, COL.phone); if (ph) L.push("📞 " + ph);
     var rate = pick(r, COL.rate); if (rate) L.push("💰 " + rate);
     var tm = pick(r, COL.time); if (tm) L.push("🕘 " + tm);
+    var area = pick(r, COL.info); if (area) L.push(t("covers") + ": " + area);
+    var notes = pick(r, COL.notes); if (notes) L.push(t("notes") + ": " + notes);
     var tail = [];
-    if (data && data.note) tail.push("⚠️ " + noteText());
-    tail.push(location.href);
+    if (noteText()) tail.push("⚠️ " + noteText());
+    tail.push(contactURL(r));
     return L.join("\n") + "\n\n" + tail.join("\n");
   }
   function noteText() {
@@ -833,10 +964,30 @@
     toast._t = setTimeout(function () { b.hidden = true; }, 2200);
   }
 
+  async function copyText(text,box){
+    try {if(!navigator.clipboard)throw Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(text);toast(t("copied"));
+    }catch(error){
+      if(!box.isConnected)return;
+      var previous=box.querySelector(".share-fallback");if(previous)previous.remove();
+      var fallback=el("div","share-fallback");fallback.appendChild(el("p","detail-hint",t("copyManually")));
+      var field=el("textarea");field.readOnly=true;field.value=text;field.setAttribute("aria-label",t("copyManually"));
+      fallback.appendChild(field);box.appendChild(fallback);field.focus();field.select();
+    }
+  }
+  function downloadContact(r){
+    var details=contact(r);details.url=contactURL(r);
+    details.notes=[data.city,pick(r,COL.info),pick(r,COL.time),pick(r,COL.rate),pick(r,COL.notes),noteText()].filter(Boolean).join("\n");
+    var url=URL.createObjectURL(new Blob([Core.vcard(details)],{type:"text/vcard;charset=utf-8"}));
+    var link=el("a");link.href=url;
+    link.download=(details.name.replace(/[<>:"/\\|?*\u0000-\u001f]/g,"_").replace(/[. ]+$/g,"")||"contact")+".vcf";
+    document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url);},10000);
+  }
+
   /** Call and WhatsApp, shared by the row and the sheet. */
   function callButtons(r, name) {
     var acts = el("div", "acts");
-    var ph = pick(r, COL.phone);
+    var ph = Core.phone(pick(r, COL.phone));
     if (!ph) return acts;
     var call = el("a", "b call");
     call.href = tel(ph);
@@ -863,36 +1014,25 @@
      a tap away, which is what keeps forty trades scannable. */
   function row(r) {
     var name = pick(r, COL.name) || "—";
-    var b = el("button", "row");
-    b.setAttribute("type", "button");
-    b.setAttribute("aria-label", t("details") + ": " + name);
+    var b = el("article", "row");
 
-    var who = el("div", "who");
-    var l1 = el("div", "line1");
-    l1.appendChild(el("span", "nm", name));
+    var who = el("button", "who more-details");
+    who.type = "button";
+    who.setAttribute("aria-label", t("showMore") + ": " + name);
+    who.setAttribute("data-contact-id",contactId(r));
+    who.appendChild(el("span", "nm", name));
+    var summary = el("span", "contact-summary");
     var role = pick(r, COL.role);
-    if (role && role !== name) l1.appendChild(el("span", "role", role));
-    who.appendChild(l1);
-    var info = pick(r, COL.info);
-    if (info) who.appendChild(el("span", "info", info));
+    if (role && role !== name) summary.appendChild(el("span", "role", Core.label(role,lang)));
+    summary.appendChild(el("span", "show-more", t("showMore") + " ›"));
+    who.appendChild(summary);
+    who.addEventListener("click", function () { openSheet(r, name); });
     b.appendChild(who);
-
-    var rate = pick(r, COL.rate);
-    if (rate) b.appendChild(el("span", "rate", rate));
 
     // Carried in the markup but only shown on paper, where the buttons go.
     var ph = pick(r, COL.phone);
     if (ph) b.appendChild(el("span", "tel", ph));
-
-    b.appendChild(callButtons(r, name));
-    var chev = svg("M9 6l6 6-6 6");
-    chev.setAttribute("class", "chev");
-    chev.setAttribute("fill", "none");
-    chev.setAttribute("stroke", "currentColor");
-    chev.setAttribute("stroke-width", "2.2");
-    b.appendChild(chev);
-
-    b.addEventListener("click", function () { openSheet(r, name); });
+    b.appendChild(callButtons(r,name));
     return b;
   }
 
@@ -901,9 +1041,18 @@
     w.hidden = true;
     w.textContent = "";
     document.documentElement.classList.remove("noscroll");
+    var target=lastSheetFocus;
+    if(!target || !target.isConnected || target===document.body || (target.closest('.row') && target.closest('.row').hidden))
+      target=Array.from(document.querySelectorAll('#list .more-details')).find(function(button){
+        return button.getAttribute('data-contact-id')===lastSheetContactId && !button.closest('.row').hidden;
+      }) || $("q");
+    target.focus({preventScroll:true});
+    if(location.hash.indexOf('#contact=')===0)history.replaceState(null,'',location.pathname+location.search);
   }
 
   function openSheet(r, name) {
+    lastSheetFocus = document.activeElement;
+    lastSheetContactId=contactId(r);
     var w = $("sheet");
     w.textContent = "";
     var back = el("div", "sheet-back");
@@ -924,7 +1073,7 @@
 
     box.appendChild(el("h2", null, name));
     var role = pick(r, COL.role), cat = pick(r, COL.cat);
-    var sub = [role, cat].filter(function (v) { return v && v !== name; }).join(" · ");
+    var sub = [Core.label(role,lang), Core.category(cat,lang)].filter(function (v) { return v && v !== name; }).join(" · ");
     if (sub) box.appendChild(el("div", "srole", sub));
 
     var line = function (label, value, href) {
@@ -936,7 +1085,8 @@
       box.appendChild(d);
     };
     var ph = pick(r, COL.phone);
-    line(t("phone"), ph, ph ? tel(ph) : null);
+    line(t("phone"), ph, Core.phone(ph) ? tel(Core.phone(ph)) : null);
+    if (!Core.phone(ph)) box.appendChild(el("span", "missing-phone", t("noPhone")));
     line(t("charges"), pick(r, COL.rate));
     line(t("timings"), pick(r, COL.time));
     line(t("covers"), pick(r, COL.info));
@@ -960,20 +1110,48 @@
     sh.title = t("share") + " " + name;
     sh.setAttribute("aria-label", t("share") + " " + name);
     sh.appendChild(svg(P.share));
-    sh.addEventListener("click", function () {
+    sh.addEventListener("click", async function () {
       var txt = shareText(r);
-      if (navigator.share) navigator.share({ title: name, text: txt })["catch"](function () {});
-      else if (navigator.clipboard)
-        navigator.clipboard.writeText(txt).then(function () { toast(t("copied")); });
+      if (navigator.share){try {await navigator.share({title:name,text:txt});return;}
+        catch(error){if(error.name==='AbortError')return;}}
+      await copyText(txt,box);
     });
     acts.appendChild(sh);
     box.appendChild(acts);
+
+    var tools=el("div","detail-tools");
+    var save=el("button");save.type="button";save.setAttribute("data-action","save");
+    function labelSave(){var on=savedContacts.has(contactId(r));save.textContent=t(on?"removeSaved":"saveContact");save.setAttribute("aria-pressed",String(on));}
+    labelSave();
+    save.addEventListener("click",function(){
+      var next=new Set(savedContacts),id=contactId(r);if(next.has(id))next.delete(id);else next.add(id);
+      try{localStorage.setItem(savedKey,JSON.stringify(Array.from(next)));savedContacts=next;}
+      catch(error){toast(t("saveFailed"));return;}
+      labelSave();build();filter();
+    });tools.appendChild(save);
+    var download=el("button",null,t("downloadContact"));download.type="button";download.setAttribute("data-action","download");
+    download.addEventListener("click",function(){downloadContact(r);});tools.appendChild(download);
+    var validPhone=Core.phone(ph);
+    if(validPhone){var copy=el("button",null,t("copyPhone"));copy.type="button";copy.setAttribute("data-action","copy-phone");
+      copy.addEventListener("click",function(){copyText(validPhone,box);});tools.appendChild(copy);}
+    var report=el("a",null,t("report"));report.href=feedbackURL(r,false);report.setAttribute("data-action","report");tools.appendChild(report);
+    box.appendChild(tools);
+    box.appendChild(el("p","detail-hint",t("savedHint")));
+    box.appendChild(el("p","detail-hint",t("emailHint")));
 
     w.appendChild(box);
     w.hidden = false;
     document.documentElement.classList.add("noscroll");
     x.focus();
   }
+
+  function openLinkedContact(){
+    if(!data || location.hash.indexOf('#contact=')!==0)return;
+    var id=new URLSearchParams(location.hash.slice(1)).get('contact');
+    var match=data.rows.find(function(r){return contactId(r)===id;});
+    if(match)openSheet(match,pick(match,COL.name));else toast(t("contactMissing"));
+  }
+  addEventListener('hashchange',openLinkedContact);
 
   function bucket(rows, rx) {
     var order = [], by = {};
@@ -1154,38 +1332,20 @@
     drawTiles(gs);
     stats(gs);
 
-    /* Two strips: the categories, and the trades within whatever they leave on
-       screen. Both take more than one — "plumber and electrician" is one job. */
+    /* One familiar service at a time; detailed category browsing stays below the list. */
     var chips = $("chips");
     chips.textContent = "";
-    if (many) {
-      chipRow(chips,
-        [{ key: "", label: t("all"), n: data.rows.length }].concat(
-          gs.map(function (g) { return { key: g.key, label: g.label, n: g.rows.length }; })),
-        function (c) { return c.key ? cats.indexOf(c.key) !== -1 : !cats.length; },
-        function (c) {
-          if (!c.key) { cats = []; trades = []; return; }
-          cats = toggle(cats, c.key);
-          trades = keepTrades();
-        });
-    }
-
-    var box2 = $("chips2");
-    box2.textContent = "";
-    var ts = tradesInScope();
-    // One trade is not a choice between trades.
-    box2.hidden = ts.length < 2;
-    if (!box2.hidden) {
-      chipRow(box2,
-        [{ key: "", label: t("allTrades"),
-           n: ts.reduce(function (a, g) { return a + g.n; }, 0) }].concat(ts),
-        function (c) { return c.key ? trades.indexOf(c.key) !== -1 : !trades.length; },
-        function (c) { trades = c.key ? toggle(trades, c.key) : []; });
-    }
+    var choices = bucket(data.rows,COL.role).filter(function(g){return g.key;})
+      .map(function(g){return {key:g.key,label:Core.label(g.label,lang),raw:g.label,n:g.rows.length};})
+      .sort(function(a,b){return Core.rank(a.raw)-Core.rank(b.raw) || a.label.localeCompare(b.label);});
+    chipRow(chips,[{key:"",label:t("all"),n:data.rows.length},{key:" saved",label:t("saved"),n:savedCount()}].concat(choices),
+      function(c){return c.key===' saved' ? savedOnly : !savedOnly && (c.key ? trades.indexOf(c.key)!==-1 : !trades.length && !cats.length);},
+      function(c){cats=[];savedOnly=c.key===' saved';trades=c.key && !savedOnly?[c.key]:[];$("q").value="";});
+    $("chips2").textContent="";$("chips2").hidden=true;
 
     gs.forEach(function (g) {
       var head = el("div", "gsub");
-      head.appendChild(el("span", null, g.label));
+      head.appendChild(el("span", null, Core.category(g.label,lang)));
       // Held on to: once a chip can narrow a heading that stays on screen, the
       // number beside it has to be what is under it, not what the sheet holds.
       var hn = el("span", "n", String(g.rows.length));
@@ -1201,7 +1361,7 @@
         var sh = null, sn = null;
         if (sb.key) {
           sh = el("div", "gsub2");
-          sh.appendChild(el("span", null, sb.label));
+          sh.appendChild(el("span", null, Core.label(sb.label,lang)));
           sn = el("span", "n", String(sb.rows.length));
           sh.appendChild(sn);
           wrap.appendChild(sh);
@@ -1212,9 +1372,8 @@
           grid.appendChild(c);
           // `sub` is empty where the heading was left off; `role` never is,
           // so the trade chips work in either shape.
-          items.push({ el: c, group: g.key, sub: sb.key, role: keyOf(r, COL.role),
-            hay: Object.keys(r).map(function (k) { return r[k]; })
-              .filter(Boolean).join(" ").toLowerCase() });
+          items.push({ el: c, id:contactId(r), group: g.key, sub: sb.key, role: keyOf(r, COL.role),
+            hay: Core.index(r,pick(r,COL.role)) });
         });
         wrap.appendChild(grid);
         return { key: sb.key, head: sh, n: sn, grid: grid };
@@ -1245,7 +1404,16 @@
       });
     }
 
-    var none = el("div", "empty", t("none"));
+    var none = el("div", "empty");
+    var noSaved=savedOnly && !savedCount();
+    none.appendChild(el("h2",null,t(noSaved?"savedEmpty":"none")));
+    none.appendChild(el("p",null,t(noSaved?"savedEmptyHelp":"emptyHelp")));
+    var clear = el("button","reset-filter",t("reset"));clear.type="button";
+    clear.addEventListener("click",resetFilters);none.appendChild(clear);
+    var related = el("div","empty-suggestions");
+    if(!savedOnly)choices.slice(0,3).forEach(function(c){var b=el("button","chip",c.label);b.type="button";
+      b.addEventListener("click",function(){cats=[];trades=[c.key];$("q").value="";build();filter();});related.appendChild(b);});
+    none.appendChild(related);
     none.id = "none";
     none.hidden = true;
     list.appendChild(none);
@@ -1261,9 +1429,10 @@
         // Searching looks at the whole list; the chips only narrow browsing.
         // Across the strips it reads as "these categories, and of those, these
         // trades"; within a strip the picks add up rather than fight.
-        var hit = term ? it.hay.indexOf(term) !== -1
+        var hit = term ? Core.matches(it.hay,term)
           : (!cats.length || cats.indexOf(it.group) !== -1) &&
             (!trades.length || trades.indexOf(it.role) !== -1);
+        hit=hit && (!savedOnly || savedContacts.has(it.id));
         it.el.hidden = !hit;
         if (hit) shown++;
       });
@@ -1288,10 +1457,14 @@
       /* Advertising goes when the block it sits under goes, and it goes
          entirely while somebody is searching: a person who typed "plumber" is
          looking for a plumber, and the results are not the place to sell. */
-      if (b.ad) b.ad.hidden = !shown || !!term;
+      if (b.ad) b.ad.hidden = !shown || !!term || savedOnly;
     });
     var none = $("none");
     if (none) none.hidden = total !== 0;
+    var selected = cats.length ? Core.category(bucket(data.rows,COL.cat).find(function(g){return g.key===cats[0];})?.label || cats[0],lang)
+      : savedOnly ? t("saved") : trades.length ? Core.label(bucket(data.rows,COL.role).find(function(g){return g.key===trades[0];})?.label || trades[0],lang) : t("all");
+    $("results").textContent = t("showing") + " " + total + " " + t("contacts") + " · " + (term ? (savedOnly?t("saved")+" · ":"")+"“" + $("q").value.trim() + "”" : selected);
+    $("resetFilters").hidden = !term && !cats.length && !trades.length && !savedOnly;
   }
 
   /* An icon per category, chosen by what the words mean rather than by a list
@@ -1323,8 +1496,7 @@
   function stats(gs) {
     var box = $("stats");
     box.textContent = "";
-    var callable = data.rows.filter(function (r) { return waNum(pick(r, COL.phone)) ||
-      pick(r, COL.phone); }).length;
+    var callable = data.rows.filter(function(r){return Core.phone(pick(r,COL.phone));}).length;
     var bits = [[String(data.rows.length), data.rows.length === 1 ? t("listing") : t("listings")]];
     if (gs.length > 1) bits.push([String(gs.length), t("categories")]);
     if (callable && callable < data.rows.length) bits.push([String(callable), t("withPhone")]);
@@ -1387,14 +1559,15 @@
       var ic = el("div", "ticon");
       ic.appendChild(svg(catIcon(g.label)));
       b.appendChild(ic);
-      b.appendChild(el("div", "tname", g.label));
+      b.appendChild(el("div", "tname", Core.category(g.label,lang)));
       b.appendChild(el("div", "tn", g.rows.length + " " +
         (g.rows.length === 1 ? t("listing") : t("listings"))));
       b.addEventListener("click", function () {
         // Tapping one already chosen takes it back out, so there is always a
         // way back — and tapping a second adds to the first.
-        cats = toggle(cats, g.key);
-        trades = keepTrades();
+        cats = on ? [] : [g.key];
+        savedOnly=false;
+        trades = [];
         $("q").value = "";
         build();
         filter();
@@ -1408,12 +1581,18 @@
   function paint() {
     document.documentElement.lang = lang;
     document.title = data.title + (data.city ? " · " + data.city : "");
-    $("title").textContent = data.title;
+    $("title").textContent = data.title === "Local Services & Help" ? t("pageTitle") : data.title;
     $("place").textContent = data.city || data.title;
-    $("sub").textContent = data.tagline || "";
+    $("sub").textContent = (data.city ? data.city + " · " : "") + t("intro");
     $("lang").value = lang;
     $("shareLbl").textContent = t("share");
     $("q").placeholder = t("search");
+    $("q").setAttribute("aria-label",t("search"));
+    $("qx").setAttribute("aria-label",t("reset"));
+    $("resetFilters").textContent=t("reset");
+    $("browseCategories").textContent=t("browse");
+    $("vswitch").setAttribute("aria-label",t("viewMode"));
+    updateConnection();
 
     // The caution lives in the footer only: four lines of warning ahead of
     // any content teaches people to scroll past warnings.
@@ -1427,6 +1606,9 @@
     $("fPlace").textContent = data.city || "";
     vswitch();
     $("upd").textContent = data.updated ? t("updated") + " " + data.updated : "";
+    $("suggestService").textContent=t("suggest");$("suggestService").href=feedbackURL(null,true);
+    $("reportDirectory").textContent=t("report");$("reportDirectory").href=feedbackURL(null,false);
+    $("suggestService").title=$("reportDirectory").title=t("emailHint");
     drawTopAd();
     drawFooterAds();
     build();
@@ -1519,12 +1701,22 @@
     return label;
   })();
 
-  $("q").addEventListener("input", filter);
+  function resetFilters(){cats=[];trades=[];savedOnly=false;$("q").value="";build();filter();$("q").focus();}
+  $("resetFilters").addEventListener("click",resetFilters);
+  $("q").addEventListener("input",function(){
+    if(cats.length || trades.length){cats=[];trades=[];build();}filter();
+  });
   addEventListener("keydown", function (e) {
     if (!$("sheet").hidden && (e.key === "Escape" || e.key === "Esc")) closeSheet();
+    else if(!$("sheet").hidden && e.key === "Tab"){
+      var focusable=$("sheet").querySelectorAll('button:not([disabled]),a[href],textarea');
+      var first=focusable[0],last=focusable[focusable.length-1];
+      if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+    }
   });
   $("qx").addEventListener("click", function () {
-    $("q").value = ""; filter(); $("q").focus();
+    resetFilters();
   });
 
   try {
@@ -1539,25 +1731,32 @@
 
   /* Registered late and guarded: a browser without service workers, or the
      page opened straight off a disk, simply carries on without one. */
-  if ("serviceWorker" in navigator &&
+  if(location.hostname === "appassets.androidplatform.net")offlineReady=true;
+  else if ("serviceWorker" in navigator &&
       (location.protocol === "https:" || location.hostname === "localhost")) {
     addEventListener("load", function () {
-      navigator.serviceWorker.register("sw.js")["catch"](function () {});
+      navigator.serviceWorker.ready.then(function(){offlineReady=true;offlineFailed=false;updateConnection();});
+      navigator.serviceWorker.register("sw.js").catch(function(){
+        offlineFailed=!offlineReady;updateConnection();
+      });
     });
-  }
+  }else {offlineReady=false;offlineFailed=true;}
 
   fetch("services.json?v=" + Date.now())
-    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); savedResponse=r.headers.has("X-Offline-Copy");return r.json(); })
     .then(function (j) {
       data = j;
       if (j.theme) document.documentElement.setAttribute("data-theme", j.theme);
       var tc = document.querySelector('meta[name=theme-color]');
       if (tc) tc.setAttribute("content", {civic:"#FBF7F0",slate:"#12161C",paper:"#F5F7FB"}[j.theme] || "#FBF7F0");
       paint();
+      openLinkedContact();
     })
     ["catch"](function () {
       $("list").innerHTML = "";
       $("list").appendChild(el("div", "empty", t("fail")));
+      var retry=el("button","reset-filter",t("retry"));retry.type="button";
+      retry.addEventListener("click",function(){location.reload();});$("list").appendChild(retry);
     });
 })();
 </script>

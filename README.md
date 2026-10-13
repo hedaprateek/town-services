@@ -5,6 +5,11 @@ call and a WhatsApp button against each. Anyone can open it; there is no sign-in
 
 **Live:** https://hedaprateek.github.io/town-services/
 
+To preview local changes on Windows, double-click `start.cmd` (requires Node.js).
+It opens **http://localhost:8799/**. Keep the launcher window open while testing.
+The local preview serves only public directory files; it does not expose the admin
+page, spreadsheet or Git files.
+
 ---
 
 ## Filling in the list
@@ -59,6 +64,9 @@ people's phone numbers, so it stops rather than shipping something unexpected.
 | `Note` | The caution shown at the top, and carried into every shared message |
 | `Note HI` | The same caution in Hindi |
 
+An optional `feedbackEmail` value in `services.json` sets the correction/suggestion
+recipient. It defaults to the maintainer's public email, `prateekheda@yahoo.com`.
+
 **`Services`** — one row per contact. Only `Name` is required.
 
 | Column | Does |
@@ -67,7 +75,7 @@ people's phone numbers, so it stops rather than shipping something unexpected.
 | `Category` | The section heading — Repairs & Maintenance, Home Help, Utilities |
 | `Role` | The trade, which becomes a sub-heading inside the category |
 | `Phone` | Call and WhatsApp buttons. A number that cannot be completed gets no WhatsApp |
-| `Covers` | Two or three words under the name: *small works*, *routine jobs*, the areas they serve |
+| `Covers` | Work or areas served, shown in contact details and included in search |
 | `Charges`, `Timings`, `Notes` | Shown when the row is tapped |
 
 `Covers` also matches `Area`, `Areas`, `Serves`, `Speciality`, `Works`, `Summary` or `Info`.
@@ -76,12 +84,43 @@ A sheet whose name starts with `_` is ignored, so drafts can live in the same fi
 
 ## The page
 
-- One line per contact — name, trade, call, WhatsApp — with everything else a tap away.
-- Grouped by category, then by trade inside it, so several plumbers sit together.
-- Search across every field; the category chips only narrow browsing.
-- English and Hindi, remembered per device.
+- Search is directly below the compact heading, followed by familiar service shortcuts.
+- Compact contact rows show the name, translated trade and icon-only Call and WhatsApp
+  buttons. Tap the name or Show more for areas, hours, charges, notes and phone details.
+  Missing numbers are explained in the details; action icons retain accessible labels.
+- Choose one service at a time. A new search clears the service selection and searches
+  the whole directory. Reset filters returns to all contacts. Category browsing is
+  available below the list, without a duplicate filter strip above it.
+- Search matches names, areas and supplied details, plus common service phrases and
+  aliases: `leaking tap`, `plumbing`, `nal`, `नल` and `नळ` all find plumbers. Multiple
+  words can narrow a result, such as `leaking tap Rahul`.
+- English, Hindi and Marathi are remembered per device. Known category and trade names
+  are translated too; personal names and free-form supplied notes are preserved.
+- Empty results provide a reset button and familiar service suggestions. Details support
+  keyboard focus, Escape to close, and return focus to the button that opened them.
 - Sharing a contact copies the details **with the caution attached**, so the warning
   travels with the number rather than staying behind on the page.
+- In Show more, save a contact to favourites; the Saved shortcut shows only favourites
+  and search can narrow them. Favourites remain on that browser/device, work offline,
+  and survive phone/notes corrections. Clearing browser storage clears them.
+- Download contact creates a standard `.vcf` file for the phone's Contacts app. It
+  includes supplied details, the directory link and caution; no missing numbers are
+  invented. Copy number and Share fall back to selectable text if clipboard access fails.
+- Shared contact links open that contact's details directly. Unknown or removed
+  contacts produce a message while keeping the directory usable.
+- Report incorrect details and Suggest a service open editable email drafts. Nothing
+  is sent or added to the directory automatically; submissions need maintainer review.
+
+The website saves its page, search helper and complete directory for offline use after
+an online visit. The footer shows whether the offline copy is ready or being used.
+Network failures or malformed data use the last good directory. Only this directory's
+own versioned caches are cleaned up; other websites' offline copies are preserved.
+The admin page and working spreadsheet are excluded from the offline shell.
+
+Run the search and compatibility checks with `node --test tests/directory.test.cjs`.
+`directory-core.js` is included in the existing Android asset-staging allowlist, so a
+future APK build can use the enhanced interface. Existing APKs keep their bundled UI
+until an updated APK is released.
 
 ## Deploying
 

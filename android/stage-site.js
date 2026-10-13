@@ -26,6 +26,7 @@ const OUT = path.join(__dirname, "app", "src", "town", "assets");
 
 const FILES = [
   "index.html",
+  "directory-core.js",
   "services.json",
   "manifest.webmanifest",
   "icons/icon-192.png",
