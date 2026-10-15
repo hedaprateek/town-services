@@ -97,14 +97,23 @@ recipient. It defaults to the maintainer's public email, `prateekheda@yahoo.com`
 | `Phone` | Call and WhatsApp buttons. A number that cannot be completed gets no WhatsApp |
 | `Covers` | Work or areas served, shown in contact details and included in search |
 | `Charges`, `Timings`, `Notes` | Shown when the row is tapped |
+| `Jobs` | Describe actual jobs handled, such as fitting sliding windows or repairing wallpaper |
+| `Search Words` | Local names, spelling variations and other search phrases; hidden from contact details |
 
 `Covers` also matches `Area`, `Areas`, `Serves`, `Speciality`, `Works`, `Summary` or `Info`.
+The upload editor also accepts `Job Description` / `Work Description` for `Jobs`, and
+`Keywords` / `Other Names` for `Search Words`. Both fields are included in the form,
+blank template, spreadsheet export and published directory. Custom trade titles and
+categories are allowed; the form suggests examples without restricting entries.
 
 A sheet whose name starts with `_` is ignored, so drafts can live in the same file.
 
 ## The page
 
 - Search is directly below the compact heading, followed by familiar service shortcuts.
+- The search prompt is "What help do you need?". Five familiar trades stay in the main
+  filter strip; other supplied service titles are under More services. Selecting one
+  closes that panel and shows its name, so the selected filter stays clear.
 - Compact contact rows show the name, translated trade and icon-only Call and WhatsApp
   buttons. Tap the name or Show more for areas, hours, charges, notes and phone details.
   Missing numbers are explained in the details; action icons retain accessible labels.
@@ -114,6 +123,14 @@ A sheet whose name starts with `_` is ignored, so drafts can live in the same fi
 - Search matches names, areas and supplied details, plus common service phrases and
   aliases: `leaking tap`, `plumbing`, `nal`, `नल` and `नळ` all find plumbers. Multiple
   words can narrow a result, such as `leaking tap Rahul`.
+- Everyday job searches use supplied work descriptions and search words. For example,
+  `my sliding window is stuck` matches a contact whose details say they repair sliding
+  windows, and spelling variants such as aluminium/aluminum are understood. Installer-only
+  descriptions do not imply repair work. This is local word/phrase matching, with no
+  external AI service or search tracking; useful results depend on accurate descriptions.
+- Jobs appear in Show more, shared contact text and contact downloads. Search words
+  help matching without cluttering contact cards or details. Empty results offer More
+  services and a Suggest this service email draft carrying the original search.
 - English, Hindi and Marathi are remembered per device. Known category and trade names
   are translated too; personal names and free-form supplied notes are preserved.
 - Empty results provide a reset button and familiar service suggestions. Details support

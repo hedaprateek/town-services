@@ -25,6 +25,22 @@ test('localizes known services and categories while retaining custom names',()=>
   assert.equal(core.category('Home Help','mr'),'घरकाम मदत');assert.equal(core.label('Custom service','hi'),'Custom service');
   assert.ok(core.rank('Plumber')<core.rank('Accountant'));
 });
+test('finds unusual services from supplied jobs and local search words without widening to unrelated trades',()=>{
+  const window={Name:'Window Example',Role:'Aluminium Window Work',Category:'Windows & Doors',
+    Jobs:'Fits sliding windows, repairs frames and replaces window rollers','Search Words':'खिडकी फिटिंग, frame specialist'};
+  const paper={Name:'Wallpaper Example',Role:'Wallpaper Installation',Category:'Wall Decoration',
+    Jobs:'Installs and repairs wallpaper','Search Words':'wall paper, wallpaper fixing, वॉलपेपर लावणे'};
+  const indexedWindow=core.index(window,window.Role),indexedPaper=core.index(paper,paper.Role);
+  for(const term of ['a person who does aluminium window fittings','my sliding window is stuck','window rollers','खिडकी फिटिंग'])assert.ok(core.matches(indexedWindow,term),term);
+  for(const term of ['someone who fixes the wallpapers in my house','wall paper installation','wallpaper fixing','peeling wallpaper','वॉलपेपर लावणे'])assert.ok(core.matches(indexedPaper,term),term);
+  assert.ok(!core.matches(indexedWindow,'wallpaper installation'));
+  assert.ok(!core.matches(hay,'sliding window stuck'));
+  assert.ok(!core.matches(indexedWindow,'need someone'));
+  const installOnly=core.index({Name:'Installer',Role:'Custom wallpaper work',Jobs:'Wallpaper installation'},'Custom wallpaper work');
+  assert.ok(core.matches(installOnly,'wallpaper fixing'),'Job matching also works with custom trade titles');
+  assert.ok(!core.matches(installOnly,'peeling wallpaper'),'Installation alone must not imply repairs');
+  assert.equal(core.label('Aluminium Window Work','mr'),'अॅल्युमिनियम खिडकीचे काम');
+});
 test('call numbers reject placeholders while preserving international and utility numbers',()=>{
   assert.equal(core.phone('--'),'');assert.equal(core.phone('Not provided'),'');assert.equal(core.phone('1'),'');
   assert.equal(core.phone('96730 20210'),'9673020210');assert.equal(core.phone('+1 (415) 555-1234'),'+14155551234');

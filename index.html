@@ -542,6 +542,11 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 .empty h2{font-size:calc(20px * var(--t));margin:0 0 8px}
 .empty p{margin-bottom:14px}
 .empty-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;justify-content:center}
+.more-services summary{min-height:32px;padding:4px 0;font-size:calc(12px * var(--t));color:var(--teal-bright);cursor:pointer}
+.more-services .chips{flex-wrap:wrap;overflow:visible;margin-top:4px;padding-bottom:4px}
+.more-services .chip{max-width:100%}
+.more-services .chip span:first-child{white-space:normal;overflow-wrap:anywhere}
+.suggest-missing{display:inline-block;margin-top:14px;padding:10px;color:var(--teal-bright);min-height:44px}
 .category-browse{margin:28px 0 6px;padding-top:16px;border-top:1px solid var(--line)}
 .category-browse summary{cursor:pointer;min-height:44px;color:var(--fg-2);font-weight:650}
 .category-browse .tiles{margin-top:10px;overflow-x:visible;display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
@@ -554,7 +559,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
   .chips{margin-top:8px}
 }
 @media print{
-  .result-bar,.show-more,.category-browse,.offline-status,.feedback-links{display:none!important}
+  .result-bar,.show-more,.category-browse,.offline-status,.feedback-links,.more-services{display:none!important}
   .rows .row{padding:7px 2px;border:0;border-bottom:.5pt solid #ddd;background:#fff;border-radius:0}
   .more-details{min-height:0}
   .role,.info,.missing-phone{color:#444}
@@ -708,6 +713,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     </div>
     <div class="chips" id="chips"></div>
     <div class="chips sub" id="chips2" hidden></div>
+    <details class="more-services" id="moreServices"><summary id="moreServicesLabel">More services</summary><div class="chips" id="extraServices"></div></details>
     <div class="result-bar"><p id="results" role="status" aria-live="polite"></p><button class="reset-filter" id="resetFilters" type="button" hidden></button></div>
   </div>
 </div>
@@ -832,6 +838,12 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     report:"चुकीची माहिती कळवा",suggest:"सेवा सुचवा",emailHint:"यादीच्या संचालकाला पाठवण्यासाठी ईमेल मसुदा उघडेल.",
     contactMissing:"हा संपर्क आता यादीत नाही.",correctDetails:"कोणती माहिती चुकीची आहे",correctInformation:"योग्य माहिती",
     serviceField:"काम / सेवा",areaField:"सेवेचा परिसर",nameField:"नाव"});
+  Object.assign(T.en,{search:"What help do you need?",moreServices:"More services",jobs:"Work they handle",suggestMissing:"Suggest this service",requestedWork:"Work you're looking for",
+    emptyHelp:"Try different words for the job, browse More services, or suggest a missing service."});
+  Object.assign(T.hi,{search:"आपको किस काम में मदद चाहिए?",moreServices:"अन्य सेवाएँ",jobs:"ये काम करते हैं",suggestMissing:"यह सेवा सुझाएँ",requestedWork:"आपको कौन सा काम करवाना है",
+    emptyHelp:"काम के लिए दूसरे शब्द आज़माएँ, अन्य सेवाएँ देखें, या नई सेवा सुझाएँ।"});
+  Object.assign(T.mr,{search:"तुम्हाला कोणत्या कामासाठी मदत हवी?",moreServices:"इतर सेवा",jobs:"हे काम करतात",suggestMissing:"ही सेवा सुचवा",requestedWork:"तुम्हाला कोणते काम करून घ्यायचे आहे",
+    emptyHelp:"कामासाठी वेगळे शब्द वापरा, इतर सेवा पहा किंवा नवीन सेवा सुचवा."});
   var lang = "en", data = null, cats = [], trades = [], built = [], lastSheetFocus = null,lastSheetContactId=null;
   var savedOnly=false,savedContacts=new Set();
   var savedKey="town-services:"+new URL('./',location.href).pathname+":favourites";
@@ -842,12 +854,13 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
   function contactId(r){return Core.contactId(contact(r));}
   function contactURL(r){var url=new URL('./',location.href);url.hash="contact="+encodeURIComponent(contactId(r));return url.href;}
   function savedCount(){return data.rows.filter(function(r){return savedContacts.has(contactId(r));}).length;}
-  function feedbackURL(r,suggest){
+  function feedbackURL(r,suggest,requested){
     var email=String(data.feedbackEmail||"prateekheda@yahoo.com");
     if(!/^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email))email="prateekheda@yahoo.com";
     var subject=(suggest?t("suggest"):t("report"))+" — "+(r?pick(r,COL.name):data.title);
     var body=suggest ? ["nameField","serviceField","phone","areaField","timings","charges","notes"].map(function(key){return t(key)+":\n";}).join("")+"\n"
       : (r ? shareText(r)+"\n\n" : new URL('./',location.href).href+"\n\n")+t("correctDetails")+":\n\n"+t("correctInformation")+":\n\n";
+    if(suggest && requested)body=t("requestedWork")+": "+requested+"\n\n"+body;
     return "mailto:"+email+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
   }
   var offlineReady = false, offlineFailed = false, savedResponse = false;
@@ -899,6 +912,8 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     time:  /^(timings|timing|time|hours|available)$/,
     phone: /^(phone|mobile|cell|tel|contactno|number)$/,
     notes: /^(notes|note|details|description|remark|remarks)$/,
+    jobs: /^(jobs|workdescription|jobdescription)$/,
+    keywords: /^(searchwords|keywords|othernames)$/,
     // Two or three words: what they do, or where they go.
     info:  /^(covers|area|areas|serves|servicearea|speciality|specialty|works|worktype|does|for|tag|summary|shortnote|info|about)$/
   };
@@ -942,6 +957,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     var tm = pick(r, COL.time); if (tm) L.push("🕘 " + tm);
     var area = pick(r, COL.info); if (area) L.push(t("covers") + ": " + area);
     var notes = pick(r, COL.notes); if (notes) L.push(t("notes") + ": " + notes);
+    var jobs = pick(r, COL.jobs); if (jobs) L.push(t("jobs") + ": " + jobs);
     var tail = [];
     if (noteText()) tail.push("⚠️ " + noteText());
     tail.push(contactURL(r));
@@ -977,7 +993,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
   }
   function downloadContact(r){
     var details=contact(r);details.url=contactURL(r);
-    details.notes=[data.city,pick(r,COL.info),pick(r,COL.time),pick(r,COL.rate),pick(r,COL.notes),noteText()].filter(Boolean).join("\n");
+    details.notes=[data.city,pick(r,COL.jobs),pick(r,COL.info),pick(r,COL.time),pick(r,COL.rate),pick(r,COL.notes),noteText()].filter(Boolean).join("\n");
     var url=URL.createObjectURL(new Blob([Core.vcard(details)],{type:"text/vcard;charset=utf-8"}));
     var link=el("a");link.href=url;
     link.download=(details.name.replace(/[<>:"/\\|?*\u0000-\u001f]/g,"_").replace(/[. ]+$/g,"")||"contact")+".vcf";
@@ -1091,10 +1107,11 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     line(t("timings"), pick(r, COL.time));
     line(t("covers"), pick(r, COL.info));
     line(t("notes"), pick(r, COL.notes));
+    line(t("jobs"), pick(r,COL.jobs));
 
     // Anything the sheet carries that has no column of its own here.
     var known = {};
-    ["name", "role", "cat", "rate", "time", "phone", "notes", "info"].forEach(function (k) {
+    ["name", "role", "cat", "rate", "time", "phone", "notes", "info", "jobs", "keywords"].forEach(function (k) {
       for (var c in r) if (COL[k].test(c.toLowerCase().replace(/[^a-z]/g, ""))) known[c] = 1;
     });
     for (var c2 in r) {
@@ -1338,9 +1355,14 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     var choices = bucket(data.rows,COL.role).filter(function(g){return g.key;})
       .map(function(g){return {key:g.key,label:Core.label(g.label,lang),raw:g.label,n:g.rows.length};})
       .sort(function(a,b){return Core.rank(a.raw)-Core.rank(b.raw) || a.label.localeCompare(b.label);});
-    chipRow(chips,[{key:"",label:t("all"),n:data.rows.length},{key:" saved",label:t("saved"),n:savedCount()}].concat(choices),
-      function(c){return c.key===' saved' ? savedOnly : !savedOnly && (c.key ? trades.indexOf(c.key)!==-1 : !trades.length && !cats.length);},
-      function(c){cats=[];savedOnly=c.key===' saved';trades=c.key && !savedOnly?[c.key]:[];$("q").value="";});
+    var common=choices.filter(function(c){return Core.rank(c.raw)<5;}),extra=choices.filter(function(c){return Core.rank(c.raw)>=5;});
+    var isSelected=function(c){return c.key===' saved' ? savedOnly : !savedOnly && (c.key ? trades.indexOf(c.key)!==-1 : !trades.length && !cats.length);};
+    var choose=function(c){cats=[];savedOnly=c.key===' saved';trades=c.key && !savedOnly?[c.key]:[];$("q").value="";$("moreServices").open=false;};
+    chipRow(chips,[{key:"",label:t("all"),n:data.rows.length},{key:" saved",label:t("saved"),n:savedCount()}].concat(common),isSelected,choose);
+    $("extraServices").textContent="";chipRow($("extraServices"),extra,isSelected,choose);
+    $("moreServices").hidden=!extra.length;
+    var selectedExtra=extra.find(isSelected);
+    $("moreServicesLabel").textContent=t("moreServices")+(selectedExtra?" · "+selectedExtra.label:"");
     $("chips2").textContent="";$("chips2").hidden=true;
 
     gs.forEach(function (g) {
@@ -1414,6 +1436,9 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     if(!savedOnly)choices.slice(0,3).forEach(function(c){var b=el("button","chip",c.label);b.type="button";
       b.addEventListener("click",function(){cats=[];trades=[c.key];$("q").value="";build();filter();});related.appendChild(b);});
     none.appendChild(related);
+    if(extra.length){var browseMore=el("button","reset-filter",t("moreServices"));browseMore.type="button";
+      browseMore.addEventListener("click",function(){resetFilters();$("moreServices").open=true;$("moreServicesLabel").focus();});none.appendChild(browseMore);}
+    var suggest=el("a","suggest-missing",t("suggestMissing"));suggest.href=feedbackURL(null,true);none.appendChild(suggest);
     none.id = "none";
     none.hidden = true;
     list.appendChild(none);
@@ -1461,6 +1486,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     });
     var none = $("none");
     if (none) none.hidden = total !== 0;
+    if(none)none.querySelector('.suggest-missing').href=feedbackURL(null,true,$("q").value.trim());
     var selected = cats.length ? Core.category(bucket(data.rows,COL.cat).find(function(g){return g.key===cats[0];})?.label || cats[0],lang)
       : savedOnly ? t("saved") : trades.length ? Core.label(bucket(data.rows,COL.role).find(function(g){return g.key===trades[0];})?.label || trades[0],lang) : t("all");
     $("results").textContent = t("showing") + " " + total + " " + t("contacts") + " · " + (term ? (savedOnly?t("saved")+" · ":"")+"“" + $("q").value.trim() + "”" : selected);

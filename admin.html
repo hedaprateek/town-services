@@ -232,12 +232,17 @@
         <div><label for="contactPhone">Phone</label><input id="contactPhone" inputmode="tel" type="tel"></div>
       </div>
       <div class="row">
-        <div><label for="contactRole">Service / trade</label><input id="contactRole" list="roleOptions" placeholder="Plumber, Cook…"><datalist id="roleOptions"></datalist></div>
+        <div><label for="contactRole">Service / trade</label><input id="contactRole" list="roleOptions" placeholder="Plumber, Wallpaper Installation, or any title"><datalist id="roleOptions"></datalist></div>
         <div><label for="contactCategory">Category</label><input id="contactCategory" list="categoryOptions" placeholder="Repairs &amp; Maintenance…"><datalist id="categoryOptions"></datalist></div>
       </div>
+      <label for="contactJobs" style="margin-top:10px">Describe the jobs this person handles</label>
+      <textarea id="contactJobs" placeholder="Fits sliding aluminium windows, repairs frames and replaces window rollers"></textarea>
+      <p class="hint">Describe actual work they offer, using everyday words. These details appear in Show more and help people search.</p>
       <details><summary>Area, hours, charges and notes</summary>
         <div class="row"><div><label for="contactCovers">Area / work covered</label><input id="contactCovers"></div><div><label for="contactTimings">Hours / availability</label><input id="contactTimings"></div></div>
         <div class="row"><div><label for="contactCharges">Charges</label><input id="contactCharges"></div><div><label for="contactNotes">Notes</label><textarea id="contactNotes"></textarea></div></div>
+        <label for="contactSearchWords">Other names / search words (optional)</label><input id="contactSearchWords" placeholder="aluminium fitting, खिडकी फिटिंग, local names or spellings">
+        <p class="hint">Separate words or phrases with commas. These help search; they do not add text to the compact contact row.</p>
       </details>
       <div class="btns"><button id="saveContact" type="submit">Add to draft</button><button id="cancelContact" type="button" class="ghost">Cancel</button></div>
       <p class="hint">Saved changes stay in this page until you publish. Nothing is added to the live directory yet.</p>
@@ -362,7 +367,7 @@
      of truth that can disagree with it. */
   var DATA = "services.json";
   var SHEET = "services.xlsx";
-  var COLS = ["Name", "Role", "Category", "Phone", "Covers", "Charges", "Timings", "Notes"];
+  var COLS = ["Name", "Role", "Category", "Phone", "Covers", "Charges", "Timings", "Notes", "Jobs", "Search Words"];
   /* Sponsors have a fixed, short set of fields, unlike the contacts. An
      advertiser filling in whatever columns they like is how a paid slot ends
      up looking like one of the neighbours' listings. */
@@ -379,7 +384,7 @@
 
   var data = null, cols = COLS.slice(), dirty = false, baseline=null,editIndex=-1,editRow=null,pendingImport=null;
   var contactFields={Name:'contactName',Phone:'contactPhone',Role:'contactRole',Category:'contactCategory',
-    Covers:'contactCovers',Timings:'contactTimings',Charges:'contactCharges',Notes:'contactNotes'};
+    Covers:'contactCovers',Timings:'contactTimings',Charges:'contactCharges',Notes:'contactNotes',Jobs:'contactJobs','Search Words':'contactSearchWords'};
   function identity(r){return ServiceDirectory.contactId({id:r.ID||r.id,name:r.Name,role:r.Role,category:r.Category});}
   function changedSummary(){
     if(!data || !baseline)return 'Load the directory before making changes.';
@@ -401,7 +406,8 @@
     });
     if(!box.children.length)box.textContent='No matching contacts.';
     ['Role','Category'].forEach(function(field){var options=$(field==='Role'?'roleOptions':'categoryOptions');options.textContent='';
-      Array.from(new Set(data.rows.map(function(r){return r[field];}).filter(Boolean))).sort().forEach(function(value){var option=document.createElement('option');option.value=value;options.appendChild(option);});});
+      var examples=field==='Role'?['Aluminium Window Work','Wallpaper Installation']:['Windows & Doors','Wall Decoration'];
+      Array.from(new Set(data.rows.map(function(r){return r[field];}).filter(Boolean).concat(examples))).sort().forEach(function(value){var option=document.createElement('option');option.value=value;options.appendChild(option);});});
     $('draftSummary').textContent=changedSummary();
   }
   function openContact(index){
@@ -856,7 +862,8 @@
           return say("That list needs a Name column. It has: " + got.join(", "), "bad");
 
         var aliases={name:'Name',person:'Name',contact:'Name',service:'Name',role:'Role',trade:'Role',category:'Category',
-          phone:'Phone',mobile:'Phone',tel:'Phone',covers:'Covers',area:'Covers',charges:'Charges',timings:'Timings',hours:'Timings',notes:'Notes'};
+          phone:'Phone',mobile:'Phone',tel:'Phone',covers:'Covers',area:'Covers',charges:'Charges',timings:'Timings',hours:'Timings',notes:'Notes',
+          jobs:'Jobs',workdescription:'Jobs',jobdescription:'Jobs',searchwords:'Search Words',keywords:'Search Words',othernames:'Search Words'};
         rows=rows.map(function(r){var clean={};Object.keys(r).forEach(function(key){clean[aliases[normKey(key)]||key]=String(r[key]||'').trim();});return clean;});
         if(rows.some(function(r){return !r.Name;}))return say('Every contact needs a name. Fill in missing names and upload again.','bad');
         pendingImport={rows:rows,about:about,sponsors:brought};

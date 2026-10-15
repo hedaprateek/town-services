@@ -22,14 +22,18 @@
     ['societymanager','Society Manager','सोसायटी प्रबंधक','सोसायटी व्यवस्थापक',['building manager']],
     ['accountant','Accountant','लेखाकार','लेखापाल',['accounts','accounting','हिसाब','लेखा']],
     ['carcleaning','Car Cleaning','कार की सफाई','गाडी स्वच्छता',['car wash','car washing','गाड़ी की सफाई','गाडी धुणे']],
-    ['babysitter','Baby Sitter','बच्चों की देखभाल','बालसंगोपन',['babysitting','child care','nanny','मुलांची देखभाल']]
+    ['babysitter','Baby Sitter','बच्चों की देखभाल','बालसंगोपन',['babysitting','child care','nanny','मुलांची देखभाल']],
+    ['aluminiumwindowwork','Aluminium Window Work','अल्युमिनियम खिड़की का काम','अॅल्युमिनियम खिडकीचे काम',['aluminium window fittings','aluminum window fittings','aluminium window fitter']],
+    ['wallpaperinstallation','Wallpaper Installation','वॉलपेपर लगाना','वॉलपेपर लावणे',['wallpaper installer','wallpaper fixing','wall paper installation','install wallpaper']]
   ];
   var categories=[
     ['Repairs & Maintenance','मरम्मत और रखरखाव','दुरुस्ती व देखभाल'],
     ['Building Services','इमारत की सेवाएँ','इमारत सेवा'],
     ['Utilities','पानी, बिजली और गैस','पाणी, वीज व गॅस'],
     ['Society Staff','सोसायटी कर्मचारी','सोसायटी कर्मचारी'],
-    ['Home Help','घर के काम में मदद','घरकाम मदत']
+    ['Home Help','घर के काम में मदद','घरकाम मदत'],
+    ['Windows & Doors','खिड़कियाँ और दरवाज़े','खिडक्या व दरवाजे'],
+    ['Wall Decoration','दीवार की सजावट','भिंतीची सजावट']
   ];
   function normalize(value){return String(value||'').normalize('NFKC').toLowerCase()
     .replace(/[.,!?;:()[\]{}"'\/\\—–_-]+/g,' ').replace(/\s+/g,' ').trim();}
@@ -43,14 +47,30 @@
   aliases.sort(function(a,b){return b[0].length-a[0].length;});
   function query(value){var result=' '+normalize(value)+' ';
     aliases.forEach(function(a){result=result.split(' '+a[0]+' ').join(' '+a[1]+' ');});return normalize(result);}
+  var wordGroups=[
+    ['aluminium','aluminum','अल्युमिनियम','अॅल्युमिनियम'],
+    ['window','windows','खिड़की','खिड़कियाँ','खिडकी','खिडक्या'],
+    ['wallpaper','wallpapers','वॉलपेपर'],['sliding','slide','सरकती','सरकत्या'],
+    ['roller','rollers'],['install','installs','installing','installation','installations','installer','fit','fits','fitting','fittings','लगाना','लगाने','लावणे','लावणारा'],
+    ['repair','repairs','repairing','fix','fixes','fixed','stuck','broken','peeling','दुरुस्ती','दुरुस्त','मरम्मत'],
+    ['replace','replacement','replacing'],['door','doors'],['hinge','hinges'],['drawer','drawers'],['frame','frames']
+  ];
+  var words=new Map();wordGroups.forEach(function(group){group.forEach(function(word){words.set(word,group[0]);});});
+  var filler=new Set(['i','need','want','a','an','the','someone','person','who','does','can','my','your','our','in','on','at','to','for','of',
+    'house','home','please','help','with','me','is','has','it','and','get','मुझे','मेरे','घर','में','को','वाला','चाहिए','करने','के','की','का',
+    'माझ्या','मला','घरी','मध्ये','करणारा','हवा']);
+  function jobTokens(value){return normalize(value).replace(/\bwall paper\b/g,'wallpaper').replace(/\bwallpaper fixing\b/g,'wallpaper installation')
+    .split(' ').filter(function(word){return word && !filler.has(word);}).map(function(word){return words.get(word)||word;});}
   function index(row,role){var s=definition(role),values=Object.keys(row).map(function(k){return row[k];});
     var c=categories.find(function(c){return values.some(function(value){return normalize(value)===normalize(c[0]);});});
     var numbers=Object.keys(row).filter(function(key){return /^(phone|mobile|cell|tel|contactno|number)$/.test(normalize(key).replace(/\s/g,''));})
       .map(function(key){return phone(row[key]).replace(/^\+/,'');}).join(' ');
-    return normalize(values.join(' ')+' '+numbers+' '+(s?[s[0],s[1],s[2],s[3]].join(' '):'')+' '+(c?c.join(' '):''));}
+    var text=values.join(' ')+' '+numbers+' '+(s?[s[0],s[1],s[2],s[3]].join(' '):'')+' '+(c?c.join(' '):'');
+    return normalize(text+' '+jobTokens(text).join(' '));}
   function matches(hay,value){
     function all(text){return text.split(' ').every(function(word){return hay.indexOf(word)!==-1;});}
-    return all(normalize(value)) || all(query(value));
+    var tokens=jobTokens(value),available=new Set(hay.split(' '));
+    return all(normalize(value)) || all(query(value)) || (tokens.length>0 && tokens.every(function(word){return available.has(word);}));
   }
   function phone(value){var raw=String(value||'').trim();if(!raw||!/^[+()\d\s.-]+$/.test(raw))return '';
     var digits=raw.replace(/\D/g,'');return digits.length>=3&&digits.length<=15?(raw.charAt(0)==='+'?'+':'')+digits:'';}
