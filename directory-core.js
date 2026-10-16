@@ -61,7 +61,9 @@
     'माझ्या','मला','घरी','मध्ये','करणारा','हवा']);
   function jobTokens(value){return normalize(value).replace(/\bwall paper\b/g,'wallpaper').replace(/\bwallpaper fixing\b/g,'wallpaper installation')
     .split(' ').filter(function(word){return word && !filler.has(word);}).map(function(word){return words.get(word)||word;});}
-  function index(row,role){var s=definition(role),values=Object.keys(row).map(function(k){return row[k];});
+  function index(row,role){var s=definition(role),values=Object.keys(row).filter(function(k){
+      return !/^(source|source type|source checked|website|whatsapp|id)$/.test(normalize(k));
+    }).map(function(k){return row[k];});
     var c=categories.find(function(c){return values.some(function(value){return normalize(value)===normalize(c[0]);});});
     var numbers=Object.keys(row).filter(function(key){return /^(phone|mobile|cell|tel|contactno|number)$/.test(normalize(key).replace(/\s/g,''));})
       .map(function(key){return phone(row[key]).replace(/^\+/,'');}).join(' ');

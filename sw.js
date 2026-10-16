@@ -1,8 +1,8 @@
 /* Own caches only: other projects retain their offline copies. */
 var BASE = new URL('./', self.location.href);
 var PREFIX = 'town-services:' + BASE.pathname + ':';
-var SHELL = PREFIX + 'shell-v5';
-var DATA = PREFIX + 'data-v5';
+var SHELL = PREFIX + 'shell-v6';
+var DATA = PREFIX + 'data-v6';
 var PAGE = new URL('index.html', BASE).href;
 var LIST = new URL('services.json', BASE).href;
 var FILES = ['./','index.html','directory-core.js','manifest.webmanifest',

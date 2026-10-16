@@ -84,8 +84,16 @@ test('published public contacts retain source details and dialable emergency num
     assert.equal(new URL(row.Source).protocol,'https:');
     assert.match(row['Source checked'],/^\d{4}-\d{2}-\d{2}$/);
     assert.ok(row['Source type']);assert.ok(core.phone(row.Phone),row.Name);
-    assert.equal(row.WhatsApp,'No','Published telephone contact does not imply WhatsApp support');
+    assert.match(row.WhatsApp,/^(Yes|No)$/,'WhatsApp availability must be explicit for sourced contacts');
+    if(row.Phone.length<8)assert.equal(row.WhatsApp,'No','Helplines must not offer WhatsApp');
   }
   for(const [name,number] of [['Emergency Response — 112','112'],['Maharashtra Emergency Ambulance — 108','108'],['LPG Leak Emergency — 1906','1906']])
     assert.equal(data.rows.find(row=>row.Name===name)?.Phone,number);
+});
+
+test('source metadata does not create unrelated service search results',()=>{
+  const business={Name:'Garden Team',Role:'Gardener',Source:'https://example.test/ro-repairs',
+    'Source type':'Provider website','Source checked':'2026-10-16',WhatsApp:'No'};
+  assert.ok(!core.matches(core.index(business,business.Role),'RO'));
+  assert.ok(core.matches(core.index({...business,Jobs:'RO purifier servicing'},business.Role),'RO'));
 });

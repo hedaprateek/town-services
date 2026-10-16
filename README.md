@@ -157,6 +157,14 @@ Regional/national helplines are labelled in Covers. Published descriptions are k
 short, with no assumed prices or response times. The existing MSEDCL listing now has
 its official customer-care number. JSON and Excel contain the same contacts.
 
+On 16 October 2026, another 36 distinct business contacts were added: furniture and
+interiors, RO servicing, computers and CCTV, appliances, solar, construction,
+laundry, transport and travel, catering and venues, healthcare enquiries, and
+industrial support. The directory now has 66 listings, 51 with telephone numbers.
+Nearby providers and central brand booking numbers are identified in Covers or
+Notes. Manufacturer dealer listings retain their publication-year caveat. Listings
+whose contact sources could not be sufficiently confirmed were omitted.
+
 An optional `WhatsApp` column set to `No` suppresses that action for contacts that only
 publish a telephone channel. Existing listings retain their previous behaviour.
 
