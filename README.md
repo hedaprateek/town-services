@@ -148,6 +148,18 @@ A sheet whose name starts with `_` is ignored, so drafts can live in the same fi
 - Report incorrect details and Suggest a service open editable email drafts. Nothing
   is sent or added to the directory automatically; submissions need maintainer review.
 
+Public contacts added on 15 October 2026 include municipal/police office enquiries,
+local aluminium and vehicle-body businesses, gas services, a hospital enquiry line,
+and regional/national helplines available to Ichalkaranji residents. Each has a Source,
+Source type and Source checked date in Show more. Source checked means the published
+web listing was reviewed; numbers were not called and this does not endorse a provider.
+Regional/national helplines are labelled in Covers. Published descriptions are kept
+short, with no assumed prices or response times. The existing MSEDCL listing now has
+its official customer-care number. JSON and Excel contain the same contacts.
+
+An optional `WhatsApp` column set to `No` suppresses that action for contacts that only
+publish a telephone channel. Existing listings retain their previous behaviour.
+
 The website saves its page, search helper and complete directory for offline use after
 an online visit. The footer shows whether the offline copy is ready or being used.
 Network failures or malformed data use the last good directory. Only this directory's

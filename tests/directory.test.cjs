@@ -76,3 +76,16 @@ test('HTML scripts parse and the Android staging allowlist includes search witho
   const files=stage.match(/const FILES = \[([\s\S]*?)\];/)[1];
   assert.ok(files.includes('directory-core.js'));assert.ok(!files.includes('admin.html'));assert.ok(!files.includes('services.xlsx'));
 });
+test('published public contacts retain source details and dialable emergency numbers',()=>{
+  const data=JSON.parse(fs.readFileSync(path.join(root,'services.json'),'utf8'));
+  const sourced=data.rows.filter(row=>row.Source);
+  assert.ok(sourced.length>0);
+  for(const row of sourced){
+    assert.equal(new URL(row.Source).protocol,'https:');
+    assert.match(row['Source checked'],/^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(row['Source type']);assert.ok(core.phone(row.Phone),row.Name);
+    assert.equal(row.WhatsApp,'No','Published telephone contact does not imply WhatsApp support');
+  }
+  for(const [name,number] of [['Emergency Response — 112','112'],['Maharashtra Emergency Ambulance — 108','108'],['LPG Leak Emergency — 1906','1906']])
+    assert.equal(data.rows.find(row=>row.Name===name)?.Phone,number);
+});

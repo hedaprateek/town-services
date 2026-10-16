@@ -914,6 +914,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     notes: /^(notes|note|details|description|remark|remarks)$/,
     jobs: /^(jobs|workdescription|jobdescription)$/,
     keywords: /^(searchwords|keywords|othernames)$/,
+    whatsapp: /^whatsapp$/,
     // Two or three words: what they do, or where they go.
     info:  /^(covers|area|areas|serves|servicearea|speciality|specialty|works|worktype|does|for|tag|summary|shortnote|info|about)$/
   };
@@ -1011,7 +1012,8 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     call.setAttribute("aria-label", t("call") + " " + name);
     call.appendChild(svg(P.phone));
     acts.appendChild(call);
-    var w = waNum(ph);
+    var channel=pick(r,COL.whatsapp).toLowerCase();
+    var w = /^(no|false|0)$/.test(channel) ? "" : waNum(ph);
     if (w) {
       var wa = el("a", "b wa");
       wa.href = "https://wa.me/" + w;
@@ -1111,13 +1113,17 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 
     // Anything the sheet carries that has no column of its own here.
     var known = {};
-    ["name", "role", "cat", "rate", "time", "phone", "notes", "info", "jobs", "keywords"].forEach(function (k) {
+    ["name", "role", "cat", "rate", "time", "phone", "notes", "info", "jobs", "keywords", "whatsapp"].forEach(function (k) {
       for (var c in r) if (COL[k].test(c.toLowerCase().replace(/[^a-z]/g, ""))) known[c] = 1;
     });
     for (var c2 in r) {
       if (known[c2]) continue;
       var v = String(r[c2] || "").trim();
-      if (v) line(c2, v);
+      if (v){
+        var href=null;
+        if(/^(source|website)$/i.test(c2.trim())){try{var sourceURL=new URL(v);if(sourceURL.protocol==='https:' || sourceURL.protocol==='http:')href=sourceURL.href;}catch(error){}}
+        line(c2,v,href);
+      }
     }
 
     var acts = callButtons(r, name);
@@ -1446,6 +1452,12 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 
   function filter() {
     var term = $("q").value.trim().toLowerCase();
+    // Prefer a recognised trade when present: "नल" should not match "ऑनलाइन".
+    // If that trade is absent from this scope, retain ordinary name/partial search.
+    var searchTerm=term,resolved=Core.query?Core.query(term):Core.normalize(term);
+    if(resolved!==Core.normalize(term) && built.some(function(group){return group.items.some(function(item){
+      return (!savedOnly || savedContacts.has(item.id)) && Core.matches(item.hay,resolved);
+    });}))searchTerm=resolved;
     $("qx").hidden = !term;
     var total = 0;
     built.forEach(function (b) {
@@ -1454,7 +1466,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
         // Searching looks at the whole list; the chips only narrow browsing.
         // Across the strips it reads as "these categories, and of those, these
         // trades"; within a strip the picks add up rather than fight.
-        var hit = term ? Core.matches(it.hay,term)
+        var hit = term ? Core.matches(it.hay,searchTerm)
           : (!cats.length || cats.indexOf(it.group) !== -1) &&
             (!trades.length || trades.indexOf(it.role) !== -1);
         hit=hit && (!savedOnly || savedContacts.has(it.id));

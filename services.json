@@ -7,7 +7,7 @@
   "note": "These numbers are shared by neighbours. They are not verified or endorsed here — please check credentials and agree charges before engaging anyone. You do so at your own risk.",
   "noteHi": "ये नंबर पड़ोसियों द्वारा साझा किए गए हैं। इनकी जाँच या सिफ़ारिश यहाँ नहीं की गई है — किसी को काम देने से पहले पहचान जाँचें और शुल्क तय कर लें। जोखिम आपका अपना होगा।",
   "noteMr": "हे क्रमांक शेजाऱ्यांनी दिलेले आहेत. त्यांची पडताळणी किंवा शिफारस येथे केलेली नाही — काम देण्यापूर्वी ओळख तपासा आणि दर ठरवून घ्या. जोखीम आपली स्वतःची राहील.",
-  "updated": "2026-09-02",
+  "updated": "2026-10-15",
   "sheets": [
     "Services"
   ],
@@ -19,7 +19,13 @@
     "Timings",
     "Phone",
     "Notes",
-    "Covers"
+    "Covers",
+    "Jobs",
+    "Search Words",
+    "Source",
+    "Source type",
+    "Source checked",
+    "WhatsApp"
   ],
   "rows": [
     {
@@ -108,9 +114,14 @@
       "Category": "Utilities",
       "Charges": "",
       "Timings": "24x7 helpline",
-      "Phone": "",
+      "Phone": "1912",
       "Notes": "Outages and meter faults",
-      "Covers": ""
+      "Covers": "",
+      "Jobs": "Power supply complaints, billing enquiries and connection enquiries",
+      "Source": "https://www.mahadiscom.in/en/contact-us/",
+      "Source type": "Provider website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
     },
     {
       "Name": "Mahanagar Gas",
@@ -201,6 +212,165 @@
       "Phone": "",
       "Notes": "Experienced with toddlers",
       "Covers": ""
+    },
+    {
+      "Name": "Ichalkaranji Municipal Corporation",
+      "Role": "Municipal Services",
+      "Category": "Municipal Services",
+      "Phone": "+912302421451",
+      "Covers": "Ichalkaranji; Station Road, beside Guru Talkies, Vikas Nagar",
+      "Jobs": "Municipal office enquiries and civic services",
+      "Search Words": "municipality, nagarpalika, महानगरपालिका, नगरपालिका, नगरपरिषद",
+      "Source": "https://kolhapur.gov.in/en/public-utility/ichalkaranji/",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Ichalkaranji Sub-Division Police Office",
+      "Role": "Police Office",
+      "Category": "Public Help",
+      "Phone": "+912302434151",
+      "Covers": "Ichalkaranji police subdivision",
+      "Jobs": "Police subdivision office enquiries",
+      "Notes": "Office contact. For an immediate emergency, call 112.",
+      "Search Words": "police, SDPO, पोलीस, पुलिस",
+      "Source": "https://kolhapurpolice.gov.in/senior-officers",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Amanat Aluminium",
+      "Role": "Aluminium Window Work",
+      "Category": "Windows & Doors",
+      "Phone": "+919503215998",
+      "Covers": "Near Vakhar Bhag Road, Nehru Nagar, Kagwade Mala, Ichalkaranji",
+      "Jobs": "Manufacture and installation of aluminium windows and doors; glass and mirror enquiries",
+      "Search Words": "aluminum fitting, aluminium frames, खिडकी फिटिंग, अॅल्युमिनियम दरवाजे",
+      "Source": "https://amanat-aluminium.grexa.site/",
+      "Source type": "Business website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Raj Auto Spray Painting",
+      "Role": "Car Body Repairs",
+      "Category": "Vehicle Services",
+      "Phone": "+919579690087",
+      "Covers": "Ganga Nagar, Kabnur, Ichalkaranji",
+      "Jobs": "Vehicle dent removal, bodywork repairs and auto spray painting",
+      "Search Words": "car dent, bumper repair, car painting, गाडी डेंट, गाडी पेंटिंग",
+      "Source": "https://raj-auto-spraye-painting.ueniweb.com/",
+      "Source type": "Business website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "HPOIL Gas — Ichalkaranji Office",
+      "Role": "PNG Customer Care",
+      "Category": "Utilities",
+      "Phone": "+918956962691",
+      "Covers": "Behind Balaji Bakers, near Golden Showers Apartment, Sangli Naka, Ichalkaranji",
+      "Jobs": "Local piped natural gas customer-care enquiries",
+      "Search Words": "PNG connection, gas office, piped gas, गॅस कनेक्शन",
+      "Source": "https://hpoilgas.in/contact-help-line.php",
+      "Source type": "Provider website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "HPOIL Gas — Kolhapur Area Emergency",
+      "Role": "PNG Gas Emergency",
+      "Category": "Public Help",
+      "Phone": "+919422011021",
+      "Covers": "HPOIL Gas Kolhapur service area, including Ichalkaranji",
+      "Timings": "24 hours",
+      "Jobs": "Provider emergency contact for PNG gas leaks",
+      "Search Words": "piped gas leak, PNG leak, गॅस गळती",
+      "Source": "https://hpoilgas.in/contact-help-line.php",
+      "Source type": "Provider website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Emergency Response — 112",
+      "Role": "Emergency Helpline",
+      "Category": "Public Help",
+      "Phone": "112",
+      "Covers": "India-wide helpline, including Ichalkaranji",
+      "Jobs": "Police, fire and medical emergency assistance",
+      "Search Words": "police emergency, fire brigade, rescue, आग, अग्निशमन, आपत्कालीन मदत",
+      "Source": "https://www.112.gov.in/about",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Maharashtra Emergency Ambulance — 108",
+      "Role": "Ambulance",
+      "Category": "Public Help",
+      "Phone": "108",
+      "Covers": "Maharashtra, including Ichalkaranji",
+      "Timings": "24 hours",
+      "Jobs": "State emergency ambulance service",
+      "Search Words": "ambulance, accident, रुग्णवाहिका, एम्बुलेंस",
+      "Source": "https://nhm.maharashtra.gov.in/en/scheme/maharashtra-emergency-medical-services-mems-emergency-medical-service-on-call/",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "LPG Leak Emergency — 1906",
+      "Role": "LPG Gas Emergency",
+      "Category": "Public Help",
+      "Phone": "1906",
+      "Covers": "India-wide LPG leakage helpline, including Ichalkaranji",
+      "Timings": "24 hours",
+      "Jobs": "Emergency assistance for LPG cylinder leakage",
+      "Search Words": "cylinder leak, LPG leak, gas cylinder, सिलेंडर गळती, गैस रिसाव",
+      "Source": "https://iocl.com/contact-us",
+      "Source type": "Provider website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Cybercrime Helpline — 1930",
+      "Role": "Cybercrime Helpline",
+      "Category": "Public Help",
+      "Phone": "1930",
+      "Covers": "National helpline, including Ichalkaranji",
+      "Jobs": "Report cybercrime and cyber financial fraud",
+      "Search Words": "online fraud, UPI fraud, online scam, सायबर फसवणूक, ऑनलाइन धोखाधड़ी",
+      "Source": "https://cybercrime.gov.in/Hindi/Helplinehn.aspx",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Maharashtra Health Helpline — 104",
+      "Role": "Health Helpline",
+      "Category": "Healthcare",
+      "Phone": "104",
+      "Covers": "Maharashtra, including Ichalkaranji",
+      "Jobs": "Health advice, blood availability enquiries and grievance support",
+      "Search Words": "health advice, blood availability, आरोग्य सल्ला, रक्त उपलब्धता",
+      "Source": "https://nhm.maharashtra.gov.in/",
+      "Source type": "Government website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
+    },
+    {
+      "Name": "Ichalkaranji Durbin Centre",
+      "Role": "Hospital Enquiries",
+      "Category": "Healthcare",
+      "Phone": "+912302424415",
+      "Covers": "13/18, behind Uttam Talkies, Awade Nagar, Ichalkaranji",
+      "Jobs": "Hospital enquiries and appointments",
+      "Source": "https://ichalkaranjidurbincentre.com/",
+      "Source type": "Provider website",
+      "Source checked": "2026-10-15",
+      "WhatsApp": "No"
     }
   ]
 }

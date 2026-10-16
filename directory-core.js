@@ -94,6 +94,6 @@
     if(contact.notes)lines.push('NOTE:'+escape(contact.notes));
     lines.push('END:VCARD');return lines.map(fold).join('\r\n')+'\r\n';
   }
-  return {normalize:normalize,label:label,category:category,index:index,matches:matches,phone:phone,rank:rank,
+  return {normalize:normalize,label:label,category:category,index:index,matches:matches,query:query,phone:phone,rank:rank,
     contactId:contactId,vcard:vcard};
 });
