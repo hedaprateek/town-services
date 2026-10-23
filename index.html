@@ -179,6 +179,40 @@
 
   .tools{position:sticky;top:0;z-index:20;background:var(--navy);
     border-bottom:1px solid var(--line);padding:11px 0}
+  .section-nav{display:flex;gap:6px;margin-bottom:8px}
+  .section-nav button{flex:1;min-height:44px;padding:8px 10px;border:1px solid var(--line);
+    border-radius:10px;background:var(--navy-2);color:var(--fg-2);font:inherit;
+    font-size:calc(13px * var(--t));font-weight:650;cursor:pointer;line-height:1.3}
+  .section-nav button[aria-pressed="true"]{background:var(--teal);color:var(--on-accent);border-color:var(--teal)}
+  .section-nav button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .promotion-intro{margin-bottom:20px}
+  .promotion-intro h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:calc(24px * var(--t))}
+  .promotion-intro p{color:var(--fg-2);margin-top:6px;max-width:62ch}
+  .dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px}
+  .dashboard-link{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;
+    padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--navy-2);color:var(--fg);
+    font:inherit;cursor:pointer;min-width:0}
+  .dashboard-link:hover{border-color:var(--teal)}
+  .dashboard-link:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+  .dashboard-link strong{font-family:'Space Grotesk',Inter,sans-serif;font-size:calc(22px * var(--t))}
+  .dashboard-link span{color:var(--fg-2);font-size:calc(13px * var(--t))}
+  .dashboard-link .dashboard-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;
+    background:var(--navy-3);color:var(--teal);font-size:24px}
+  .dashboard-link .dashboard-count{margin-top:auto;color:var(--teal);font-weight:650}
+  .dashboard-link.promotion-link{background:color-mix(in srgb,var(--gold) 7%,var(--navy-2))}
+  .dashboard-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+  .dashboard-preview .adslot{margin:0}
+  .dashboard-preview .ad{flex-wrap:wrap;height:calc(100% - 24px)}
+  .dashboard-preview .adname,.dashboard-preview .adline{white-space:normal;overflow-wrap:anywhere}
+  .demo-note{padding:12px 14px;border:1px dashed var(--warn-line);border-radius:10px;
+    background:var(--warn-tint);color:var(--warn-fg);margin-bottom:18px;font-size:calc(13px * var(--t))}
+  .adslot.demo .adtag{color:var(--warn-fg)}
+  @media(max-width:559px){.dashboard-grid,.dashboard-preview{grid-template-columns:1fr}
+    .dashboard-link{padding:18px;gap:7px}.dashboard-link strong{font-size:calc(20px * var(--t))}}
+  #promotionList .adname,#promotionList .adline{white-space:normal;overflow-wrap:anywhere}
+  #promotionList .ad{flex-wrap:wrap}
+  #promotionList .adwho{flex-basis:150px}
+  #promotionList .adoffer{overflow-wrap:anywhere;max-width:100%}
   .sfield{position:relative;display:flex;align-items:center}
   .sfield>svg{position:absolute;left:13px;width:16px;height:16px;color:var(--muted);pointer-events:none}
   .sfield input{width:100%;font:inherit;font-size:calc((16px) * var(--t));color:var(--fg);min-height:var(--tap);
@@ -312,8 +346,7 @@
   /* The rail down the edge is the tell: no row on this page has one. */
   .ad::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;
     background:linear-gradient(var(--gold),var(--teal))}
-  /* The slot above the list gets the masthead's wash. It is the one that sells
-     first and it should look like it. */
+  /* Featured promotions use the masthead's background wash. */
   .ad.feature{padding:17px 16px}
   .ad.feature::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;
     background:radial-gradient(72% 140% at 100% 0%,
@@ -661,6 +694,112 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
   s.setAttribute("data-cf-beacon", JSON.stringify({ token: t }));
   document.head.appendChild(s);
 })();</script>
+<style>
+  /* Visual polish stays scoped so the contact directory retains its compact rows. */
+  .tools{background:color-mix(in srgb,var(--navy) 94%,transparent);backdrop-filter:blur(14px)}
+  .section-nav{padding:3px;border:1px solid var(--line);border-radius:14px;background:var(--navy-3)}
+  .section-nav button{border-color:transparent;background:transparent;border-radius:10px;
+    transition:background .18s,color .18s,box-shadow .18s}
+  .section-nav button[aria-pressed="true"]{box-shadow:0 3px 9px #00000015}
+  .dashboard-hero{position:relative;isolation:isolate;overflow:hidden;padding:30px;border-radius:22px;
+    background:linear-gradient(125deg,#103f3b,#17665c);color:#fff;box-shadow:0 12px 30px #103f3b18}
+  .dashboard-hero::before,.dashboard-hero::after{content:"";position:absolute;z-index:-1;border:1px solid #ffffff14;
+    border-radius:50%;width:280px;height:280px;right:-100px;top:-110px;pointer-events:none}
+  .dashboard-hero::after{width:390px;height:390px;right:-155px;top:-165px}
+  .dashboard-hero .promotion-intro{margin-bottom:21px}
+  .hero-place{display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;font-size:11px;
+    font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:#c4e7dd}
+  .hero-place::before{content:"";width:6px;height:6px;border-radius:50%;background:#9ee1bc;box-shadow:0 0 0 4px #9ee1bc15}
+  .dashboard-hero h2{font-size:calc(clamp(28px,4.5vw,39px) * var(--t));letter-spacing:-.04em;line-height:1.13;max-width:20ch}
+  .dashboard-hero .promotion-intro p{color:#d0e5df;font-size:calc(14px * var(--t));max-width:44ch}
+  .dashboard-hero .sfield input{border:1px solid #ffffff40;min-height:52px;border-radius:13px;
+    background:#fff;color:#163f39;box-shadow:0 4px 14px #00000012}
+  .dashboard-hero .sfield input::placeholder{color:#657b77}
+  .dashboard-hero .sfield>svg,.dashboard-hero .qx{color:#42635d}
+  .sfield input{transition:border-color .18s,box-shadow .18s}
+  .sfield input:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 18%,transparent)}
+  .dashboard-hero .sfield input:focus{outline:2px solid #b6e1cc;outline-offset:3px;box-shadow:none}
+  .quick-searches{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+  .quick-searches button{min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;
+    background:var(--navy-2);color:var(--fg-2);font:inherit;font-size:calc(12px * var(--t));cursor:pointer;
+    transition:background .18s,border-color .18s,transform .18s}
+  .dashboard-hero .quick-searches button{border-color:#ffffff30;background:#ffffff0d;color:#ecf8f2}
+  .quick-searches button[aria-pressed="true"]{background:var(--teal);color:var(--on-accent)}
+  .quick-searches button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+  .dashboard-hero .quick-searches button:focus-visible{outline-color:#b6e1cc}
+  .dashboard-grid{margin:18px 0 26px}
+  .dashboard-link{position:relative;overflow:hidden;border-radius:17px;padding:20px;
+    box-shadow:0 3px 12px #00000003;transition:transform .2s,border-color .2s,box-shadow .2s}
+  .dashboard-link::after{content:'↗';position:absolute;right:18px;top:18px;font-size:22px;color:var(--muted);
+    transition:transform .2s}
+  .dashboard-link strong{letter-spacing:-.025em}
+  .dashboard-link .dashboard-icon{border:1px solid color-mix(in srgb,var(--teal) 14%,transparent);
+    background:color-mix(in srgb,var(--teal) 9%,var(--navy-2));border-radius:12px}
+  .dashboard-link.promotion-link .dashboard-icon{color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--navy-2));border-color:var(--warn-line)}
+  .dashboard-link .dashboard-count{padding-top:6px;font-size:calc(12px * var(--t))}
+  #dashboardPreviewTitle{font-size:calc(19px * var(--t));letter-spacing:-.025em;margin-bottom:10px}
+  .demo-note{border:0;border-left:3px solid var(--warn-line);background:var(--warn-tint);
+    border-radius:4px 10px 10px 4px;font-size:calc(12px * var(--t));line-height:1.6;margin-top:12px}
+  #promotionList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+  #promotionList>.demo-note,#promotionList>.empty,#promotionList>.adask{grid-column:1/-1}
+  #promotionList>.demo-note{margin:0}
+  .dashboard-preview .adslot,#promotionList .adslot,#dashboardSearchResults .adslot{position:relative;
+    margin:0;border:1px solid var(--line);border-radius:17px;overflow:hidden;background:var(--navy-2);
+    box-shadow:0 3px 14px #00000004;transition:transform .22s,box-shadow .22s,border-color .22s}
+  #dashboardSearchResults .adslot{margin-top:12px}
+  .business-art{position:relative;height:132px;overflow:hidden;background:var(--art-bg,#e0ede6);color:var(--art-fg,#28634d)}
+  .business-art::after{content:"";position:absolute;width:170px;height:170px;border:1px solid currentColor;
+    opacity:.1;border-radius:50%;right:-30px;top:-65px}
+  .business-art svg{position:absolute;right:16px;bottom:5px;width:165px;height:116px}
+  .business-art-label{position:absolute;left:16px;bottom:17px;font-size:11px;font-weight:700;
+    max-width:42%;line-height:1.4;letter-spacing:.04em}
+  .dashboard-preview .adtag,#promotionList .adtag,#dashboardSearchResults .adtag{position:absolute;z-index:2;
+    top:12px;left:14px;padding:4px 8px;border-radius:6px;background:#ffffffeb;color:#314e42;font-size:9px}
+  .dashboard-preview .adtag::before,#promotionList .adtag::before,#dashboardSearchResults .adtag::before{display:none}
+  .dashboard-preview .ad,#promotionList .ad,#dashboardSearchResults .ad{height:auto;border:0;border-radius:0;padding:17px;
+    background:none;gap:10px;box-shadow:none;flex-wrap:wrap}
+  .dashboard-preview .ad::before,.dashboard-preview .ad::after,#promotionList .ad::before,#promotionList .ad::after,
+  #dashboardSearchResults .ad::before,#dashboardSearchResults .ad::after{display:none}
+  .dashboard-preview .admono,#promotionList .admono,#dashboardSearchResults .admono{display:none}
+  .dashboard-preview .adwho,#promotionList .adwho,#dashboardSearchResults .adwho{flex:1 1 100%;min-width:0}
+  .dashboard-preview .adname,#promotionList .adname{font-size:calc(17px * var(--t));letter-spacing:-.02em}
+  .ad:not(.feature):not(.vacant) .adline{display:block}
+  .product-tags{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 2px}
+  .product-tags span{padding:3px 7px;border-radius:5px;background:var(--navy-3);color:var(--muted);font-size:calc(10.5px * var(--t));overflow-wrap:anywhere}
+  .adoffer{border:0;border-radius:5px;padding:5px 8px;font-size:calc(11px * var(--t));line-height:1.5}
+  .contact-result{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;
+    padding:13px 14px;border:1px solid var(--line);border-radius:11px;background:var(--navy-2);color:var(--fg);
+    font:inherit;margin-top:7px;cursor:pointer;overflow-wrap:anywhere}
+  .contact-result span{font-size:calc(12px * var(--t));color:var(--muted);text-align:right}
+  .section-enter{animation:section-in .28s ease-out both}
+  @keyframes section-in{from{opacity:.45;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+  button,a{-webkit-tap-highlight-color:transparent}
+  @media(hover:hover){
+    .dashboard-link:hover{transform:translateY(-3px);box-shadow:0 10px 25px #153c3010}
+    .dashboard-link:hover::after{transform:translate(2px,-2px)}
+    #promotionList .adslot:hover,.dashboard-preview .adslot:hover{transform:translateY(-3px);box-shadow:0 10px 24px #153c3010;border-color:color-mix(in srgb,var(--teal) 35%,var(--line))}
+    .quick-searches button:hover{transform:translateY(-1px);border-color:var(--teal)}
+    .dashboard-hero .quick-searches button:hover{background:#ffffff22;border-color:#ffffff65}
+    .contact-result:hover{border-color:var(--teal);background:var(--navy-3)}
+  }
+  @media(max-width:559px){
+    .dashboard-hero{padding:22px 18px;border-radius:18px}.dashboard-hero h2{font-size:calc(30px * var(--t))}
+    .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .dashboard-link{padding:15px 12px;gap:9px}.dashboard-link strong{font-size:calc(17px * var(--t));line-height:1.25;overflow-wrap:anywhere}
+    .dashboard-link span{font-size:calc(11.5px * var(--t))}.dashboard-link::after{right:10px;top:12px;font-size:18px}
+    .dashboard-link .dashboard-icon{width:34px;height:34px;font-size:21px}
+    #promotionList{grid-template-columns:1fr;gap:14px}.business-art{height:126px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+  @media print{
+    .dashboard-hero{background:#fff;color:#000;box-shadow:none;border:1px solid #bbb}
+    .dashboard-hero .promotion-intro p,.hero-place{color:#333}
+    .quick-searches,.business-art,.product-tags,.dashboard-link::after{display:none!important}
+    .section-enter{animation:none}.dashboard-preview .adslot,#promotionList .adslot{box-shadow:none}
+  }
+</style>
 </head>
 <body>
 
@@ -696,6 +835,12 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 
 <div class="tools" id="tools">
   <div class="wrap">
+    <nav class="section-nav" aria-label="Sections" id="sectionNav">
+      <button id="dashboardTab" type="button" aria-pressed="true" aria-controls="dashboardPanel">Home</button>
+      <button id="contactsTab" type="button" aria-pressed="false" aria-controls="contactsPanel">All Contacts</button>
+      <button id="promotionsTab" type="button" aria-pressed="false" aria-controls="promotionsPanel">Business Promotions</button>
+    </nav>
+    <div id="contactTools" hidden>
     <div class="sfield-row">
     <div class="sfield">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg>
@@ -715,13 +860,38 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     <div class="chips sub" id="chips2" hidden></div>
     <details class="more-services" id="moreServices"><summary id="moreServicesLabel">More services</summary><div class="chips" id="extraServices"></div></details>
     <div class="result-bar"><p id="results" role="status" aria-live="polite"></p><button class="reset-filter" id="resetFilters" type="button" hidden></button></div>
+    </div>
   </div>
 </div>
 
 <main>
-  <div class="wrap"><div id="adtop"></div></div>
+  <section class="wrap" id="dashboardPanel" aria-labelledby="dashboardTitle">
+    <div class="dashboard-hero">
+    <div class="promotion-intro"><span class="hero-place" id="heroPlace"></span><h2 id="dashboardTitle">Your town, one place.</h2><p id="dashboardIntro"></p></div>
+    <div class="sfield"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg><input id="dashboardSearch" type="search" autocomplete="off"><button class="qx" id="dashboardClear" type="button" hidden aria-label="Clear">×</button></div>
+    <div class="quick-searches" id="quickSearches"></div>
+    </div>
+    <div id="dashboardSearchResults" hidden aria-live="polite"></div>
+    <div class="dashboard-grid" id="dashboardChoices">
+      <button class="dashboard-link" id="dashboardContacts" type="button"><span class="dashboard-icon" aria-hidden="true">☷</span><strong id="dashboardContactsTitle"></strong><span id="dashboardContactsText"></span><span class="dashboard-count" id="dashboardContactsCount"></span></button>
+      <button class="dashboard-link promotion-link" id="dashboardPromotions" type="button"><span class="dashboard-icon" aria-hidden="true">✦</span><strong id="dashboardPromotionsTitle"></strong><span id="dashboardPromotionsText"></span><span class="dashboard-count" id="dashboardPromotionsCount"></span></button>
+    </div>
+    <h3 id="dashboardPreviewTitle"></h3>
+    <p class="demo-note" id="dashboardDemoNote" hidden></p>
+    <div class="dashboard-preview" id="dashboardPreview"></div>
+  </section>
+  <section id="contactsPanel" aria-labelledby="contactsTab" hidden>
   <div class="wrap" id="list"></div>
   <div class="wrap"><details class="category-browse"><summary id="browseCategories">Browse by category</summary><div class="tiles" id="tiles"></div></details></div>
+  </section>
+  <section class="wrap" id="promotionsPanel" aria-labelledby="promotionsTab" hidden>
+    <div class="promotion-intro"><h2 id="promotionsTitle">Business Promotions</h2><p id="promotionsIntro"></p></div>
+    <div class="sfield"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg><input id="promotionSearch" type="search" autocomplete="off"><button class="qx" id="promotionClear" type="button" hidden aria-label="Clear">×</button></div>
+    <div class="promotion-filters quick-searches" id="promotionFilters" aria-label="Business types"></div>
+    <p id="promotionResults" class="stats" role="status"></p>
+    <div id="promotionList"></div>
+    <p class="fnote" id="promotionNote"></p>
+  </section>
 </main>
 
 <div class="sheet-wrap" id="sheet" hidden></div>
@@ -740,7 +910,6 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
       </div>
       <p class="fnote" id="fnote"></p>
     </div>
-    <div class="adstrip" id="adstrip" hidden></div>
     <p class="offline-status" id="offlineState" role="status"></p>
     <div class="feedback-links"><a id="suggestService"></a><a id="reportDirectory"></a></div>
     <div class="fbar">
@@ -763,6 +932,9 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 (function () {
   "use strict";
   var Core = ServiceDirectory;
+  function sectionFromHash(){return location.hash === '#promotions' ? 'promotions' :
+    location.hash === '#contacts' || location.hash.indexOf('#contact=')===0 ? 'contacts' : 'dashboard';}
+  var section = sectionFromHash();
   var T = {
     en: { search:"Search a trade or a name…", all:"All", allTrades:"All trades", other:"Other",
           call:"Call", wa:"WhatsApp", share:"Share", copied:"Copied to the clipboard",
@@ -796,6 +968,66 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
           adsAsk:"या जागेबद्दल विचारा",
           adNote:"“प्रायोजित” असे लिहिलेल्या जागा पैसे देऊन घेतलेल्या आहेत. त्यांची पडताळणी किंवा शिफारस केलेली नाही, आणि त्या शेजाऱ्यांच्या यादीचा भाग नाहीत." }
   };
+  Object.assign(T.en, {allContacts:'All Contacts',promotions:'Business Promotions',sections:'Sections',
+    promotionsIntro:'Discover local business advertisements and offers.',noPromotions:'No business promotions yet.',
+    noPromotionsHelp:'Local business promotions will appear here when added.',promoteBusiness:'Promote your business',
+    promotionDisclaimer:'Promotions are advertisements, not recommendations. Confirm offers and details directly with the business.'});
+  Object.assign(T.hi, {allContacts:'सभी संपर्क',promotions:'व्यवसाय प्रचार',sections:'विभाग',
+    promotionsIntro:'स्थानीय व्यवसायों के विज्ञापन और ऑफ़र देखें।',noPromotions:'अभी कोई व्यवसाय प्रचार नहीं है।',
+    noPromotionsHelp:'जोड़े जाने पर स्थानीय व्यवसायों के प्रचार यहाँ दिखेंगे।',promoteBusiness:'अपने व्यवसाय का प्रचार करें',
+    promotionDisclaimer:'प्रचार विज्ञापन हैं, सिफ़ारिशें नहीं। ऑफ़र और जानकारी सीधे व्यवसाय से जाँचें।'});
+  Object.assign(T.mr, {allContacts:'सर्व संपर्क',promotions:'व्यवसाय जाहिराती',sections:'विभाग',
+    promotionsIntro:'स्थानिक व्यवसायांच्या जाहिराती आणि ऑफर पहा.',noPromotions:'अद्याप व्यवसाय जाहिराती नाहीत.',
+    noPromotionsHelp:'स्थानिक व्यवसायांच्या जाहिराती जोडल्यावर येथे दिसतील.',promoteBusiness:'तुमच्या व्यवसायाची जाहिरात करा',
+    promotionDisclaimer:'या जाहिराती आहेत, शिफारसी नाहीत. ऑफर आणि तपशील थेट व्यवसायाकडून तपासा.'});
+  Object.assign(T.en,{home:'Home',dashboardTitle:'Your town, one place.',dashboardIntro:'Find a useful contact or explore local businesses.',
+    contactHint:'Search local services and call directly.',promotionHint:'Discover products, services and business offers.',previewTitle:'Business spotlight',
+    demo:'Demo',demoNotice:'Fictional sample businesses for demonstration only. Offers are examples; no bookings or purchases are available.',
+    businessSearch:'Search names, products, types…',demoCount:'demo promotions',promotionCount:'business promotions',
+    searchContacts:'Matching contacts',searchPromotions:'Matching businesses',noBusinessMatches:'No matching businesses. Try a product, name or business type.'});
+  Object.assign(T.hi,{home:'होम',dashboardTitle:'अपना शहर, एक जगह।',dashboardIntro:'ज़रूरी संपर्क खोजें या स्थानीय व्यवसाय देखें।',
+    contactHint:'स्थानीय सेवाएँ खोजें और सीधे कॉल करें।',promotionHint:'उत्पाद, सेवाएँ और व्यवसायों के ऑफ़र देखें।',previewTitle:'व्यवसायों की झलक',
+    demo:'डेमो',demoNotice:'ये केवल प्रदर्शन के लिए काल्पनिक व्यवसाय हैं। ऑफ़र उदाहरण हैं; बुकिंग या खरीदारी उपलब्ध नहीं है।',
+    businessSearch:'व्यवसाय का नाम, उत्पाद या प्रकार खोजें…',demoCount:'डेमो प्रचार',promotionCount:'व्यवसाय प्रचार',
+    searchContacts:'मिलते-जुलते संपर्क',searchPromotions:'मिलते-जुलते व्यवसाय',noBusinessMatches:'कोई व्यवसाय नहीं मिला। उत्पाद, नाम या व्यवसाय का प्रकार खोजें।'});
+  Object.assign(T.mr,{home:'मुख्यपृष्ठ',dashboardTitle:'आपले शहर, एकाच ठिकाणी.',dashboardIntro:'उपयुक्त संपर्क शोधा किंवा स्थानिक व्यवसाय पहा.',
+    contactHint:'स्थानिक सेवा शोधा आणि थेट फोन करा.',promotionHint:'उत्पादने, सेवा आणि व्यवसायांच्या ऑफर पहा.',previewTitle:'व्यवसायांची झलक',
+    demo:'डेमो',demoNotice:'हे केवळ प्रात्यक्षिकासाठी काल्पनिक व्यवसाय आहेत. ऑफर उदाहरणे आहेत; बुकिंग किंवा खरेदी उपलब्ध नाही.',
+    businessSearch:'व्यवसायाचे नाव, उत्पादन किंवा प्रकार शोधा…',demoCount:'डेमो जाहिराती',promotionCount:'व्यवसाय जाहिराती',
+    searchContacts:'जुळणारे संपर्क',searchPromotions:'जुळणारे व्यवसाय',noBusinessMatches:'व्यवसाय सापडला नाही. उत्पादन, नाव किंवा व्यवसायाचा प्रकार शोधा.'});
+  var demoBusinesses=[
+    {name:'Sample Home Studio',type:'Furniture & Interiors',products:'Sofas, wardrobes, modular kitchens, wall panels, furniture, फर्निचर, सोफा, कपाट',line:'Furniture and fresh ideas for your home',offer:'Demo offer · free design consultation',demo:true},
+    {name:'Sample Tech Care',type:'Electronics & Repairs',products:'Laptops, computers, CCTV cameras, printers, repair, संगणक, दुरुस्ती, कंप्यूटर',line:'Computer care and smarter security',offer:'Demo offer · laptop check-up package',demo:true},
+    {name:'Sample Celebration Kitchen',type:'Catering & Events',products:'Wedding catering, birthday menus, vegetarian meals, tiffin, जेवण, खानपान, टिफिन',line:'Menus for family celebrations and everyday meals',offer:'Demo offer · celebration menu package',demo:true},
+    {name:'Sample Solar Living',type:'Solar & Energy',products:'Rooftop solar panels, inverters, batteries, installation, सौर ऊर्जा, सोलर',line:'Explore solar options for your home',offer:'Demo offer · rooftop survey',demo:true}
+  ];
+  function promotionInventory(){var live=adsFor('top').concat(adsFor('feed'),adsFor('footer'));return live.length?live:demoBusinesses;}
+  function businessArtwork(s){
+    var text=String(s.type||s.products||s.name).toLowerCase(),kind=/furniture|interior|home/.test(text)?'home':
+      /computer|electronic|tech|repair/.test(text)?'tech':/cater|food|event|kitchen/.test(text)?'food':/solar|energy/.test(text)?'solar':'shop';
+    var art={
+      home:['#e5e8dc','#526b48','<path d="M23 67V39l48-25 48 25v28"/><rect x="30" y="66" width="84" height="29" rx="6"/><path d="M39 65V54a7 7 0 017-7h51a7 7 0 017 7v11M43 95v7m58-7v7M71 49v16M21 102h108"/><path d="M122 59v42m-9-42h18l-4-18h-10z"/>'],
+      tech:['#e0eaf3','#386583','<rect x="29" y="27" width="91" height="57" rx="5"/><path d="M37 35h75v40H37zM67 85v10m15-10v10M54 98h40M20 105h111M52 48l-9 9 9 9m42-18 9 9-9 9m-15-18-9 18"/>'],
+      food:['#f4e4d8','#9b633e','<ellipse cx="75" cy="70" rx="38" ry="30"/><ellipse cx="75" cy="70" rx="26" ry="20"/><path d="M21 35v26m-6-26v14q0 9 6 9t6-9V35m-6 27v38M128 35q-12 0-12 22v13h12m0-35v65M69 16q-7 8 0 15m14-15q-7 8 0 15"/>'],
+      solar:['#f3edd5','#88732d','<path d="M29 53h88l14 42H16zM24 74h99M58 53l-7 42m35-42 6 42M67 96v9m16-9v9M57 106h36"/><circle cx="111" cy="25" r="11"/><path d="M111 7V2m18 23h6m-37 0h-6m32-13 4-4m-30 4-4-4M40 25l-5 12h10l-5 11"/>'],
+      shop:['#e4e9e2','#456a5c','<path d="M27 46h97l-9-22H36zM32 47v55h87V47M23 104h105M48 102V70h25v32m15-32h20v17H88zM27 46v7q10 13 20 0 10 13 19 0 10 13 20 0 10 13 19 0 10 13 19 0v-7"/>']
+    }[kind];
+    var box=el('div','business-art');box.setAttribute('aria-hidden','true');
+    box.style.setProperty('--art-bg',art[0]);box.style.setProperty('--art-fg',art[1]);
+    var drawing=document.createElementNS('http://www.w3.org/2000/svg','svg');drawing.setAttribute('viewBox','0 0 150 115');
+    drawing.setAttribute('fill','none');drawing.setAttribute('stroke','currentColor');drawing.setAttribute('stroke-width','2');
+    drawing.setAttribute('stroke-linecap','round');drawing.setAttribute('stroke-linejoin','round');drawing.innerHTML=art[2];
+    box.appendChild(drawing);box.appendChild(el('span','business-art-label',s.type||s.name));return box;
+  }
+  function promotionCard(s){
+    var card=adCard(s,s.slot==='top');
+    if(s.products){var tags=el('div','product-tags');String(s.products).split(',').slice(0,3).forEach(function(product){
+      tags.appendChild(el('span',null,product.trim()));});card.querySelector('.adwho').appendChild(tags);}
+    var block=adBlock(card,!s.demo);
+    block.insertBefore(businessArtwork(s),card);
+    if(s.demo){block.classList.add('demo');block.insertBefore(el('div','adtag',t('demo')),card);}
+    return block;
+  }
   /* What is chosen, not what is chosen singular: someone wanting a plumber and
      an electrician for the same job should not have to look twice. `cats` holds
      category keys, `trades` the trades inside them; empty means no narrowing. */
@@ -1170,6 +1402,7 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
 
   function openLinkedContact(){
     if(!data || location.hash.indexOf('#contact=')!==0)return;
+    showSection('contacts');
     var id=new URLSearchParams(location.hash.slice(1)).get('contact');
     var match=data.rows.find(function(r){return contactId(r)===id;});
     if(match)openSheet(match,pick(match,COL.name));else toast(t("contactMissing"));
@@ -1210,15 +1443,12 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
      "plumber", and cannot be forwarded to somebody as a number a neighbour
      vouched for, because none of that code can see it.
 
-     Three slots: `top`, one card above the list; `feed`, between the category
-     blocks; `footer`, named together at the bottom. */
+     The existing slot values set promotion order: top, feed, then footer.
+     All promotion cards live in the separate Business Promotions section. */
   function today() { return new Date().toISOString().slice(0, 10); }
-  /* Whether this list is selling space at all. With no contact to point an
-     advertiser at, an empty slot is furniture with nothing behind it — so a
-     town that has not set one sees no advertising apparatus whatsoever. */
+  /* An optional advertising contact controls the booking invitation.
+     The promotions section remains available even without this setting. */
   function adsOpen() { return !!String((data && data.adsContact) || "").trim(); }
-  // Set by the top slot when it takes the one invitation going.
-  var vacantShown = false;
   function adsFor(slot) {
     var now = today();
     return (data.sponsors || []).filter(function (s) {
@@ -1231,13 +1461,6 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
       if (!/^\d{4}-\d{2}-\d{2}$/.test(till)) return true;
       return till >= now;
     });
-  }
-  /* Where more than one has bought the same slot, they take turns by visit
-     rather than the first one in the sheet taking every impression. */
-  function rotate(list) {
-    if (list.length < 2) return list;
-    var n = Math.floor(Math.random() * list.length);
-    return list.slice(n).concat(list.slice(0, n));
   }
   function adActs(s) {
     var acts = el("div", "adacts");
@@ -1410,28 +1633,6 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
                    subs: subs, items: items, ad: null });
     });
 
-    /* A feed slot belongs to the block above it, so that when a chip hides that
-       block the advert goes with it instead of being left stranded between two
-       unrelated headings. */
-    var feed = rotate(adsFor("feed"));
-    if (feed.length || (adsOpen() && !vacantShown)) {
-      built.forEach(function (b, i) {
-        if (i % 3 !== 0) return;                        // after the 1st, 4th, 7th…
-        var n = Math.floor(i / 3);
-        /* One appearance each. Cycling a short list to fill every position
-           would print the same advert twice on one screen, which reads as a
-           page padded with advertising rather than a page carrying two. */
-        if (n >= feed.length && feed.length) return;
-        var s = feed.length ? feed[n] : null;
-        // A page with no sponsors at all shows the invitation once, not once
-        // per category.
-        if (!s && (n > 0 || vacantShown)) return;
-        var slot = adBlock(s ? adCard(s) : vacantCard(), !!s);
-        list.insertBefore(slot, b.wrap.nextSibling);
-        b.ad = slot;
-      });
-    }
-
     var none = el("div", "empty");
     var noSaved=savedOnly && !savedCount();
     none.appendChild(el("h2",null,t(noSaved?"savedEmpty":"none")));
@@ -1491,10 +1692,6 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
       b.wrap.hidden = !shown;
       if (b.n) b.n.textContent = String(shown);
       if (b.head) b.head.hidden = !shown || (!term && cats.length === 1);
-      /* Advertising goes when the block it sits under goes, and it goes
-         entirely while somebody is searching: a person who typed "plumber" is
-         looking for a plumber, and the results are not the place to sell. */
-      if (b.ad) b.ad.hidden = !shown || !!term || savedOnly;
     });
     var none = $("none");
     if (none) none.hidden = total !== 0;
@@ -1547,40 +1744,80 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     });
   }
 
-  /* The slot above the list, and the row of names in the footer. Neither sits
-     inside the list, so neither is touched by the chips or the search. */
-  function drawTopAd() {
-    var box = $("adtop");
-    box.textContent = "";
-    var top = rotate(adsFor("top"));
-    if (top.length) { box.appendChild(adBlock(adCard(top[0], true), true)); return; }
-    // Asking for advertisers twice on one page reads as a page with no
-    // advertisers, so the invitation is shown once and this is its first
-    // refusal: the slot at the top is the one worth offering.
-    if (adsOpen()) { box.appendChild(adBlock(vacantCard(), false)); vacantShown = true; }
-  }
-  function drawFooterAds() {
-    var box = $("adstrip");
-    box.textContent = "";
-    var list = adsFor("footer");
-    box.hidden = !list.length;
-    if (!list.length) return;
-    // "Sponsored · Supported by" — the word that makes the footer note apply
-    // to this row too, said before the names rather than trailing after them.
-    box.appendChild(el("span", "lbl", t("sponsored") + " · " + t("supportedBy")));
-    list.forEach(function (s) {
-      var link = String(s.link || "").trim();
-      var isLink = /^https?:\/\//i.test(link);
-      var chip = el(isLink ? "a" : "span", "adchip");
-      if (isLink) {
-        chip.href = link; chip.target = "_blank";
-        chip.rel = "noopener noreferrer nofollow sponsored";
-      }
-      chip.appendChild(el("span", "m", initials(s.name)));
-      chip.appendChild(document.createTextNode(s.name));
-      box.appendChild(chip);
+  function showSection(next) {
+    var previous=section;
+    section = ['contacts','promotions'].indexOf(next)>=0 ? next : 'dashboard';
+    document.documentElement.setAttribute('data-section',section);
+    ['dashboard','contacts','promotions'].forEach(function(name){
+      $(name+'Panel').hidden=section!==name;
+      $(name+'Tab').setAttribute('aria-pressed',String(section===name));
     });
+    $('contactTools').hidden=section!=='contacts';
+    if(previous!==section){var panel=$(section+'Panel');panel.classList.remove('section-enter');
+      requestAnimationFrame(function(){panel.classList.add('section-enter');});}
   }
+  ['dashboard','contacts','promotions'].forEach(function(name){
+    $(name+'Tab').addEventListener('click',function(){
+      showSection(name);if(location.hash!=='#'+name)location.hash=name;
+    });
+  });
+  ['Contacts','Promotions'].forEach(function(name){$('dashboard'+name).addEventListener('click',function(){$(name.toLowerCase()+'Tab').click();});});
+  addEventListener('hashchange',function(){showSection(sectionFromHash());});
+  function drawPromotions() {
+    var box=$('promotionList');box.textContent='';
+    var inventory=promotionInventory(),term=$('promotionSearch').value;
+    var list=inventory.filter(function(s){return Core.promotionMatches(s,term);});
+    $('promotionClear').hidden=!term;
+    $('promotionResults').textContent=list.length+' / '+inventory.length+' '+t(inventory[0]?.demo?'demoCount':'promotionCount');
+    var filters=$('promotionFilters');filters.textContent='';
+    var types=[...new Set(inventory.map(function(s){return s.type;}).filter(Boolean))];
+    [t('all')].concat(types).forEach(function(type,i){var button=el('button',null,type);button.type='button';
+      button.setAttribute('aria-pressed',String(i===0?!term:Core.normalize(type)===Core.normalize(term)));
+      button.addEventListener('click',function(){$('promotionSearch').value=i===0||type===term?'':type;drawPromotions();});filters.appendChild(button);});
+    if(inventory[0]?.demo)box.appendChild(el('p','demo-note',t('demoNotice')));
+    if(!list.length)box.appendChild(el('p','empty',t('noBusinessMatches')));
+    list.forEach(function(s){box.appendChild(promotionCard(s));});
+    if(adsOpen())box.appendChild(adBlock(vacantCard(),false));
+    else {var ask=el('a','ghost-btn adask',t('promoteBusiness'));ask.href=feedbackURL(null,true,t('promoteBusiness'));box.appendChild(ask);}
+    $('promotionNote').textContent=t('promotionDisclaimer');
+  }
+  function drawDashboardSearch(){
+    var box=$('dashboardSearchResults'),value=$('dashboardSearch').value.trim();
+    ['dashboardChoices','dashboardPreviewTitle','dashboardPreview'].forEach(function(id){$(id).hidden=!!value;});
+    $('dashboardDemoNote').hidden=!!value||!promotionInventory()[0]?.demo;
+    box.hidden=!value;$('dashboardClear').hidden=!value;box.textContent='';if(!value)return;
+    var contacts=data.rows.filter(function(r){return Core.matches(Core.index(r,pick(r,COL.role)),value);});
+    box.appendChild(el('h3','gsub',t('searchContacts')+' · '+contacts.length));
+    contacts.slice(0,5).forEach(function(r){var b=el('button','contact-result',pick(r,COL.name));b.type='button';
+      b.appendChild(el('span',null,Core.label(pick(r,COL.role),lang)+' →'));
+      b.addEventListener('click',function(){showSection('contacts');openSheet(r,pick(r,COL.name));});box.appendChild(b);});
+    if(contacts.length>5){var more=el('button','reset-filter',t('allContacts'));more.type='button';more.addEventListener('click',function(){
+      $('contactsTab').click();$('q').value=value;filter();});box.appendChild(more);}
+    var promotions=promotionInventory().filter(function(s){return Core.promotionMatches(s,value);});
+    box.appendChild(el('h3','gsub',t('searchPromotions')+' · '+promotions.length));
+    if(promotions.some(function(s){return s.demo;}))box.appendChild(el('p','demo-note',t('demoNotice')));
+    promotions.forEach(function(s){box.appendChild(promotionCard(s));});
+    if(!contacts.length&&!promotions.length)box.appendChild(el('p','empty',t('none')));
+  }
+  function drawDashboard(){
+    $('heroPlace').textContent=data.city||data.title;
+    var quick=$('quickSearches');quick.textContent='';
+    var suggestions=lang==='mr'?['प्लंबर','फर्निचर','संगणक','सोलर']:lang==='hi'?['प्लंबर','फर्निचर','कंप्यूटर','सोलर']:['Plumber','Furniture','Computers','Solar'];
+    suggestions.forEach(function(term){var button=el('button',null,term);button.type='button';button.addEventListener('click',function(){
+      $('dashboardSearch').value=term;drawDashboardSearch();});quick.appendChild(button);});
+    $('dashboardTitle').textContent=t('dashboardTitle');$('dashboardIntro').textContent=t('dashboardIntro');
+    $('dashboardContactsTitle').textContent=t('allContacts');$('dashboardPromotionsTitle').textContent=t('promotions');
+    $('dashboardContactsText').textContent=t('contactHint');$('dashboardPromotionsText').textContent=t('promotionHint');
+    $('dashboardContactsCount').textContent=data.rows.length+' '+t('contacts')+' →';
+    var list=promotionInventory();$('dashboardPromotionsCount').textContent=list.length+' '+t(list[0]?.demo?'demoCount':'promotionCount')+' →';
+    $('dashboardPreviewTitle').textContent=t('previewTitle');$('dashboardDemoNote').hidden=!list[0]?.demo;
+    $('dashboardDemoNote').textContent=t('demoNotice');$('dashboardPreview').textContent='';
+    list.slice(0,2).forEach(function(s){$('dashboardPreview').appendChild(promotionCard(s));});drawDashboardSearch();
+  }
+  [['promotionSearch','promotionClear',drawPromotions],['dashboardSearch','dashboardClear',drawDashboardSearch]].forEach(function(item){
+    $(item[0]).addEventListener('input',function(){if(data)item[2]();});
+    $(item[1]).addEventListener('click',function(){$(item[0]).value='';if(data)item[2]();$(item[0]).focus();});
+  });
 
   /** Shortcuts into each section, and the shape of the list at a glance. */
   function drawTiles(gs) {
@@ -1647,8 +1884,17 @@ h1{font-size:calc(28px * var(--t));max-width:none;line-height:1.15}
     $("suggestService").textContent=t("suggest");$("suggestService").href=feedbackURL(null,true);
     $("reportDirectory").textContent=t("report");$("reportDirectory").href=feedbackURL(null,false);
     $("suggestService").title=$("reportDirectory").title=t("emailHint");
-    drawTopAd();
-    drawFooterAds();
+    $('dashboardTab').textContent=t('home');
+    ['promotionSearch','dashboardSearch'].forEach(function(id){$(id).placeholder=t('businessSearch');$(id).setAttribute('aria-label',t('businessSearch'));});
+    ['promotionClear','dashboardClear'].forEach(function(id){$(id).setAttribute('aria-label',t('reset'));});
+    drawDashboard();
+    $('contactsTab').textContent=t('allContacts');
+    $('promotionsTab').textContent=t('promotions');
+    $('sectionNav').setAttribute('aria-label',t('sections'));
+    $('promotionsTitle').textContent=t('promotions');
+    $('promotionsIntro').textContent=t('promotionsIntro');
+    drawPromotions();
+    showSection(section);
     build();
     filter();
   }

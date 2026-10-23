@@ -96,6 +96,10 @@
     if(contact.notes)lines.push('NOTE:'+escape(contact.notes));
     lines.push('END:VCARD');return lines.map(fold).join('\r\n')+'\r\n';
   }
-  return {normalize:normalize,label:label,category:category,index:index,matches:matches,query:query,phone:phone,rank:rank,
+  function promotionMatches(business,value){
+    var text=normalize(['name','line','offer','type','products'].map(function(key){return business[key]||'';}).join(' '));
+    return normalize(value).split(' ').filter(Boolean).every(function(word){return text.indexOf(word)!==-1;});
+  }
+  return {promotionMatches:promotionMatches,normalize:normalize,label:label,category:category,index:index,matches:matches,query:query,phone:phone,rank:rank,
     contactId:contactId,vcard:vcard};
 });

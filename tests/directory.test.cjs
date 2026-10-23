@@ -97,3 +97,11 @@ test('source metadata does not create unrelated service search results',()=>{
   assert.ok(!core.matches(core.index(business,business.Role),'RO'));
   assert.ok(core.matches(core.index({...business,Jobs:'RO purifier servicing'},business.Role),'RO'));
 });
+
+test('business search matches product, type and name together without searching private metadata',()=>{
+  const business={name:'Sample Home Studio',type:'Furniture & Interiors',products:'Sofas, wall panels, कपाट',
+    line:'Custom home design',offer:'Design consultation',until:'2030-01-01',link:'https://catering.example/'};
+  for(const value of ['HOME','wall panels','studio furniture','sofas interiors','कपाट','consultation',''])
+    assert.ok(core.promotionMatches(business,value),value);
+  for(const value of ['catering','2030','sofas laptops'])assert.ok(!core.promotionMatches(business,value),value);
+});

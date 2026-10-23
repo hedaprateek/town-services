@@ -302,14 +302,15 @@
   </details>
 
   <details class="card">
-    <summary>Sponsored slots</summary>
+    <summary>Business promotions</summary>
     <p class="hint">
       Paid placements. They are kept out of the list itself — a sponsor is never
-      counted in the header, never returned by a search, and never shared as a
+      counted as a contact, never returned by contact search, and never shared as a
       number a neighbour gave — and every one is labelled <b>Sponsored</b> on the
-      page. <b>Slot</b> is where it appears: <code>top</code> above the list,
-      <code>feed</code> between the sections, <code>footer</code> as a name at the
-      bottom. <b>Link</b> must start with <code>https://</code>. <b>Until</b> is the
+      Business Promotions section. <b>Slot</b> sets the order and style:
+      <code>top</code> is featured first, followed by <code>feed</code>, then
+      <code>footer</code>. All appear as full promotion cards in that section.
+      <b>Link</b> must start with <code>https://</code>. <b>Until</b> is the
       date the slot is paid up to (<code>YYYY-MM-DD</code>) — after it, the slot
       stops showing on its own.
     </p>
@@ -319,7 +320,7 @@
     </table></div>
     <p class="count" id="spCount"></p>
     <div class="btns">
-      <button id="addSp">Add a sponsor</button>
+      <button id="addSp">Add a business promotion</button>
     </div>
     <div class="row" style="margin-top:14px">
       <div><label for="fAds">Who to contact about buying a slot</label>
@@ -374,6 +375,8 @@
   var SP_COLS = [
     { k: "name",  h: "Name",    w: "170px" },
     { k: "line",  h: "Tagline", w: "230px" },
+    { k: "type", h: "Business type", w: "150px" },
+    { k: "products", h: "Products / services", w: "230px" },
     { k: "offer", h: "Offer",   w: "140px" },
     { k: "phone", h: "Phone",   w: "120px" },
     { k: "link",  h: "Link",    w: "180px" },
@@ -834,6 +837,8 @@
               return {
                 name: g(r, /^(name|business|shop|sponsor|advertiser)$/),
                 line: g(r, /^(tagline|line|about|description|desc|says|blurb)$/),
+                type: g(r, /^(type|businesstype|category)$/),
+                products: g(r, /^(products|productsservices|services)$/),
                 offer: g(r, /^(offer|deal|discount|highlight)$/),
                 phone: g(r, /^(phone|mobile|cell|tel|contactno|number)$/),
                 link: g(r, /^(link|url|website|web|site)$/),
@@ -1011,6 +1016,7 @@
       })
       .map(function (p) {
         return { name: String(p.name).trim(), line: String(p.line || "").trim(),
+                 type: String(p.type || "").trim(), products: String(p.products || "").trim(),
                  offer: String(p.offer || "").trim(), phone: String(p.phone || "").trim(),
                  link: String(p.link || "").trim(),
                  slot: SP_SLOTS.indexOf(String(p.slot)) < 0 ? "feed" : String(p.slot),

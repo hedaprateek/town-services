@@ -141,8 +141,8 @@ function build(bytes) {
 
   /* ── Paid slots ──
      A separate sheet, and separate all the way through to the page: sponsors
-     never join `rows`, so they are never counted in the header, returned by a
-     search, grouped under a trade or shared as a number a neighbour gave. The
+     never join `rows`, so they are never counted as contacts or returned by
+     contact search. Business search displays them as promotions. The
      columns are fixed and few, because an advertiser filling in whatever they
      like is how a paid slot ends up looking like a listing. */
   const sponsorName = wb.SheetNames.filter(n =>
@@ -194,6 +194,8 @@ function build(bytes) {
         sponsors.push({
           name: name,
           line: field(r, /^(tagline|line|about|description|desc|says|blurb)$/),
+          type: field(r, /^(type|businesstype|category)$/),
+          products: field(r, /^(products|productsservices|services)$/),
           offer: field(r, /^(offer|deal|discount|highlight)$/),
           phone: field(r, /^(phone|mobile|cell|tel|contactno|number)$/),
           link: link,

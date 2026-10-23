@@ -157,6 +157,33 @@ Regional/national helplines are labelled in Covers. Published descriptions are k
 short, with no assumed prices or response times. The existing MSEDCL listing now has
 its official customer-care number. JSON and Excel contain the same contacts.
 
+The public page opens on a dashboard with two large shortcuts and business previews.
+The dashboard includes popular search shortcuts, a focused results view, and
+illustrated promotion cards with product tags. Promotions can be narrowed by
+business type. Section changes and hover states use brief transitions; reduced
+motion preferences disable animations. Illustrations are local SVGs and work offline.
+Dashboard search finds contacts and business promotions, with each kind labelled.
+Business search matches names, business types, products/services, descriptions and
+offers; multiple words narrow the matches. Contact search remains available in its
+own section. Type and Products / services can be edited or imported in Sponsors.
+
+When there are no active business promotions, four fictional demo businesses show
+sample layouts. Each carries a Demo label and notice, with no phone or website
+actions. They never enter the real directory, spreadsheet or contact counts.
+Adding an active promotion automatically replaces the demo cards.
+
+The dashboard leads to two sections: **All Contacts** holds the searchable directory,
+and **Business Promotions** holds advertisements and offers. Contact search and
+saved contacts stay in All Contacts; promotions do not enter its counts or results.
+The `#promotions` link opens the promotions section directly. Switching sections
+preserves contact search and filters. Both sections support English, Hindi and Marathi.
+With no active promotions, the second section shows demo cards and an enquiry link.
+
+Use **Business promotions** in the editor to add a business name, description,
+offer, phone, website and expiry date. The existing Sponsors spreadsheet works too.
+All active promotions appear in their own section: `top` entries are featured
+first, followed by `feed`, then `footer`. Expired entries are hidden automatically.
+
 On 16 October 2026, another 36 distinct business contacts were added: furniture and
 interiors, RO servicing, computers and CCTV, appliances, solar, construction,
 laundry, transport and travel, catering and venues, healthcare enquiries, and
