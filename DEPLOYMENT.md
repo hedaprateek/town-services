@@ -9,6 +9,30 @@ private key is needed.
 Owner: `prateekbct@gmail.com`. It is configured in both `wrangler.jsonc` and
 `firestore.rules`. Changing the owner requires updating and deploying both.
 
+Firebase project `community-directory-88fc7` was created on 8 November 2026 through
+the signed-in Firebase Console. Google sign-in is enabled, the Cloudflare hostname
+is authorized, and the Mumbai Standard Firestore database has the tested rules
+published. Its web configuration is now included in `wrangler.jsonc`.
+
+Cloudflare Wrangler is authorized for the existing account, with credentials stored
+encrypted using Windows Credential Manager. Static assets uploaded successfully,
+but the final Worker code upload was rejected by this computer's Zscaler policy
+("Not allowed to access this file type"). No live owner sign-in or data import has
+been completed. Existing public sites have not been switched or retired.
+
+On a connection/device approved to deploy Cloudflare Workers, check out the
+`google-access` branch and run:
+
+```powershell
+npm ci
+npx wrangler login --scopes account:read user:read workers_scripts:write workers_routes:write --use-keyring
+npm run deploy
+```
+
+Then verify real Google owner/viewer sign-in and perform the initial import below.
+Do not treat an uploaded asset bundle or a configured `/health` endpoint as proof
+that the authenticated application is live and working.
+
 ## Account setup
 
 1. Open <https://console.firebase.google.com/> as the owner. Create a project,
@@ -29,7 +53,7 @@ Owner: `prateekbct@gmail.com`. It is configured in both `wrangler.jsonc` and
 
    Google must authorize the account before project creation or deployment.
    On this machine the Firebase CLI's `auth.firebase.tools` sign-in endpoint was
-   blocked by the organization's web filter. The project has **not** been created.
+   blocked by the organization's web filter. Console setup was used successfully instead.
    Use an approved connection that permits Firebase, or create/configure the project
    in Firebase Console. Rules can be pasted into the console; create the members
    `status ASC, email ASC` composite index and disable indexing of the large content
