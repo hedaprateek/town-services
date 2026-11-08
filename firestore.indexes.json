@@ -1,0 +1,14 @@
+{
+  "indexes": [
+    { "collectionGroup": "members", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "email", "order": "ASCENDING" }
+    ] }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "directories", "fieldPath": "data_json", "indexes": [] },
+    { "collectionGroup": "history", "fieldPath": "data_json", "indexes": [] },
+    { "collectionGroup": "workbooks", "fieldPath": "content", "indexes": [] },
+    { "collectionGroup": "materials", "fieldPath": "content", "indexes": [] }
+  ]
+}

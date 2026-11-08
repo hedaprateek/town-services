@@ -33,12 +33,12 @@ android {
       dimension "site"
       applicationId "io.github.hedaprateek.townservices"
       resValue "string", "app_name", "Local Services"
-      buildConfigField "boolean", "BUNDLED", "true"
+      buildConfigField "boolean", "BUNDLED", "false"
       buildConfigField "String", "START_URL",
-        '"https://appassets.androidplatform.net/assets/index.html"'
+        '"https://community-directory.hedaprateek.workers.dev/town/"'
       buildConfigField "String", "REMOTE_BASE",
-        '"https://hedaprateek.github.io/town-services/"'
-      buildConfigField "String", "DATA_FILES", '"services.json"'
+        '"https://community-directory.hedaprateek.workers.dev/town/"'
+      buildConfigField "String", "DATA_FILES", '""'
       buildConfigField "String", "UA_TAG", '"TownServicesApp/1"'
     }
     /* The society directory. Deliberately NOT bundled: an APK is a zip that
@@ -52,9 +52,9 @@ android {
       resValue "string", "app_name", "Society Directory"
       buildConfigField "boolean", "BUNDLED", "false"
       buildConfigField "String", "START_URL",
-        '"https://society-info.hedaprateek.workers.dev/"'
+        '"https://community-directory.hedaprateek.workers.dev/society/"'
       buildConfigField "String", "REMOTE_BASE",
-        '"https://society-info.hedaprateek.workers.dev/"'
+        '"https://community-directory.hedaprateek.workers.dev/society/"'
       buildConfigField "String", "DATA_FILES", '""'
       buildConfigField "String", "UA_TAG", '"SocietyDirectoryApp/1"'
     }

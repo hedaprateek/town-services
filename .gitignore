@@ -16,3 +16,13 @@ android/app/src/*/res/mipmap-*/
 local.properties
 *.jks
 *.keystore
+
+# Private runtime/build state and migration inputs never become web assets.
+.wrangler/
+dist/
+.dev.vars
+.env*
+private-data/
+society/materials/
+firebase-debug.log
+*-debug.log

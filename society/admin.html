@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d1726">
+<title>Directory Admin</title>
+<style>
+:root{
+  --bg:#f4f6fa; --surface:#fff; --surface-2:#eef1f7;
+  --text:#0f1b2d; --text-2:#3f4c60; --muted:#6b7688;
+  --border:#e0e5ee; --border-2:#c6cedb;
+  --navy:#0d1726; --navy-2:#18293f;
+  --accent:#1d4ed8; --accent-ink:#1e40af; --accent-soft:#eaf0fe;
+  --ok:#0f7b4f; --ok-soft:#e6f6ee;
+  --warn:#8a5a00; --warn-soft:#fdf3e2;
+  --danger:#b42318; --danger-soft:#fdf0ee;
+  --r:10px; --r-sm:7px; --tap:42px;
+  --sh:0 1px 2px rgba(15,27,45,.05);
+  --sh-2:0 2px 6px rgba(15,27,45,.07),0 12px 26px -14px rgba(15,27,45,.25);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0b1017; --surface:#131a25; --surface-2:#1b2431;
+    --text:#e9edf4; --text-2:#b3bccb; --muted:#8592a6;
+    --border:#222c3b; --border-2:#334054;
+    --navy:#070c13; --navy-2:#101825;
+    --accent:#5b8def; --accent-ink:#8ab0f7; --accent-soft:#16233a;
+    --ok:#4ade80; --ok-soft:#10281c; --warn:#fbbf24; --warn-soft:#2a2113;
+    --danger:#f97066; --danger-soft:#2a1512;
+    --sh:0 1px 2px rgba(0,0,0,.5);
+    --sh-2:0 2px 6px rgba(0,0,0,.5),0 12px 26px -14px rgba(0,0,0,.85);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 70px}
+
+header{background:linear-gradient(150deg,var(--navy),var(--navy-2));color:#fff;
+  padding-top:env(safe-area-inset-top)}
+.head-in{max-width:1180px;margin:0 auto;padding:18px 16px;display:flex;align-items:center;
+  gap:12px;flex-wrap:wrap}
+.head-in h1{margin:0;font-size:18px;font-weight:650;letter-spacing:-.02em}
+.head-in .sub{color:rgba(255,255,255,.65);font-size:12.5px}
+.grow{flex:1}
+
+button{font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:var(--r-sm);
+  min-height:var(--tap);padding:9px 15px;border:1px solid var(--navy-2);
+  background:var(--navy-2);color:#fff;transition:.16s;-webkit-tap-highlight-color:transparent}
+button:hover{filter:brightness(1.15)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+button.ghost:hover{background:var(--surface-2);filter:none}
+button.danger{background:var(--danger);border-color:var(--danger)}
+button.sm{min-height:32px;padding:4px 10px;font-size:13px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.card h2{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--text-2)}
+.card p.hint{margin:0 0 12px;color:var(--muted);font-size:13px}
+
+.msg{padding:10px 14px;border-radius:var(--r-sm);margin:14px 0;font-size:13.5px;display:none}
+.msg.show{display:block}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.err{background:var(--danger-soft);color:var(--danger)}
+.msg.warn{background:var(--warn-soft);color:var(--warn)}
+
+.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border);
+  margin-bottom:14px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:none;border-bottom:2px solid transparent;border-radius:0;
+  color:var(--muted);font-weight:600;padding:11px 13px;min-height:0}
+.tab:hover{color:var(--text);filter:none}
+.tab.on{color:var(--accent-ink);border-bottom-color:var(--accent)}
+.tab .x{opacity:.5;margin-left:6px}
+
+.table-scroll{overflow:auto;max-height:60vh;border:1px solid var(--border);
+  border-radius:var(--r);background:var(--surface)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+th{position:sticky;top:0;z-index:2;text-align:left;padding:0;background:var(--surface-2);
+  border-bottom:1px solid var(--border);white-space:nowrap}
+th .th-in{display:flex;align-items:center;gap:4px;padding:7px 9px}
+th input{font:inherit;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);background:transparent;border:1px solid transparent;border-radius:5px;
+  padding:3px 5px;width:100%;min-width:70px}
+th input:hover{border-color:var(--border-2)}
+th input:focus{outline:none;border-color:var(--accent);background:var(--surface);color:var(--text)}
+td{padding:0;border-bottom:1px solid var(--border)}
+td input{font:inherit;width:100%;min-width:96px;background:transparent;color:var(--text);
+  border:1px solid transparent;border-radius:5px;padding:7px 8px}
+td input:hover{border-color:var(--border)}
+td input:focus{outline:none;border-color:var(--accent);background:var(--surface);
+  box-shadow:0 0 0 2px rgba(29,78,216,.13)}
+tbody tr:hover td{background:var(--surface-2)}
+.rownum{color:var(--muted);font-size:11.5px;padding:0 8px;text-align:right;
+  font-variant-numeric:tabular-nums;user-select:none}
+.del{background:none;border:none;color:var(--muted);font-size:16px;line-height:1;
+  min-height:0;padding:4px 9px}
+.del:hover{color:var(--danger);filter:none}
+
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600}
+input[type=text],input[type=password]{font:inherit;width:100%;color:var(--text);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:9px 11px;min-height:var(--tap)}
+input[type=text]:focus,input[type=password]:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(29,78,216,.14)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.row>div{flex:1;min-width:170px}
+code{background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:12.5px;
+  word-break:break-all}
+details{margin-top:10px}
+summary{cursor:pointer;color:var(--accent-ink);font-size:13px;font-weight:600}
+details ol{margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:13px}
+details li{margin-bottom:5px}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.credit{text-align:center;font-size:12.5px;color:var(--muted);margin-top:22px}
+.credit b{font-weight:600;color:var(--text-2)}
+  /* ── Print ──
+     Paper gets its own colours. These pages are pale text on dark panels, and
+     browsers leave background graphics off by default, so printing one
+     untouched gives white text on white paper.
+
+     And the credit becomes a running footer. A fixed element in paged media is
+     not pinned to a viewport — it repeats on every sheet. It is held 16mm below
+     the content box, with a 24mm bottom page margin to receive it, so it sits
+     under the copy rather than across it. */
+  @media print{
+    @page{margin:14mm 14mm 24mm}
+
+    *{box-shadow:none!important;text-shadow:none!important;
+      -webkit-print-color-adjust:economy;print-color-adjust:economy}
+    body{background:#fff}
+    a{text-decoration:none;color:inherit}
+    *{background:transparent!important;color:#111!important}
+    .tabs,.actions,button,input,select,textarea,.drop,.toast{display:none!important}
+
+    /* The studio credit block below is the running footer, so the copy of
+       the line in the site own footer steps aside on paper rather than
+       printing underneath it. */
+    .credit{display:none}
+  }
+</style>
+
+<!-- ═══ Stunity Tech — studio credit (screen + print) ═══════════════════
+     Quiet on screen, set apart from the site's own footer text. In print it
+     becomes a running footer: fixed to the page box so it repeats on every
+     sheet, with @page reserving the space so it never lands on the copy.
+     Colour tokens fall back gracefully on sites that don't define them. -->
+<style>
+.stunity-credit{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:26px auto 34px;padding:20px 16px 0;max-width:1180px;
+  border-top:1px solid var(--line-soft,rgba(128,128,128,.22));
+  font-family:var(--mono,ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace);
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;line-height:1.5;
+  color:var(--muted,#6b7280);
+}
+.stunity-credit .sc-dot{width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--shade,currentColor);opacity:.75}
+.stunity-credit b{font-weight:500;color:var(--ink,inherit)}
+.stunity-credit[data-print-only]{display:none}
+.sc-wrap{position:relative;display:inline-block}
+.sc-link{color:inherit;text-decoration:none;
+  border-bottom:1px solid transparent;transition:border-color .18s ease}
+/* the attractor: a slow pulse on the end of the name, so the footer reads as
+   something to touch rather than a static byline. */
+.sc-link::after{content:"";display:inline-block;width:5px;height:5px;
+  margin-left:6px;border-radius:50%;background:currentColor;
+  vertical-align:middle;animation:scPulse 2.6s ease-in-out infinite}
+@keyframes scPulse{0%,100%{opacity:.28;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.25)}}
+.sc-wrap:hover .sc-link,.sc-wrap:focus-within .sc-link{
+  border-bottom-color:currentColor}
+
+.sc-card{position:absolute;bottom:calc(100% + 12px);left:0;
+  transform:translateY(6px);
+  width:max-content;max-width:min(272px,86vw);
+  display:grid;gap:7px;padding:14px 16px;
+  text-align:left;text-transform:none;letter-spacing:normal;line-height:1.45;
+  background:var(--sc-card-bg,#fdfdfb);color:var(--sc-card-ink,#1b1b1b);
+  border:1px solid rgba(128,128,128,.26);border-radius:12px;
+  box-shadow:0 12px 34px rgba(0,0,0,.22);
+  opacity:0;visibility:hidden;pointer-events:none;z-index:60;
+  transition:opacity .2s ease,transform .2s ease,visibility .2s}
+.sc-wrap:hover .sc-card,.sc-wrap:focus-within .sc-card{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translateY(0)}
+.sc-card::after{content:"";position:absolute;top:100%;left:22px;
+  border:6px solid transparent;
+  border-top-color:var(--sc-card-bg,#fdfdfb)}
+.sc-card b{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:600}
+.sc-card i{font-style:normal;font-size:12.5px;opacity:.72}
+.sc-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.sc-acts a{font-size:12px;text-decoration:none;color:inherit;
+  padding:4px 9px;border-radius:999px;
+  border:1px solid rgba(128,128,128,.34);
+  transition:background .16s ease,border-color .16s ease}
+.sc-acts a:hover{background:rgba(128,128,128,.14);
+  border-color:rgba(128,128,128,.6)}
+.sc-link:focus-visible,.sc-acts a:focus-visible{
+  outline:1px solid currentColor;outline-offset:3px;border-radius:2px}
+
+/* On touch the card is opened by tap (see the script), so it keeps the same
+   shape it has on a pointer device. Only the tap targets grow. */
+@media (hover:none){
+  .sc-acts a{padding:7px 12px}
+  .sc-card{gap:9px;padding:15px 17px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sc-link::after{animation:none}
+  .sc-card{transition:none}
+}
+@media print{
+  .sc-card{display:none!important}
+  .sc-link::after{display:none!important}
+  .sc-link{border-bottom:0!important;text-decoration:none!important;
+    color:inherit!important}
+}
+.sc-card{z-index:9999}
+/* When the script flips the card below the credit (no room above), the
+   little pointer has to move to the top edge with it. */
+.sc-card.sc-below::after{top:auto;bottom:100%;
+  border-top-color:transparent;border-bottom-color:var(--sc-card-bg,#fdfdfb)}
+@media print{
+  @page{margin-bottom:24mm}
+  html body #stunityCredit.stunity-credit,html body #stunityCredit.stunity-credit[data-print-only]{
+    display:flex!important;position:fixed;left:0;right:0;bottom:-16mm;
+    margin:0;padding:3mm 0 0;max-width:none;
+    border-top:.2mm solid #c9c9c9;background:#fff;color:#5b5b5b;
+    font-size:7.5pt;letter-spacing:.14em;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .stunity-credit b{color:#111}
+  .stunity-credit .sc-dot{background:#8a8a8a}
+}
+</style>
+
+<!-- Cloudflare Web Analytics: cookieless, collects no personal data and
+     sets nothing on the device, so it needs no consent banner. Every site
+     here shares one origin, so ONE site token covers all of them and the
+     dashboard splits the numbers by path. Until a real token is pasted in
+     below, the guard returns early and nothing is loaded at all. -->
+<script>(function(){
+  var t = "__CF_BEACON_TOKEN__";
+  if (!t || t.charAt(0) === "_") return;          // not configured yet
+  var s = document.createElement("script");
+  s.defer = true;
+  s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+  s.setAttribute("data-cf-beacon", JSON.stringify({ token: t }));
+  document.head.appendChild(s);
+})();</script>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <div>
+      <h1>Directory Admin</h1>
+      <div class="sub" id="src">Loading…</div>
+    </div>
+    <div class="grow"></div>
+    <div class="btns">
+      <button class="ghost" id="viewBtn">View site</button>
+      <button id="pubBtn">Publish</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="msg" id="msg"></div>
+
+  <div class="card">
+    <h2>Data</h2>
+    <p class="hint">
+      Edit below, or move data in and out of Excel. Nothing reaches the live site until
+      you press <strong>Publish</strong>.
+      <br>
+      A sheet or column whose name starts with <code>_</code> is stored but
+      <strong>never shown on the public page</strong> — use it for dates of birth,
+      landlord details and anything else not meant for the noticeboard.
+    </p>
+    <div class="btns">
+      <button class="ghost" id="impBtn">Import from Excel…</button>
+      <button class="ghost" id="expBtn">Export to Excel</button>
+      <button class="ghost" id="reloadBtn">Reload live data</button>
+      <button class="ghost" id="addSheet">+ Add sheet</button>
+    </div>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv" style="display:none">
+  </div>
+
+  <div class="card">
+    <h2>Start from a template</h2>
+    <p class="hint">
+      Each template comes with the right sheets, the optional columns
+      (blood group, emergency contact, vehicle, owner details), a
+      <code>_Private</code> sheet that is never published, and its own theme.
+      <strong>Load replaces everything in the editor</strong> — nothing reaches the live
+      site until you Publish, and <em>Reload live data</em> undoes it.
+    </p>
+    <div class="row">
+      <div><label for="tplSel">Template</label>
+        <select id="tplSel" style="width:100%;font:inherit;color:var(--text);
+          background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+          padding:9px 11px;min-height:var(--tap)">
+          <option value="directory">Housing society — committee, residents, services</option>
+          <option value="school">School or coaching — staff, classes, parents</option>
+          <option value="club">Club or association — office bearers, members, events</option>
+          <option value="team">Team — people, on call, vendors</option>
+          <option value="temple">Temple or community centre — timings, volunteers</option>
+          <option value="alumni">Alumni or batch group — coordinators, members</option>
+        </select></div>
+      <div style="flex:0;align-self:flex-end" class="btns">
+        <button class="ghost" id="tplDownload">Download</button>
+        <button class="ghost" id="tplLoad">Load into editor</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Public services page</h2>
+    <p class="hint">
+      <strong>services.html</strong> is the one page anyone can open without a code —
+      meant to be shared around the town. It is built from <strong>Services &amp; Help</strong>
+      plus <strong>_Town Services</strong>, a sheet the society page never shows. Residents,
+      committee and the <code>_Private</code> sheets never reach it.
+    </p>
+    <p class="hint">
+      Upload a separate list here to fill <strong>_Town Services</strong> — an Excel or CSV
+      with a <strong>Name</strong> column, and any of Role, Category, Phone, Charges, Timings,
+      Covers, Notes. <strong>Covers</strong> is the two or three words shown under the name
+      on the list: “small works”, “routine jobs”, the areas they serve.
+    </p>
+    <div class="btns">
+      <button class="ghost" id="townUpload">Upload a separate list…</button>
+      <input type="file" id="townFile" accept=".xlsx,.xls,.csv" style="display:none">
+      <button class="ghost" id="townTemplate">Download a blank list</button>
+      <button class="ghost" id="townView">Open the public page</button>
+    </div>
+    <div id="townOut" class="hint" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Member codes — one code per person</h2>
+    <p class="hint">
+      Generates a code for everyone in the chosen sheets, then hands you a
+      <strong>SITE_PASSWORDS</strong> line to paste into Cloudflare and a card per person
+      with a prefilled WhatsApp or email message. Nothing here is published — the codes
+      stay in this browser until you copy or download them.
+    </p>
+    <p class="hint">
+      Codes are kept in this browser, so they are still here when you come back. Pressing
+      <strong>Generate codes</strong> again keeps every code already issued and only mints
+      one for a person who does not have one yet — so adding a resident never invalidates
+      anyone else's slip.
+    </p>
+
+    <div class="row">
+      <div><label for="mcSite">Site address residents will open</label>
+        <input type="text" id="mcSite" placeholder="https://society-info.hedaprateek.workers.dev"></div>
+      <div style="flex:0;min-width:110px"><label for="mcPrefix">Code prefix</label>
+        <input type="text" id="mcPrefix" value="LVN" maxlength="6"></div>
+    </div>
+
+    <div class="btns" style="margin-bottom:10px">
+      <button class="ghost" id="mcUseCurrent">Use the data loaded above</button>
+      <button class="ghost" id="mcUpload">Upload a different Excel…</button>
+      <input type="file" id="mcFile" accept=".xlsx,.xls,.csv" style="display:none">
+    </div>
+    <div id="mcSheets" class="bar" style="gap:14px"></div>
+
+    <div class="btns">
+      <button id="mcGen">Generate codes</button>
+      <button class="ghost" id="mcSlips">Print slips</button>
+      <button class="ghost" id="mcCsv">Download CSV</button>
+      <button class="ghost" id="mcForget">Forget saved codes</button>
+    </div>
+
+    <div id="mcOut" style="margin-top:14px"></div>
+  </div>
+  <div class="card">
+    <h2>Appearance</h2>
+    <p class="hint">
+      The theme is stored as a <code>Theme</code> row in your About sheet, so it goes live
+      with <strong>Publish</strong> like everything else.
+    </p>
+    <div class="row">
+      <div><label for="themeSel">Theme</label>
+        <select id="themeSel" style="width:100%;font:inherit;color:var(--text);
+          background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);
+          padding:9px 11px;min-height:var(--tap)">
+          <option value="navy">Navy — deep blue, teal and gold (default)</option>
+          <option value="forest">Forest — dark green and lime</option>
+          <option value="plum">Plum — aubergine, violet and pink</option>
+          <option value="slate">Slate — graphite, sky and amber</option>
+          <option value="sunset">Sunset — warm brown and orange</option>
+          <option value="ocean">Ocean — deep teal and cyan</option>
+          <option value="paper">Paper — light, white and indigo</option>
+        </select></div>
+      <div style="flex:0;align-self:flex-end"><button class="ghost" id="themeApply">Apply</button></div>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <h2>Materials</h2>
+    <p class="hint">
+      Upload a document (PDF, Word, Excel, PowerPoint, image) into the
+      <code>materials/</code> folder. It is committed straight away, and a row is added
+      to your <strong>Documents</strong> sheet — press Publish afterwards to put that row
+      live. Needs the GitHub token below.
+    </p>
+    <div class="btns">
+      <button class="ghost" id="upBtn">Upload material…</button>
+    </div>
+    <input type="file" id="matFile"
+           accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.webp,.txt"
+           style="display:none">
+    <div id="matList" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <div class="tabs" id="tabs"></div>
+    <div class="bar">
+      <button class="sm" id="addRow">+ Row</button>
+      <button class="sm ghost" id="addCol">+ Column</button>
+      <button class="sm ghost" id="delSheet">Delete this sheet</button>
+      <span class="grow"></span>
+      <span class="hint" id="count" style="color:var(--muted);font-size:12.5px"></span>
+    </div>
+    <div class="table-scroll">
+      <table><thead id="thead"></thead><tbody id="tbody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Publishing</h2>
+    <p class="hint">
+      Publishing writes <code>data.xlsx</code> straight to your GitHub repository, and the
+      live site updates within a minute. It needs a token with permission to write to that
+      one repo. The token is kept in this tab only — never saved to the page or the repo.
+    </p>
+    <div class="row">
+      <div><label for="repo">Repository</label>
+        <input type="text" id="repo" placeholder="owner/repo"></div>
+      <div><label for="tok">GitHub token</label>
+        <input type="password" id="tok" placeholder="github_pat_… or ghp_…" autocomplete="off"></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--text)">
+      <input type="checkbox" id="remember" style="width:auto;min-height:0">
+      Remember the token for this tab
+    </label>
+    <div class="btns" style="margin-top:12px">
+      <button class="ghost" id="checkBtn">Check token</button>
+    </div>
+    <div id="checkOut" style="margin-top:10px"></div>
+    <details>
+      <summary>How do I create the token?</summary>
+      <ol>
+        <li>GitHub → your avatar → <strong>Settings</strong> → <strong>Developer settings</strong></li>
+        <li><strong>Personal access tokens</strong> → <strong>Fine-grained tokens</strong> →
+            <strong>Generate new token</strong></li>
+        <li><strong>Repository access</strong> → Only select repositories → pick
+            <code>People-Information</code></li>
+        <li>Under <strong>Permissions → Repository permissions</strong>, set
+            <strong>Contents</strong> to <strong>Read and write</strong></li>
+        <li>Generate, copy, and paste it above. If you skip this, use
+            <strong>Export to Excel</strong> and upload the file to GitHub by hand instead.</li>
+      </ol>
+    </details>
+  </div>
+
+  <p class="credit"><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by Prateek</p>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var DATA_FILE = "data.xlsx";
+  var book = [];        // [{name, cols:[], rows:[{}]}]
+  var active = 0;
+  var dirty = false;
+
+  var $ = function (i) { return document.getElementById(i); };
+  function say(t, kind) {
+    var m = $("msg");
+    m.textContent = t;
+    m.className = "msg show " + (kind || "ok");
+    if (kind !== "err") setTimeout(function () { m.className = "msg"; }, 4500);
+  }
+
+  /* ---------- work out which repo to publish to ---------- */
+  // Where the data lives. Hostname detection only works on *.github.io, so a
+  // custom domain (or opening the file locally) falls back to this.
+  var DEFAULT_REPO = "hedaprateek/People-Information";
+
+  // GitHub answers every write-permission problem with the same opaque 403,
+  // so spell out the two settings that actually cause it.
+  var FORBIDDEN =
+    "Forbidden (403) — the token cannot write to this repo. Two things to check: " +
+    "(1) Repository access must be \"Only select repositories\" with this repo ticked, " +
+    "not \"Public repositories\", which is read-only. " +
+    "(2) Permissions → Repository permissions → Contents must be \"Read and write\". " +
+    "Press \"Check token\" below to see which one it is.";
+
+  (function () {
+    var m = location.hostname.match(/^([^.]+)\.github\.io$/);
+    var repo = DEFAULT_REPO;
+    if (m) {
+      var seg = location.pathname.split("/").filter(Boolean);
+      repo = m[1] + "/" + (seg.length ? seg[0] : m[1] + ".github.io");
+    }
+    // A previously saved bad value would otherwise persist forever; run it
+    // through the same cleaner and drop it if it is unusable.
+    try {
+      var saved = normalizeRepo(localStorage.getItem("adm-repo"));
+      if (saved) repo = saved;
+    } catch (e) {}
+    repo = normalizeRepo(repo) || DEFAULT_REPO;
+    $("repo").value = repo;
+    try {
+      var t = sessionStorage.getItem("adm-tok");
+      if (t) { $("tok").value = t; $("remember").checked = true; }
+    } catch (e) {}
+  })();
+  $("repo").addEventListener("input", function () {
+    try { localStorage.setItem("adm-repo", $("repo").value.trim()); } catch (e) {}
+  });
+
+  /* ---------- load ---------- */
+  function readSheets(wb) {
+    return wb.SheetNames.map(function (name) {
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { defval: "", raw: false });
+      var cols = rows.length ? Object.keys(rows[0]) : [];
+      if (!cols.length) {
+        // preserve a header-only sheet
+        var aoa = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
+        cols = (aoa[0] || []).map(String).filter(Boolean);
+      }
+      return { name: name, cols: cols, rows: rows };
+    });
+  }
+
+  function fromWorkbook(wb) {
+    book = readSheets(wb);
+    if (!book.length) book = [{ name: "Sheet1", cols: ["Name", "Phone"], rows: [] }];
+    active = 0;
+    dirty = false;
+    render();
+  }
+
+  // Replace same-named sheets, append new ones, leave everything else alone —
+  // so importing form responses cannot wipe Committee or Documents.
+  function mergeWorkbook(wb) {
+    var added = 0, replaced = 0;
+    readSheets(wb).forEach(function (s) {
+      var i = -1;
+      for (var j = 0; j < book.length; j++) {
+        if (book[j].name.toLowerCase() === s.name.toLowerCase()) { i = j; break; }
+      }
+      if (i >= 0) { book[i] = s; replaced++; } else { book.push(s); added++; }
+    });
+    active = 0;
+    render();
+    return { added: added, replaced: replaced };
+  }
+
+  function load() {
+    fetch(DATA_FILE + "?v=" + Date.now())
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.arrayBuffer(); })
+      .then(function (b) {
+        fromWorkbook(XLSX.read(new Uint8Array(b), { type: "array" }));
+        $("src").textContent = "Loaded " + DATA_FILE + " from the live site";
+        try { $("mcSite").value = localStorage.getItem("adm-mcsite") || ""; } catch (e) {}
+        try { $("themeSel").value = currentTheme(); } catch (e) {}
+        drawSheetPicker();
+      })
+      .catch(function (e) {
+        $("src").textContent = "No live data loaded";
+        book = [{ name: "Sheet1", cols: ["Name", "Phone", "Email"], rows: [] }];
+        render();
+        say("Could not load " + DATA_FILE + " (" + e.message +
+            "). Import an Excel file, or start typing.", "warn");
+      });
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    var tabs = $("tabs");
+    tabs.textContent = "";
+    book.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.className = "tab" + (i === active ? " on" : "");
+      b.textContent = s.name;
+      var n = document.createElement("span");
+      n.className = "x";
+      n.textContent = s.rows.length;
+      b.appendChild(n);
+      b.onclick = function () { active = i; render(); };
+      b.ondblclick = function () {
+        var v = prompt("Rename sheet", s.name);
+        if (v && v.trim()) { s.name = v.trim(); dirty = true; render(); }
+      };
+      b.title = "Double-click to rename";
+      tabs.appendChild(b);
+    });
+
+    var s = book[active];
+    if (!s) return;
+    $("count").textContent = s.rows.length + " rows · " + s.cols.length + " columns";
+
+    var thead = $("thead"), tbody = $("tbody");
+    thead.textContent = ""; tbody.textContent = "";
+
+    var hr = document.createElement("tr");
+    hr.appendChild(document.createElement("th"));
+    s.cols.forEach(function (c, ci) {
+      var th = document.createElement("th");
+      var box = document.createElement("div");
+      box.className = "th-in";
+      var inp = document.createElement("input");
+      inp.value = c;
+      inp.title = "Rename column";
+      inp.onchange = function () {
+        var to = inp.value.trim();
+        if (!to || to === c) { inp.value = c; return; }
+        s.rows.forEach(function (r) { r[to] = r[c]; delete r[c]; });
+        s.cols[ci] = to;
+        dirty = true;
+        render();
+      };
+      var x = document.createElement("button");
+      x.className = "del";
+      x.textContent = "×";
+      x.title = "Delete column";
+      x.onclick = function () {
+        if (!confirm('Delete the column "' + c + '"?')) return;
+        s.cols.splice(ci, 1);
+        s.rows.forEach(function (r) { delete r[c]; });
+        dirty = true;
+        render();
+      };
+      box.appendChild(inp); box.appendChild(x);
+      th.appendChild(box);
+      hr.appendChild(th);
+    });
+    hr.appendChild(document.createElement("th"));
+    thead.appendChild(hr);
+
+    s.rows.forEach(function (row, ri) {
+      var tr = document.createElement("tr");
+      var num = document.createElement("td");
+      num.className = "rownum";
+      num.textContent = ri + 1;
+      tr.appendChild(num);
+
+      s.cols.forEach(function (c) {
+        var td = document.createElement("td");
+        var inp = document.createElement("input");
+        inp.value = row[c] == null ? "" : row[c];
+        inp.oninput = function () { row[c] = inp.value; dirty = true; };
+        td.appendChild(inp);
+        tr.appendChild(td);
+      });
+
+      var last = document.createElement("td");
+      var d = document.createElement("button");
+      d.className = "del";
+      d.textContent = "×";
+      d.title = "Delete row";
+      d.onclick = function () {
+        s.rows.splice(ri, 1);
+        dirty = true;
+        render();
+      };
+      last.appendChild(d);
+      tr.appendChild(last);
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ---------- edit actions ---------- */
+  $("addRow").onclick = function () {
+    var s = book[active];
+    var r = {};
+    s.cols.forEach(function (c) { r[c] = ""; });
+    s.rows.push(r);
+    dirty = true;
+    render();
+    var inputs = $("tbody").querySelectorAll("tr:last-child input");
+    if (inputs.length) inputs[0].focus();
+  };
+  $("addCol").onclick = function () {
+    var s = book[active];
+    var n = (prompt("Column name") || "").trim();
+    if (!n) return;
+    if (s.cols.indexOf(n) > -1) return say("That column already exists.", "err");
+    s.cols.push(n);
+    s.rows.forEach(function (r) { r[n] = ""; });
+    dirty = true;
+    render();
+  };
+  $("addSheet").onclick = function () {
+    var n = (prompt("Sheet name (this becomes a section heading)") || "").trim();
+    if (!n) return;
+    if (book.some(function (s) { return s.name.toLowerCase() === n.toLowerCase(); }))
+      return say("A sheet with that name already exists.", "err");
+    book.push({ name: n, cols: ["Name", "Phone"], rows: [] });
+    active = book.length - 1;
+    dirty = true;
+    render();
+  };
+  $("delSheet").onclick = function () {
+    if (book.length < 2) return say("A workbook needs at least one sheet.", "err");
+    var s = book[active];
+    if (!confirm('Delete the sheet "' + s.name + '" and its ' + s.rows.length + ' rows?')) return;
+    book.splice(active, 1);
+    active = 0;
+    dirty = true;
+    render();
+  };
+  $("reloadBtn").onclick = function () {
+    if (dirty && !confirm("Discard your unsaved edits and reload the live data?")) return;
+    load();
+  };
+  $("viewBtn").onclick = function () { window.open("index.html", "_blank"); };
+
+  /* ---------- excel in / out ---------- */
+  function toWorkbook() {
+    var wb = XLSX.utils.book_new();
+    book.forEach(function (s) {
+      // Write from an array-of-arrays so empty sheets keep their headers and
+      // column order survives exactly as shown in the editor.
+      var aoa = [s.cols].concat(s.rows.map(function (r) {
+        return s.cols.map(function (c) { return r[c] == null ? "" : String(r[c]); });
+      }));
+      var ws = XLSX.utils.aoa_to_sheet(aoa);
+      // Force every cell to text so phone numbers keep +91 and leading zeros.
+      var rng = XLSX.utils.decode_range(ws["!ref"]);
+      for (var R = rng.s.r; R <= rng.e.r; R++) {
+        for (var C = rng.s.c; C <= rng.e.c; C++) {
+          var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+          if (cell && cell.v != null) { cell.t = "s"; cell.v = String(cell.v); }
+        }
+      }
+      ws["!cols"] = s.cols.map(function (c) {
+        return { wch: Math.max(12, Math.min(38, c.length + 4)) };
+      });
+      XLSX.utils.book_append_sheet(wb, ws, s.name.slice(0, 31));
+    });
+    return wb;
+  }
+
+  $("expBtn").onclick = function () {
+    try {
+      XLSX.writeFile(toWorkbook(), "data.xlsx");
+      say("Exported data.xlsx to your Downloads folder.");
+    } catch (e) { say("Export failed: " + e.message, "err"); }
+  };
+  $("impBtn").onclick = function () { $("file").click(); };
+  $("file").onchange = function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    var merge = confirm(
+      "How should \"" + f.name + "\" be brought in?\n\n" +
+      "OK  —  MERGE: sheets with the same name are replaced, new sheets are added, " +
+      "and everything else you already have is kept.\n\n" +
+      "Cancel  —  REPLACE: throw away the current data and use only this file.");
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      try {
+        var wb = XLSX.read(new Uint8Array(ev.target.result), { type: "array" });
+        if (merge) {
+          var n = mergeWorkbook(wb);
+          say("Merged " + f.name + ": " + n.replaced + " sheet(s) replaced, " +
+              n.added + " added. Press Publish to put it live.", "warn");
+        } else {
+          fromWorkbook(wb);
+          say("Replaced everything with " + book.length + " sheet(s) from " + f.name +
+              ". Press Publish to put it live.", "warn");
+        }
+        dirty = true;
+        $("src").textContent = "Imported from " + f.name;
+      } catch (err) { say("Could not read that file: " + err.message, "err"); }
+      e.target.value = "";
+    };
+    fr.readAsArrayBuffer(f);
+  };
+
+  /* ---------- publish ---------- */
+  function b64(buf) {
+    var bin = "", a = new Uint8Array(buf), CH = 0x8000;
+    for (var i = 0; i < a.length; i += CH) {
+      bin += String.fromCharCode.apply(null, a.subarray(i, i + CH));
+    }
+    return btoa(bin);
+  }
+
+  /** Accepts anything someone might reasonably paste: a browser URL, an SSH
+   *  remote, a clone URL, a link to a branch, or just owner/repo. Returns
+   *  "owner/repo", or "" if it cannot be read that way. */
+  function normalizeRepo(v) {
+    var s = String(v || "").trim();
+    if (!s) return "";
+    s = s.replace(/^git@github\.com:/i, "")             // SSH remote
+         .replace(/^(https?:\/\/)?(www\.)?github\.com\//i, "")  // browser or clone URL
+         .replace(/\.git$/i, "")
+         .replace(/^\/+|\/+$/g, "");                    // stray slashes
+    // ".../tree/main", ".../blob/main/x" — keep only the first two segments
+    var parts = s.split("/").filter(Boolean);
+    if (parts.length < 2) return "";
+    s = parts[0] + "/" + parts[1];
+    return /^[\w.-]+\/[\w.-]+$/.test(s) ? s : "";
+  }
+
+  function creds() {
+    var raw = $("repo").value.trim();
+    var repo = normalizeRepo(raw) || normalizeRepo(DEFAULT_REPO);
+    var tok = $("tok").value.trim();
+
+    if (!repo) {
+      say(raw
+        ? 'Could not read "' + raw + '" as a repository. It should look like ' +
+          DEFAULT_REPO + '.'
+        : "The Repository box is empty. Type " + DEFAULT_REPO +
+          " (if the box was blank, you may be on a cached copy of this page — reload with Ctrl+F5).",
+        "err");
+      return null;
+    }
+    // Show the cleaned value so it is obvious what will actually be written to.
+    if (raw !== repo) {
+      $("repo").value = repo;
+      try { localStorage.setItem("adm-repo", repo); } catch (e) {}
+    }
+    if (!tok) { say("Paste a GitHub token first.", "err"); return null; }
+    return { repo: repo, tok: tok, H: {
+      "Authorization": "Bearer " + tok,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    }};
+  }
+
+  // Commit one file to the repo, creating or updating it as needed.
+  function putFile(c, path, contentB64, message) {
+    var api = "https://api.github.com/repos/" + c.repo + "/contents/" + path;
+    return fetch(api + "?ref=HEAD", { headers: c.H })
+      .then(function (r) {
+        if (r.status === 404) return null;   // file not created yet — fine
+        if (r.status === 401) throw new Error("Token rejected (401). It is mistyped, revoked or expired.");
+        if (r.status === 403) throw new Error(FORBIDDEN);
+        if (!r.ok) throw new Error("GitHub returned " + r.status);
+        return r.json();
+      })
+      .then(function (cur) {
+        var body = { message: message, content: contentB64 };
+        if (cur && cur.sha) body.sha = cur.sha;
+        return fetch(api, { method: "PUT", headers: c.H, body: JSON.stringify(body) });
+      })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          if (r.status === 403) throw new Error(FORBIDDEN);
+          if (!r.ok) throw new Error(j.message || ("GitHub returned " + r.status));
+          return j;
+        });
+      });
+  }
+  /* ══════════════ Templates ══════════════ */
+
+  // Fetched from the repository rather than rebuilt here: one definition,
+  // so the admin page and scripts/make-template.js cannot drift apart.
+  function tplUrl(which) {
+    var repo = normalizeRepo($("repo").value) || normalizeRepo(DEFAULT_REPO);
+    var file = which === "directory" ? "directory-template.xlsx" : which + "-template.xlsx";
+    return "https://raw.githubusercontent.com/" + repo + "/main/template/" + file;
+  }
+
+  function fetchTemplate(which) {
+    return fetch(tplUrl(which) + "?v=" + Date.now()).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.arrayBuffer();
+    });
+  }
+
+  $("tplDownload").onclick = function () {
+    var which = $("tplSel").value;
+    say("Fetching the template…", "warn");
+    fetchTemplate(which).then(function (buf) {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([buf],
+        { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+      a.download = which + "-template.xlsx";
+      a.click();
+      say("Downloaded " + a.download + ". Fill it in, then Import it back.", "ok");
+    }).catch(function (e) {
+      say("Could not fetch the template (" + e.message + "). Open it directly: " +
+          tplUrl(which), "err");
+    });
+  };
+
+  $("tplLoad").onclick = function () {
+    var which = $("tplSel").value;
+    if (!confirm("Load the " + which + " template?\n\nThis replaces everything in the " +
+                 "editor. The live site is untouched until you press Publish, and " +
+                 "\"Reload live data\" brings your current data back.")) return;
+    say("Fetching the template…", "warn");
+    fetchTemplate(which).then(function (buf) {
+      fromWorkbook(XLSX.read(new Uint8Array(buf), { type: "array" }));
+      dirty = true;
+      $("src").textContent = "Loaded the " + which + " template";
+      drawSheetPicker();
+      try { $("themeSel").value = currentTheme(); } catch (e) {}
+      say("Loaded " + book.length + " sheet(s). Delete the example rows, fill in your " +
+          "own, then Publish.", "warn");
+    }).catch(function (e) {
+      say("Could not fetch the template (" + e.message + "). Check the Repository box below.", "err");
+    });
+  };
+
+
+  /* ══════════════ Member codes ══════════════ */
+
+  var mcSource = null;     // [{name, rows}] — the sheets to draw people from
+  var mcPeople = [];       // who holds which code; never published
+
+  /* The roll of issued codes lives in this browser and nowhere else. It must not
+     go into data.xlsx or the repo — both are public — so localStorage and the
+     downloaded CSV are the only two records. Losing both does not lock anyone
+     out (the codes still work; Cloudflare holds them) but it does lose the
+     record of who has which, and re-issuing means new slips for everyone. */
+  var MC_ROLL = "mc-roll";
+  // Identity, so a re-run recognises someone and keeps their existing code.
+  function mcKey(p) {
+    // Each part is squeezed on its own — a stray space in the sheet must not
+    // read as a different person and mint them a second code.
+    var tidy = function (v) {
+      return String(v || "").toLowerCase().replace(/\s+/g, " ").trim();
+    };
+    // Flat B-11 and row house B-11 are two different homes, so the kind of
+    // unit is part of who someone is — without it they share one code.
+    return tidy(p.name) + "|" + tidy(p.flat) + "|" + tidy(p.utype);
+  }
+  // How the home is written on a slip, a card and in the message. Two people
+  // at "B-11" must not both read as "B-11" to whoever hands the slips out.
+  function mcWhere(p) {
+    if (!p.flat) return "";
+    return p.utype ? p.flat + " (" + p.utype + ")" : p.flat;
+  }
+  function mcSave() {
+    try { localStorage.setItem(MC_ROLL, JSON.stringify(mcPeople)); } catch (e) {}
+  }
+  function mcRestore() {
+    var v = [];
+    try { v = JSON.parse(localStorage.getItem(MC_ROLL) || "[]"); } catch (e) {}
+    mcPeople = Array.isArray(v) ? v.filter(function (p) { return p && p.name && p.code; }) : [];
+    if (mcPeople.length) drawMemberCodes();
+  }
+
+  function mcSheetList() {
+    return (mcSource || book.map(function (s) { return { name: s.name, rows: s.rows }; }))
+      .filter(function (s) { return s.name.charAt(0) !== "_" && s.rows.length; });
+  }
+
+  function drawSheetPicker() {
+    var box = $("mcSheets");
+    box.textContent = "";
+    mcSheetList().forEach(function (s) {
+      var id = "mcs-" + s.name.replace(/\W/g, "");
+      var lab = document.createElement("label");
+      lab.style.cssText = "display:flex;align-items:center;gap:6px;font-size:13px;" +
+                          "color:var(--text);font-weight:500;margin:0";
+      var cb = document.createElement("input");
+      cb.type = "checkbox"; cb.id = id; cb.dataset.sheet = s.name;
+      cb.style.cssText = "width:auto;min-height:0";
+      // People sheets by default; vendors and documents are not members.
+      cb.checked = /resident|committee|member|owner|tenant/i.test(s.name);
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(s.name + " (" + s.rows.length + ")"));
+      box.appendChild(lab);
+    });
+    if (!box.children.length) box.textContent = "No sheets loaded yet.";
+  }
+
+  $("mcUseCurrent").onclick = function () {
+    mcSource = null;
+    drawSheetPicker();
+    say("Using the data loaded in this page.", "ok");
+  };
+  $("mcSite").addEventListener("input", function () {
+    try { localStorage.setItem("adm-mcsite", $("mcSite").value.trim()); } catch (e) {}
+  });
+  $("mcUpload").onclick = function () { $("mcFile").click(); };
+  $("mcFile").onchange = function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      try {
+        var wb = XLSX.read(new Uint8Array(ev.target.result), { type: "array" });
+        mcSource = wb.SheetNames.map(function (n) {
+          return { name: n, rows: XLSX.utils.sheet_to_json(wb.Sheets[n], { defval: "", raw: false }) };
+        });
+        drawSheetPicker();
+        say("Read " + f.name + ". Tick the sheets holding people, then Generate codes.", "warn");
+      } catch (err) { say("Could not read that file: " + err.message, "err"); }
+      e.target.value = "";
+    };
+    fr.readAsArrayBuffer(f);
+  };
+
+  // No I, O, 0 or 1 — misread off a slip, mistyped on a phone.
+  var MC_ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  function mcCode(prefix, taken) {
+    var c;
+    do {
+      var b = new Uint8Array(6);
+      crypto.getRandomValues(b);
+      c = (prefix ? prefix + "-" : "");
+      for (var i = 0; i < 6; i++) c += MC_ALPHA[b[i] % MC_ALPHA.length];
+    } while (taken[c]);
+    taken[c] = 1;
+    return c;
+  }
+  function mcPick(row, rx, skip) {
+    for (var k in row) {
+      var key = k.toLowerCase();
+      if (skip && skip.test(key)) continue;
+      if (!rx.test(key)) continue;
+      var v = String(row[k] || "").trim();
+      if (v) return v;
+    }
+    return "";
+  }
+  /* "Unit Type" holds a kind of home, not a door number, but it matches the
+     /unit/ in the address rule and the /resident/ in the name rule. It has to
+     be excluded from both or the flat reads as "Row House". */
+  var MC_UTYPE = /^(unit|property|house|home|dwelling|premises|residence)\s*(type|kind)$/;
+  // wa.me wants digits with a country code and nothing else.
+  function mcWa(v) {
+    var cc = "91";
+    var raw = String(v || "").trim();
+    var d = raw.replace(/\D/g, "");
+    if (!d) return "";
+    // A leading + or 00 means the author wrote a full international number.
+    var plus = raw.charAt(0) === "+" || /^00\d/.test(d);
+    var local = true;
+    d = d.replace(/^00/, "");
+    if (d.length > 10 && d.indexOf(cc) === 0) d = d.slice(cc.length);
+    else if (plus) local = false;          // +<some other country>
+    d = d.replace(/^0+/, "");             // a domestic trunk prefix
+
+    // Someone who wrote +1 415… meant that number; it is not ours to judge
+    // against a plan it does not belong to.
+    if (!local) return d.length >= 8 && d.length <= 15 ? d : "";
+    // India is the one plan worth hard-coding: a mobile is ten digits
+    // beginning 6-9. A landline's STD code, an 1800 number and a short
+    // helpline all fail that, which is exactly the point.
+    if (cc === "91") return /^[6-9]\d{9}$/.test(d) ? cc + d : "";
+    // Another country's own plan is not ours to guess: keep a length window.
+    return d.length >= 8 && d.length <= 14 ? cc + d : "";
+  }
+  function mcSociety() {
+    var a = book.filter(function (s) { return /^about$/i.test(s.name); })[0];
+    if (!a) return "our society";
+    for (var i = 0; i < a.rows.length; i++) {
+      var k = Object.keys(a.rows[i]);
+      if (/society name|^name$/i.test(String(a.rows[i][k[0]])))
+        return String(a.rows[i][k[1]]).trim() || "our society";
+    }
+    return "our society";
+  }
+  /* Reads one field. An earlier version fell back to #baseUrl, which no
+     longer exists, so this threw on null before the caller's own "enter an
+     address" check could report the real problem. */
+  function mcSiteUrl() {
+    var el = $("mcSite");
+    var v = el ? el.value.trim() : "";
+    return v ? v.replace(/\/+$/, "") + "/" : "";
+  }
+  function mcMessage(p) {
+    var soc = mcSociety(), site = mcSiteUrl();
+    return soc + " — Directory access\n\n" +
+      "Committee contacts, emergency numbers, plumber/electrician/maid contacts with " +
+      "charges, resident list and society documents.\n\n" +
+      "Open: " + site + "\nYour code: " + p.code + "\n\n" +
+      "The code is for " + (mcWhere(p) || p.name) + " only. Enter it once — the site remembers " +
+      "you for 30 days. Please do not forward it.\n\n────────\n\n" +
+      soc + " — निर्देशिका\n\nसमिति संपर्क, आपातकालीन नंबर, प्लंबर/इलेक्ट्रीशियन/मेड के नंबर और शुल्क, " +
+      "निवासी सूची और दस्तावेज़।\n\nलिंक: " + site + "\nआपका कोड: " + p.code + "\n\n" +
+      "यह कोड केवल आपके लिए है। कृपया किसी और को न दें।";
+  }
+
+  $("mcGen").onclick = function () {
+    var chosen = Array.prototype.filter.call(
+      $("mcSheets").querySelectorAll("input[type=checkbox]"), function (c) { return c.checked; })
+      .map(function (c) { return c.dataset.sheet; });
+    if (!chosen.length) return say("Tick at least one sheet.", "err");
+    if (!mcSiteUrl()) return say("Enter the site address residents will open.", "err");
+
+    var prefix = $("mcPrefix").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    var taken = {}, out = [], kept = 0;
+
+    // Anyone already on the roll keeps their code — slips already handed out
+    // stay valid. Their old codes are reserved so a fresh one cannot collide.
+    var prior = {};
+    mcPeople.forEach(function (p) { prior[mcKey(p)] = p; taken[p.code] = 1; });
+
+    mcSheetList().forEach(function (s) {
+      if (chosen.indexOf(s.name) < 0) return;
+      s.rows.forEach(function (row) {
+        var who = mcPick(row, /^name$|full name|member|resident/, MC_UTYPE);
+        if (!who) return;
+        var block = mcPick(row, /^block|wing|tower/, MC_UTYPE);
+        var unit = mcPick(row, /flat|unit|door|house/, MC_UTYPE);
+        // Many sheets already carry the block inside the flat ("A" + "A-101").
+        var already = block && unit &&
+          unit.toUpperCase().indexOf(block.toUpperCase()) === 0;
+        var p = {
+          sheet: s.name, name: who,
+          flat: !unit ? block : (block && !already) ? block + "-" + unit : unit,
+          utype: mcPick(row, MC_UTYPE),
+          email: mcPick(row, /mail/),
+          phone: mcPick(row, /phone|mobile|contact|cell/),
+          code: ""
+        };
+        var was = prior[mcKey(p)];
+        if (was) { p.code = was.code; kept++; }
+        else p.code = mcCode(prefix, taken);
+        out.push(p);
+      });
+    });
+    if (!out.length) return say("No rows with a name in those sheets.", "err");
+
+    // Someone on the roll but no longer in the sheets has moved out. Drop them
+    // here and their code leaves SITE_PASSWORDS on the next deploy, which ends
+    // their sessions — that is the intended way to revoke access.
+    var left = mcPeople.length - kept;
+
+    mcPeople = out;
+    mcSave();
+    drawMemberCodes();
+    var fresh = out.length - kept;
+    say(
+      (kept ? kept + " existing codes kept, " + fresh + " new" : out.length + " codes generated") +
+      (left ? ", " + left + " no longer in the sheets and now revoked" : "") +
+      ". Paste the SITE_PASSWORDS line into Cloudflare and deploy BEFORE sending anyone their code.",
+      "warn");
+  };
+
+  $("mcForget").onclick = function () {
+    if (!mcPeople.length) return say("Nothing saved.", "warn");
+    if (!confirm("Erase the record of who holds which code?\n\nThe codes keep working — " +
+                 "Cloudflare holds those. You lose only the list of who has which, and it " +
+                 "cannot be recovered unless you downloaded the CSV."))
+      return;
+    mcPeople = [];
+    try { localStorage.removeItem(MC_ROLL); } catch (e) {}
+    drawMemberCodes();
+    say("Erased from this browser. The codes in Cloudflare still work.", "ok");
+  };
+
+  function drawMemberCodes() {
+    var box = $("mcOut");
+    box.textContent = "";
+    if (!mcPeople.length) return;
+
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "background:var(--surface-2);border:1px solid var(--border);" +
+                         "border-radius:var(--r);padding:12px;margin-bottom:14px";
+    var h = document.createElement("div");
+    h.style.cssText = "font-size:11.5px;font-weight:700;letter-spacing:.08em;" +
+                      "text-transform:uppercase;color:var(--muted);margin-bottom:7px";
+    h.textContent = "Paste into Cloudflare as SITE_PASSWORDS, then Deploy";
+    var ta = document.createElement("textarea");
+    ta.readOnly = true;
+    ta.style.cssText = "width:100%;min-height:60px;font:12.5px ui-monospace,Consolas,monospace;" +
+      "color:var(--text);background:var(--surface);border:1px solid var(--border);" +
+      "border-radius:7px;padding:9px";
+    ta.value = mcPeople.map(function (p) { return p.code; }).join(",");
+    var cp = document.createElement("button");
+    cp.className = "sm"; cp.style.marginTop = "8px"; cp.textContent = "Copy";
+    cp.onclick = function () {
+      navigator.clipboard.writeText(ta.value).then(function () { cp.textContent = "Copied"; });
+    };
+    wrap.appendChild(h); wrap.appendChild(ta); wrap.appendChild(cp);
+    box.appendChild(wrap);
+
+    var reach = mcPeople.filter(function (p) { return mcWa(p.phone) || p.email; }).length;
+    var note = document.createElement("p");
+    note.className = "hint";
+    note.textContent = mcPeople.length + " codes saved in this browser. " + reach +
+      " can be sent from here; the rest need a printed slip or handing over in person. " +
+      "Download the CSV as a backup — this browser is otherwise the only record.";
+    box.appendChild(note);
+
+    var grid = document.createElement("div");
+    grid.style.cssText = "display:grid;gap:10px;grid-template-columns:1fr";
+    if (window.matchMedia("(min-width:760px)").matches)
+      grid.style.gridTemplateColumns = "1fr 1fr";
+
+    var sent = {};
+    try { sent = JSON.parse(localStorage.getItem("mc-sent") || "{}"); } catch (e) {}
+
+    mcPeople.forEach(function (p, i) {
+      var card = document.createElement("div");
+      var mark = function () {
+        card.style.borderColor = "var(--accent)";
+        card.style.background = "var(--accent-soft)";
+        sent[p.code] = 1;
+        try { localStorage.setItem("mc-sent", JSON.stringify(sent)); } catch (e) {}
+      };
+      card.style.cssText = "border:1px solid var(--border);border-radius:var(--r);padding:11px 13px";
+      if (sent[p.code]) { card.style.borderColor = "var(--accent)"; card.style.background = "var(--accent-soft)"; }
+
+      var top = document.createElement("div");
+      top.style.cssText = "display:flex;gap:10px;align-items:flex-start";
+      var who = document.createElement("div");
+      who.style.flex = "1";
+      var nm = document.createElement("div");
+      nm.style.cssText = "font-weight:650;font-size:14.5px"; nm.textContent = p.name;
+      var sub = document.createElement("div");
+      sub.style.cssText = "color:var(--muted);font-size:12px";
+      sub.textContent = [mcWhere(p), p.sheet].filter(Boolean).join(" · ");
+      who.appendChild(nm); who.appendChild(sub);
+      var code = document.createElement("div");
+      code.style.cssText = "font:700 14px ui-monospace,Consolas,monospace;letter-spacing:.05em;" +
+        "color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:3px 8px;white-space:nowrap";
+      code.textContent = p.code;
+      top.appendChild(who); top.appendChild(code);
+      card.appendChild(top);
+
+      var meta = document.createElement("div");
+      meta.style.cssText = "color:var(--muted);font-size:11.5px;margin-top:6px";
+      meta.textContent = (p.phone || "no phone") + " · " + (p.email || "no email");
+      card.appendChild(meta);
+
+      var acts = document.createElement("div");
+      acts.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;margin-top:9px";
+
+      var wa = mcWa(p.phone);
+      if (wa) {
+        var a = document.createElement("a");
+        a.href = "https://wa.me/" + wa + "?text=" + encodeURIComponent(mcMessage(p));
+        a.target = "_blank"; a.rel = "noopener";
+        a.textContent = "WhatsApp";
+        a.style.cssText = "display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;" +
+          "text-decoration:none;background:#25D366;color:#06301a;border-radius:7px;padding:6px 11px";
+        a.onclick = mark;
+        acts.appendChild(a);
+      }
+      if (p.email) {
+        var m = document.createElement("a");
+        m.href = "mailto:" + p.email + "?subject=" +
+          encodeURIComponent(mcSociety() + " — Directory access") +
+          "&body=" + encodeURIComponent(mcMessage(p));
+        m.textContent = "Email";
+        m.style.cssText = "display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;" +
+          "text-decoration:none;background:var(--accent);color:#fff;border-radius:7px;padding:6px 11px";
+        m.onclick = mark;
+        acts.appendChild(m);
+      }
+      var cb = document.createElement("button");
+      cb.className = "sm ghost"; cb.textContent = "Copy message";
+      cb.onclick = function () {
+        navigator.clipboard.writeText(mcMessage(p)).then(function () {
+          cb.textContent = "Copied"; mark();
+          setTimeout(function () { cb.textContent = "Copy message"; }, 1400);
+        });
+      };
+      acts.appendChild(cb);
+      card.appendChild(acts);
+      grid.appendChild(card);
+    });
+    box.appendChild(grid);
+  }
+
+  $("mcCsv").onclick = function () {
+    if (!mcPeople.length) return say("Generate the codes first.", "warn");
+    var q = function (v) { return /[",]/.test(v) ? '"' + String(v).replace(/"/g, '""') + '"' : v; };
+    var csv = "Sheet,Name,Flat,Unit Type,Email,Phone,Access Code,Sent On\n" +
+      mcPeople.map(function (p) {
+        return [p.sheet, p.name, p.flat, p.utype || "", p.email, p.phone, p.code, ""].map(q).join(",");
+      }).join("\n") + "\n";
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = "member-codes.csv";
+    a.click();
+    say("Downloaded. Keep it off any shared drive — it lists every code.", "warn");
+  };
+  /* ---------- printable slips for the codes generated above ---------- */
+  $("mcSlips").onclick = function () {
+    if (!mcPeople.length) return say("Generate the codes first.", "warn");
+    var site = mcSiteUrl(), soc = mcSociety();
+    var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]); }); };
+
+    // The QR carries the address only. A slip photographed in a lift should
+    // not hand over access on its own — the code still has to be typed.
+    var qr = typeof qrcode === "function" ? (function () {
+      var q = qrcode(0, "M"); q.addData(site); q.make();
+      var n = q.getModuleCount(), d = "";
+      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++)
+        if (q.isDark(y, x)) d += "M" + x + " " + y + "h1v1h-1z";
+      return '<svg class="qr" viewBox="-2 -2 ' + (n + 4) + ' ' + (n + 4) +
+        '" shape-rendering="crispEdges"><rect x="-2" y="-2" width="' + (n + 4) +
+        '" height="' + (n + 4) + '" fill="#fff"/><path d="' + d + '" fill="#0A1628"/></svg>';
+    })() : "";
+
+    var slips = mcPeople.map(function (p) {
+      return '<div class="slip"><div class="soc">' + esc(soc) + '</div>' +
+        '<div class="flat">' + esc(mcWhere(p) || p.name) + '</div>' +
+        '<div class="mid"><div class="cw"><div class="lbl">Your access code</div>' +
+        '<div class="code">' + esc(p.code) + '</div></div>' + qr + '</div>' +
+        '<div class="how">Scan, or go to <b>' + esc(site.replace(/^https?:\/\//, "")) +
+        '</b> and type the code above.<br>कोड स्कैन करें या ऊपर दिया कोड दर्ज करें।</div>' +
+        '<div class="warn">Issued to you. Please do not pass it on.</div></div>';
+    }).join("");
+
+    var w = window.open("", "_blank");
+    if (!w) return say("Your browser blocked the print window. Allow pop-ups and retry.", "err");
+    w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(soc) +
+      ' — access slips</title><style>@page{size:A4;margin:9mm}*{box-sizing:border-box;margin:0;padding:0}' +
+      'body{font-family:"Segoe UI",system-ui,sans-serif;color:#0A1628}' +
+      '.bar{padding:14px 18px;background:#0A1628;color:#fff;display:flex;gap:12px;align-items:center}' +
+      '.bar button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:#0EA5C8}' +
+      '.sheet{display:grid;grid-template-columns:1fr 1fr;max-width:210mm;margin:12px auto;background:#fff;padding:9mm}' +
+      '.slip{border:1px dashed #b6c0cf;padding:6mm;height:64mm;display:flex;flex-direction:column;break-inside:avoid}' +
+      '.soc{font-size:9pt;letter-spacing:.08em;text-transform:uppercase;color:#5A6B82}' +
+      '.flat{font-size:19pt;font-weight:700;margin-top:1mm}' +
+      '.mid{display:flex;align-items:center;gap:4mm;margin-top:auto}.cw{flex:1;min-width:0}' +
+      '.lbl{font-size:8pt;letter-spacing:.09em;text-transform:uppercase;color:#5A6B82;margin-bottom:1mm}' +
+      '.code{font-family:ui-monospace,Consolas,monospace;font-size:17pt;font-weight:700;letter-spacing:.06em}' +
+      '.qr{width:26mm;height:26mm;flex:none}' +
+      '.how{font-size:8.5pt;color:#3F4C60;margin-top:3mm;line-height:1.45}' +
+      '.warn{font-size:7.5pt;color:#8a6a1f;margin-top:1.5mm}' +
+      '.pc{position:fixed;left:0;right:0;bottom:0;text-align:right;font-size:7.5pt;' +
+      'color:#6B7A90;padding-top:2mm;border-top:.4pt solid #CBD5E1}' +
+      '@media print{.bar{display:none}.sheet{margin:0;padding:0 0 8mm}}</style></head><body>' +
+      '<div class="bar"><strong>' + mcPeople.length +
+      ' slips</strong><button onclick="window.print()">Print</button></div>' +
+      '<div class="sheet">' + slips + '</div>' +
+      '<div class="pc">Stunity Tech — by Prateek</div></body></html>');
+    w.document.close();
+  };
+
+  /* ---------- theme, stored in the About sheet ---------- */
+  function aboutSheet() {
+    return book.filter(function (s) { return /^about$/i.test(s.name); })[0];
+  }
+  function currentTheme() {
+    var a = aboutSheet();
+    if (!a) return "navy";
+    for (var i = 0; i < a.rows.length; i++) {
+      var k = Object.keys(a.rows[i]);
+      if (/^theme$/i.test(String(a.rows[i][k[0]]).trim()))
+        return String(a.rows[i][k[1]]).trim().toLowerCase() || "navy";
+    }
+    return "navy";
+  }
+  $("themeApply").onclick = function () {
+    var a = aboutSheet();
+    if (!a) return say("No About sheet to write the theme into.", "err");
+    var want = $("themeSel").value;
+    var cols = a.cols.length ? a.cols : (a.cols = ["Field", "Value"]);
+    var hit = null;
+    a.rows.forEach(function (row) {
+      if (/^theme$/i.test(String(row[cols[0]]).trim())) hit = row;
+    });
+    if (hit) hit[cols[1]] = want;
+    else {
+      var row = {};
+      cols.forEach(function (c) { row[c] = ""; });
+      row[cols[0]] = "Theme"; row[cols[1]] = want;
+      a.rows.push(row);
+    }
+    dirty = true;
+    render();
+    say('Theme set to "' + want + '". Press Publish to put it live.', "warn");
+  };
+
+
+
+  /* ---------- token diagnostics ---------- */
+  // "Resource not accessible by personal access token" is GitHub's catch-all
+  // 403. These two calls narrow it to the exact setting that is wrong.
+  $("checkBtn").onclick = function () {
+    var c = creds();
+    if (!c) return;
+    var out = $("checkOut");
+    out.textContent = "Checking…";
+    out.style.cssText = "margin-top:10px;font-size:13.5px;color:var(--muted)";
+
+    function report(lines, kind) {
+      out.textContent = "";
+      out.style.cssText = "margin-top:10px;font-size:13.5px;line-height:1.6;color:" +
+        (kind === "err" ? "var(--danger)" : kind === "ok" ? "var(--ok)" : "var(--warn)");
+      lines.forEach(function (t) {
+        var d = document.createElement("div");
+        d.textContent = t;
+        out.appendChild(d);
+      });
+    }
+
+    fetch("https://api.github.com/user", { headers: c.H })
+      .then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok) {
+            throw new Error(r.status === 401
+              ? "The token was rejected (401). It is mistyped, revoked, or expired."
+              : "GitHub returned " + r.status + ": " + (j.message || ""));
+          }
+          return j.login;
+        });
+      })
+      .then(function (who) {
+        return fetch("https://api.github.com/repos/" + c.repo, { headers: c.H })
+          .then(function (r) {
+            return r.json().then(function (j) { return { status: r.status, body: j, who: who }; });
+          });
+      })
+      .then(function (res) {
+        if (res.status === 404) {
+          report([
+            "Signed in as " + res.who + ", but the token cannot see " + c.repo + ".",
+            "Fix: when creating the token, Repository access must be",
+            "\"Only select repositories\" with this repository ticked —",
+            "not \"Public repositories\", which is read-only."
+          ], "err");
+          return;
+        }
+        if (res.status !== 200) {
+          report(["GitHub returned " + res.status + ": " + (res.body.message || "")], "err");
+          return;
+        }
+        var perms = res.body.permissions || {};
+        if (!perms.push) {
+          report([
+            "Signed in as " + res.who + " and " + c.repo + " is visible, but read-only.",
+            "Fix: edit the token → Permissions → Repository permissions →",
+            "set Contents to \"Read and write\", then save.",
+            "(\"Public repositories\" access can never write — reissue the token",
+            "with \"Only select repositories\" if that is what you picked.)"
+          ], "err");
+          return;
+        }
+        report([
+          "Token is good.",
+          "Account: " + res.who,
+          "Repository: " + c.repo + " (write access confirmed)",
+          "Publish and Upload should now work."
+        ], "ok");
+      })
+      .catch(function (e) { report([e.message], "err"); });
+  };
+
+  /* ---------- upload a material ---------- */
+  $("upBtn").onclick = function () { $("matFile").click(); };
+  $("matFile").onchange = function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    e.target.value = "";
+    var c = creds();
+    if (!c) return;
+    if (f.size > 20 * 1024 * 1024) {
+      return say("That file is " + (f.size / 1048576).toFixed(1) +
+                 " MB. The GitHub contents API caps at about 25 MB — keep it under 20.", "err");
+    }
+    // Keep the name URL-safe; spaces and & in a path break links quietly.
+    var safe = f.name.replace(/[^\w.\-]+/g, "_");
+    var path = "materials/" + safe;
+
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      say("Uploading " + safe + "…", "warn");
+      putFile(c, path, b64(ev.target.result), "Add material: " + safe)
+        .then(function () {
+          // find or create the Documents sheet, then add the row
+          var idx = book.findIndex(function (s) { return /document|material|download/i.test(s.name); });
+          if (idx < 0) {
+            book.push({ name: "Documents", cols: ["Title", "Category", "File", "Updated", "Notes"], rows: [] });
+            idx = book.length - 1;
+          }
+          var s = book[idx];
+          ["Title", "File"].forEach(function (need) {
+            if (!s.cols.some(function (c2) { return c2.toLowerCase() === need.toLowerCase(); }))
+              s.cols.push(need);
+          });
+          var col = function (want) {
+            return s.cols.filter(function (c2) { return c2.toLowerCase() === want; })[0];
+          };
+          var row = {};
+          s.cols.forEach(function (c2) { row[c2] = ""; });
+          row[col("title")] = f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+          row[col("file")] = path;
+          if (col("updated")) row[col("updated")] = new Date().toISOString().slice(0, 10);
+          s.rows.push(row);
+          active = idx;
+          dirty = true;
+          render();
+          addMat(safe);
+          say('Uploaded "' + safe + '" and added a row to ' + s.name +
+              ". Edit the title if you like, then press Publish.", "ok");
+        })
+        .catch(function (err) { say("Upload failed: " + err.message, "err"); });
+    };
+    fr.readAsArrayBuffer(f);
+  };
+
+  function addMat(name) {
+    var box = $("matList");
+    var d = document.createElement("div");
+    d.style.cssText = "font-size:13px;color:var(--muted);padding:3px 0";
+    d.textContent = "✓ materials/" + name;
+    box.appendChild(d);
+  }
+
+  /* ---------- the public services page ----------
+     services.json is served without an access code, so it is built from the
+     services sheet alone. Residents, committee and the _private sheets are
+     never read here — see scripts/make-services.js for the same rule offline. */
+  var SERVICES_SHEET = /^(services|services & help|services and help|help|vendors|trades)$/i;
+  /* A sheet whose name starts with Town (or _Town, which the directory never
+     renders) is for the public page only — the way to list a trade for the
+     whole town without putting them in the society's own section. */
+  var TOWN_SHEET = /^_?town\b/i;
+
+  /** Which sheets feed services.json. About | Services Page Sheets overrides. */
+  function serviceSheets() {
+    var told = aboutValue("services page sheets");
+    if (told) {
+      var want = told.split(",").map(function (s) { return s.trim().toLowerCase(); })
+        .filter(Boolean);
+      var hit = book.filter(function (s) { return want.indexOf(s.name.trim().toLowerCase()) > -1; });
+      if (hit.length) return hit;
+    }
+    return book.filter(function (s) {
+      return SERVICES_SHEET.test(s.name.trim()) || TOWN_SHEET.test(s.name.trim());
+    });
+  }
+
+  function aboutValue(k) {
+    var a = aboutSheet();
+    if (!a || !a.cols.length) return "";
+    var f = a.cols[0], v = a.cols[1];
+    var hit = a.rows.filter(function (r) {
+      return String(r[f] || "").trim().toLowerCase() === k;
+    })[0];
+    return hit ? String(hit[v] || "").trim() : "";
+  }
+
+  /* ── Kept in the sheet, off the page ──
+     An underscore in front of a sheet tab, a column heading or a single cell
+     means "ours, not the noticeboard's": the spare number the committee keeps,
+     the resident who asked not to be listed. A Hide column with a yes in it
+     takes the whole row out.
+
+     Applied where the rows are gathered, not where they are drawn, so the
+     cards, the search, the share text, the detail sheet and the published file
+     are all covered by the one rule and none of them can show what the others
+     hide. */
+  var HIDE_COL = /^(hide|hidden|skip|unlisted|donotpublish|dontpublish)$/;
+  var HIDE_YES = /^(y|yes|true|1|x|✓|✔|हाँ|हा|होय)$/i;
+  function normKey(k) { return String(k).toLowerCase().replace(/[^a-z]/g, ""); }
+  function isHidden(v) { return String(v == null ? "" : v).trim().charAt(0) === "_"; }
+  function rowHidden(r) {
+    for (var k in r) {
+      if (!Object.prototype.hasOwnProperty.call(r, k)) continue;
+      if (HIDE_COL.test(normKey(k)) && HIDE_YES.test(String(r[k] == null ? "" : r[k]).trim()))
+        return true;
+    }
+    return false;
+  }
+  /** A copy with every hidden column and every hidden cell taken out. */
+  function shown(r) {
+    var out = {};
+    for (var k in r) {
+      if (!Object.prototype.hasOwnProperty.call(r, k)) continue;
+      if (isHidden(k) || HIDE_COL.test(normKey(k))) continue;
+      out[k] = isHidden(r[k]) ? "" : r[k];
+    }
+    return out;
+  }
+  /** Does this row still say anything once the hidden parts are gone? */
+  function hasAnything(r) {
+    for (var k in r) {
+      if (Object.prototype.hasOwnProperty.call(r, k) &&
+          String(r[k] == null ? "" : r[k]).trim() !== "") return true;
+    }
+    return false;
+  }
+
+  function servicesJson() {
+    var sheets = serviceSheets();
+    if (!sheets.length) return null;
+
+    var rows = [], cols = [], seen = {};
+    sheets.forEach(function (s) {
+      s.cols.forEach(function (c) {
+        if (isHidden(c) || HIDE_COL.test(normKey(c))) return;
+        if (cols.indexOf(c) < 0) cols.push(c);
+      });
+      s.rows.forEach(function (r) {
+        if (!s.cols.some(function (c) { return String(r[c] || "").trim(); })) return;
+        if (rowHidden(r)) return;
+        var vis = shown(r);
+        if (!hasAnything(vis)) return;
+        var o = {};
+        cols.forEach(function (c) { o[c] = vis[c] == null ? "" : String(vis[c]); });
+        // The same trade listed in both sheets should appear once.
+        var id = [o.Name, o.Phone, o.Role].join("|").toLowerCase().trim();
+        if (id !== "||" && seen[id]) return;
+        seen[id] = 1;
+        rows.push(o);
+      });
+    });
+
+    var low = sheets[0].name.toLowerCase();
+    return {
+      title: aboutValue("services page title") || "Local Services & Help",
+      tagline: aboutValue("services page tagline") ||
+        "Plumbers, electricians, help at home — numbers collected by neighbours.",
+      city: aboutValue("city"),
+      // Its own look; the society's Theme is deliberately not inherited.
+      theme: (aboutValue("services page theme") || "civic").toLowerCase(),
+      country: aboutValue("country code") || aboutValue("country") || "91",
+      note: aboutValue("note: " + low) || aboutValue("note: services & help"),
+      noteHi: aboutValue("note hi: " + low) || aboutValue("note hi: services & help"),
+      updated: new Date().toISOString().slice(0, 10),
+      sheets: sheets.map(function (s) { return s.name; }),
+      columns: cols,
+      rows: rows
+    };
+  }
+  // btoa cannot take non-Latin1, and these sheets carry Devanagari.
+  function b64utf8(str) {
+    var bytes = new TextEncoder().encode(str), bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  /* ---------- a separate list for the public page ---------- */
+  var TOWN_COLS = ["Name", "Role", "Category", "Phone", "Charges", "Timings", "Covers", "Notes"];
+  var TOWN_NAME = "_Town Services";
+
+  function townSheet(create) {
+    var s = book.filter(function (x) { return TOWN_SHEET.test(x.name.trim()); })[0];
+    if (!s && create) {
+      s = { name: TOWN_NAME, cols: TOWN_COLS.slice(), rows: [] };
+      book.push(s);
+    }
+    return s || null;
+  }
+
+  $("townView").onclick = function () { window.open("services.html", "_blank"); };
+
+  $("townTemplate").onclick = function () {
+    var wb = XLSX.utils.book_new();
+    var demo = [
+      { Name: "Example Plumber", Role: "Plumber", Category: "Repairs & Maintenance",
+        Phone: "+91 90040 55511", Charges: "₹100 / visit", Timings: "9 AM – 7 PM",
+        Covers: "small works, taps", Notes: "Parts charged separately" },
+      { Name: "Example Tutor", Role: "Tutor", Category: "Tuition",
+        Phone: "+91 90040 55512", Charges: "₹800 / month", Timings: "evenings",
+        Covers: "classes 5 to 8", Notes: "" }
+    ];
+    var ws = XLSX.utils.json_to_sheet(demo, { header: TOWN_COLS });
+    // Text, or Excel eats the leading zero and the +91.
+    var rng = XLSX.utils.decode_range(ws["!ref"]);
+    for (var R = rng.s.r; R <= rng.e.r; R++)
+      for (var C = rng.s.c; C <= rng.e.c; C++) {
+        var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+        if (cell && cell.v != null) { cell.t = "s"; cell.v = String(cell.v); }
+      }
+    ws["!cols"] = TOWN_COLS.map(function (c) { return { wch: Math.max(14, c.length + 6) }; });
+    XLSX.utils.book_append_sheet(wb, ws, TOWN_NAME);
+    XLSX.writeFile(wb, "town-services-template.xlsx");
+    say("Downloaded town-services-template.xlsx. Fill it in, then upload it here.", "ok");
+  };
+
+  $("townUpload").onclick = function () { $("townFile").click(); };
+  $("townFile").onchange = function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    e.target.value = "";
+    var fr = new FileReader();
+    fr.onload = function (ev) {
+      try {
+        var wb = XLSX.read(new Uint8Array(ev.target.result), { type: "array" });
+        // Whichever sheet actually has rows — a one-sheet upload is the norm.
+        var rows = [], cols = [];
+        wb.SheetNames.forEach(function (n) {
+          if (rows.length) return;
+          var got = XLSX.utils.sheet_to_json(wb.Sheets[n], { defval: "", raw: false })
+            .filter(function (r) {
+              return Object.keys(r).some(function (k) { return String(r[k] || "").trim(); });
+            });
+          if (got.length) { rows = got; cols = Object.keys(got[0]); }
+        });
+        if (!rows.length) return say("That file has no rows in it.", "err");
+        if (!cols.some(function (c) { return /^name$|^person$|^service$/i.test(c.trim()); }))
+          return say("That list needs a Name column. Found: " + cols.join(", "), "err");
+
+        var merge = confirm(
+          "Add " + rows.length + " row(s) from \"" + f.name + "\" to the public list?\n\n" +
+          "OK  —  ADD to what is already in _Town Services.\n\n" +
+          "Cancel  —  REPLACE everything in _Town Services with this file.");
+
+        var s = townSheet(true);
+        cols.forEach(function (c) { if (s.cols.indexOf(c) < 0) s.cols.push(c); });
+        if (!merge) s.rows = [];
+        rows.forEach(function (r) {
+          var o = {};
+          s.cols.forEach(function (c) { o[c] = r[c] == null ? "" : String(r[c]); });
+          s.rows.push(o);
+        });
+
+        active = book.indexOf(s);
+        dirty = true;
+        render();
+        var out = $("townOut");
+        out.textContent = (merge ? "Added " : "Replaced with ") + rows.length +
+          " row(s) from " + f.name + ". " + s.rows.length +
+          " row(s) now in " + s.name + ". Press Publish to put it on the public page.";
+        say("Loaded " + rows.length + " row(s) into " + s.name +
+            ". These appear on the public services page only — never in the directory. " +
+            "Press Publish.", "warn");
+      } catch (err) { say("Could not read that file: " + err.message, "err"); }
+    };
+    fr.readAsArrayBuffer(f);
+  };
+
+  $("pubBtn").onclick = function () {
+    var c = creds();
+    if (!c) return;
+
+    var content;
+    try {
+      content = b64(XLSX.write(toWorkbook(), { type: "array", bookType: "xlsx" }));
+    } catch (e) { return say("Could not build the file: " + e.message, "err"); }
+
+    $("pubBtn").disabled = true;
+    $("pubBtn").textContent = "Publishing…";
+    putFile(c, DATA_FILE, content, "Update directory data (" +
+        book.reduce(function (n, s) { return n + s.rows.length; }, 0) + " rows)")
+      .then(function () {
+        // The public town page reads its own file. Publishing only data.xlsx
+        // would leave it frozen at whatever it held before.
+        var svc = servicesJson();
+        if (!svc) return null;
+        return putFile(c, "services.json", b64utf8(JSON.stringify(svc, null, 2) + "\n"),
+                       "Update public services list (" + svc.rows.length + " rows)")
+          ["catch"](function (e) {
+            say("The directory published, but the public services page did not: " +
+                e.message, "warn");
+            return null;
+          });
+      })
+      .then(function () {
+        dirty = false;
+        if ($("remember").checked) { try { sessionStorage.setItem("adm-tok", c.tok); } catch (e) {} }
+        else { try { sessionStorage.removeItem("adm-tok"); } catch (e) {} }
+        say("Published. The live site updates within a minute — reload it to confirm.");
+      })
+      .catch(function (e) { say("Publish failed: " + e.message, "err"); })
+      .finally(function () {
+        $("pubBtn").disabled = false;
+        $("pubBtn").textContent = "Publish";
+      });
+  };
+
+  addEventListener("beforeunload", function (e) {
+    if (dirty) { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  load();
+  mcRestore();   // codes issued on an earlier visit are still here
+})();
+</script>
+
+<div class="stunity-credit" id="stunityCredit" data-print-only><span class="sc-dot"></span><span><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by <b>Prateek</b></span></div>
+<script>
+/* Card portal + positioner.
+   The card is moved to <body> while open: position:fixed alone is not enough
+   because a transformed ancestor (heirloom zooms with one) becomes the
+   containing block for fixed descendants. Moving the node escapes transforms,
+   overflow:hidden and stacking contexts together. Since it then leaves
+   .sc-wrap, the CSS :hover rule cannot reach it and visibility is set inline.
+   Pointer devices open on hover; touch devices open on tap. */
+(function(){
+  var M = 10, GAP = 12, T = null;
+  var fine = !window.matchMedia ||
+             matchMedia("(hover:hover) and (pointer:fine)").matches;
+  var list = document.querySelectorAll(".sc-wrap");
+  if (!list.length) return;
+
+  function isOpen(w){ return !!w.__scCard && w.__scCard.parentElement === document.body; }
+
+  function show(w){
+    var c = w.__scCard; if (!c) return;
+    clearTimeout(T);
+    if (c.parentElement !== document.body) document.body.appendChild(c);
+    c.style.position = "fixed"; c.style.bottom = "auto"; c.style.right = "auto";
+    c.style.transform = "none"; c.style.opacity = "1";
+    c.style.visibility = "visible"; c.style.pointerEvents = "auto";
+    c.style.maxWidth = (innerWidth - M * 2) + "px";
+    c.style.left = "0px"; c.style.top = "0px";
+    var t = w.getBoundingClientRect(), r = c.getBoundingClientRect();
+    var x = t.left + t.width / 2 - r.width / 2;
+    x = Math.max(M, Math.min(x, innerWidth - r.width - M));
+    var y = t.top - r.height - GAP, below = false;
+    if (y < M) { y = t.bottom + GAP; below = true; }
+    c.classList.toggle("sc-below", below);
+    c.style.left = Math.round(x) + "px";
+    c.style.top  = Math.round(y) + "px";
+    w.__trigger && w.__trigger.setAttribute("aria-expanded", "true");
+  }
+
+  function hide(w){
+    var c = w.__scCard; if (!c) return;
+    c.removeAttribute("style"); c.classList.remove("sc-below");
+    if (c.parentElement === document.body) w.appendChild(c);
+    w.__trigger && w.__trigger.setAttribute("aria-expanded", "false");
+  }
+  function hideAll(except){
+    for (var i = 0; i < list.length; i++) if (list[i] !== except) hide(list[i]);
+  }
+  function arm(w){ clearTimeout(T); T = setTimeout(function(){ hide(w); }, 120); }
+
+  for (var i = 0; i < list.length; i++) (function(w){
+    var c = w.querySelector(".sc-card");
+    var a = w.querySelector(".sc-link");
+    w.__scCard = c; w.__trigger = a;
+    if (a) { a.setAttribute("aria-expanded", "false"); }
+    if (!c) return;
+
+    if (fine) {
+      w.addEventListener("pointerenter", function(){ show(w); });
+      w.addEventListener("pointerleave", function(){ arm(w); });
+      c.addEventListener("pointerenter", function(){ clearTimeout(T); });
+      c.addEventListener("pointerleave", function(){ arm(w); });
+    } else if (a) {
+      /* First tap reveals the card rather than leaving for the site; a second
+         tap on the name goes there. Taps on the card actions always work. */
+      a.addEventListener("click", function(e){
+        if (!isOpen(w)) { e.preventDefault(); hideAll(w); show(w); }
+      });
+      document.addEventListener("click", function(e){
+        if (isOpen(w) && !w.contains(e.target) && !c.contains(e.target)) hide(w);
+      }, true);
+    }
+
+    w.addEventListener("focusin", function(){ show(w); });
+    w.addEventListener("focusout", function(){
+      setTimeout(function(){
+        if (!w.contains(document.activeElement) && !c.contains(document.activeElement)) hide(w);
+      }, 0);
+    });
+    c.addEventListener("focusin",  function(){ clearTimeout(T); });
+    c.addEventListener("focusout", function(){
+      setTimeout(function(){
+        if (!w.contains(document.activeElement) && !c.contains(document.activeElement)) hide(w);
+      }, 0);
+    });
+  })(list[i]);
+
+  addEventListener("keydown", function(e){ if (e.key === "Escape") hideAll(null); });
+  addEventListener("scroll", function(){
+    for (var i = 0; i < list.length; i++) if (isOpen(list[i])) show(list[i]);
+  }, {passive:true});
+  addEventListener("resize", function(){
+    for (var i = 0; i < list.length; i++) if (isOpen(list[i])) show(list[i]);
+  });
+})();
+</script>
+</body>
+</html>

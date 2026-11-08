@@ -92,14 +92,13 @@ jobs:
           downloaded file; Android asks once for permission to install from
           this source, and that is the whole install.
 
-          **Local Services** — the public town list. The list travels inside
-          the app, so it opens with no signal, and it quietly picks up new
-          listings whenever the phone is online. Safe to forward to anyone.
+          **Local Services** — opens the protected town directory in your
+          system browser. Sign in with Google; viewing needs approval.
 
-          **Society Directory** — opens the members-only directory. Everyone
-          still enters their own access code once, on their own phone. No
-          resident data is inside the file, so the download on its own is worth
-          nothing without a code.
+          **Society Directory** — opens the protected society directory in
+          your system browser. Sign in with Google; viewing needs approval.
+
+          Neither APK includes contacts or workbooks. A connection is required.
 
           No iPhone version: only Android can install an app from a file. On an
           iPhone, open the site in Safari and use Share → Add to Home Screen,

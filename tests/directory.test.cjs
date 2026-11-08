@@ -66,15 +66,14 @@ test('phone contact downloads escape user text, fold Unicode safely and retain c
   assert.ok(!card.includes('\ufffd'));
   assert.ok(!core.vcard({name:'Person\nTEL:123',phone:'Not provided'}).includes('\r\nTEL:'));
 });
-test('HTML scripts parse and the Android staging allowlist includes search without admin data',()=>{
+test('HTML scripts parse and Android staging contains no directory data',()=>{
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   for(const script of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
     if(/src=|application\/ld\+json/.test(script[1]))continue;new vm.Script(script[2]);
   }
   assert.ok(html.includes('src="directory-core.js"'));
   const stage=fs.readFileSync(path.join(root,'android/stage-site.js'),'utf8');
-  const files=stage.match(/const FILES = \[([\s\S]*?)\];/)[1];
-  assert.ok(files.includes('directory-core.js'));assert.ok(!files.includes('admin.html'));assert.ok(!files.includes('services.xlsx'));
+  assert.ok(!stage.includes('"services.json"'));assert.ok(!stage.includes('"services.xlsx"'));assert.match(stage,/No contact files/);
 });
 test('published public contacts retain source details and dialable emergency numbers',()=>{
   const data=JSON.parse(fs.readFileSync(path.join(root,'services.json'),'utf8'));

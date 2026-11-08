@@ -1,0 +1,42 @@
+name: Protected directory checks
+on:
+  push:
+    branches: [google-access]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run test:rules
+      - run: npm run build
+      - run: node scripts/browser-private.mjs
+      - run: npx wrangler deploy --dry-run
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10'
+      - run: node android/stage-site.js
+      - run: node android/make-launcher-icons.js
+      - run: gradle --no-daemon assembleRelease
+        working-directory: android

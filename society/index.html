@@ -1,0 +1,3128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Society-only. Crawlable on purpose so this tag is actually seen;
+     see robots.txt for why blocking instead would backfire. -->
+<meta name="robots" content="noindex, nofollow">
+<title>Society Directory</title>
+<meta name="description" content="Committee, emergency numbers, service contacts, resident directory and society documents — all in one place.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Society Directory">
+<meta property="og:description" content="Committee, emergency numbers, service contacts, residents and documents — one page, always current.">
+<meta name="theme-color" content="#0A1628">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230EA5C8'/%3E%3Cstop offset='1' stop-color='%23E0A81E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M16 7l8 6v12H8V13z' fill='%230A1628'/%3E%3C/svg%3E">
+<!-- use-credentials or the manifest is fetched WITHOUT cookies, which behind the
+     access gate means a 401 — and a browser that cannot read the manifest will
+     not offer to install the site at all. -->
+<link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Directory">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* The palette is the only thing that varies between themes; everything below
+     is written against these names. Set "Theme" in the About sheet. */
+  :root{
+    --navy:#0A1628; --navy-2:#0F1E36; --navy-3:#152242;
+    --teal:#0EA5C8; --teal-bright:#22C3E6; --gold:#E0A81E; --alert:#F2555A;
+    --line:rgba(255,255,255,.10); --muted:#8CA0B8;
+    --fg:#E8EEF6; --fg-2:#C4D2E4; --on-accent:var(--navy);
+    /* Text sitting on a tinted alert or caution panel. Picked for a dark
+       page; the light theme overrides all six. */
+    --alert-fg:#FFC2C5; --alert-tint:rgba(242,85,90,.09); --alert-line:rgba(242,85,90,.30);
+    --alert-num:#FF9198;
+    --warn-fg:#F2DFAE; --warn-tint:rgba(224,168,30,.10); --warn-line:rgba(224,168,30,.34);
+    --tap:44px; --navh:60px;
+  }
+
+  html[data-theme="forest"]{
+    --navy:#07160F; --navy-2:#0C2418; --navy-3:#123322;
+    --teal:#10B981; --teal-bright:#34D399; --gold:#A3E635; --alert:#F87171;
+    --muted:#8AA79A; --fg:#E7F3EC; --fg-2:#BFDCCC;
+  }
+  html[data-theme="plum"]{
+    --navy:#150B1C; --navy-2:#221030; --navy-3:#2E1742;
+    --teal:#A855F7; --teal-bright:#C084FC; --gold:#F472B6; --alert:#FB7185;
+    --muted:#A691B5; --fg:#F2EAF7; --fg-2:#D8C7E4;
+  }
+  html[data-theme="slate"]{
+    --navy:#0D1117; --navy-2:#161B22; --navy-3:#1F2731;
+    --teal:#38BDF8; --teal-bright:#7DD3FC; --gold:#FBBF24; --alert:#F87171;
+    --muted:#8B98A8; --fg:#E9EEF4; --fg-2:#C3CDD9;
+  }
+  html[data-theme="sunset"]{
+    --navy:#1A0E12; --navy-2:#2A151B; --navy-3:#3A1D25;
+    --teal:#FB923C; --teal-bright:#FDBA74; --gold:#FCD34D; --alert:#F43F5E;
+    --muted:#B49A93; --fg:#FBEEE8; --fg-2:#E8CDBF;
+  }
+  html[data-theme="ocean"]{
+    --navy:#041520; --navy-2:#07242F; --navy-3:#0B3242;
+    --teal:#22D3EE; --teal-bright:#67E8F9; --gold:#5EEAD4; --alert:#FB7185;
+    --muted:#84A7B5; --fg:#E4F4F9; --fg-2:#B9DFEA;
+  }
+
+  /* A light theme needs more than a palette swap: the hero sits on a pale
+     background, so its white text and shadows have to be undone. */
+  html[data-theme="paper"]{
+    --navy:#F5F7FB; --navy-2:#FFFFFF; --navy-3:#EDF1F8;
+    --teal:#1D4ED8; --teal-bright:#1E40AF; --gold:#B45309; --alert:#B91C1C;
+    --line:rgba(15,23,42,.13); --muted:#5B6676;
+    --fg:#0F172A; --fg-2:#334155; --on-accent:#FFFFFF;
+    --alert-fg:#991B1B; --alert-tint:rgba(185,28,28,.07); --alert-line:rgba(185,28,28,.28);
+    --alert-num:#B91C1C;
+    --warn-fg:#8A4B0B; --warn-tint:rgba(180,83,9,.08); --warn-line:rgba(180,83,9,.30);
+  }
+  html[data-theme="paper"] .hero h1{text-shadow:none}
+  html[data-theme="paper"] .hero .sub{color:var(--muted);text-shadow:none}
+  html[data-theme="paper"] .brand .dot{color:#fff}
+  html[data-theme="paper"] .icon-btn{color:var(--fg-2)}
+  html[data-theme="paper"] .stat .num{color:var(--fg)}
+  html[data-theme="paper"] .av{color:#fff}
+  html[data-theme="paper"] .hero-glow,
+  html[data-theme="paper"] .hero-glow-2{opacity:.45}
+  /* nav and .searchbar take their colour from --navy, which every theme sets,
+     so they need no per-theme override. */
+  html[data-theme="paper"] .nav-links{background:rgba(255,255,255,.98)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  /* .ccard and .prow set their own display, which outranks the browser's
+     [hidden] rule — without this, filtering hides nothing. */
+  [hidden]{display:none!important}
+  html{scroll-behavior:smooth}
+  /* Noto Sans Devanagari carries the Hindi text; Latin still renders in Inter
+     because Devanagari has no Latin glyphs to fall back on. */
+  body{font-family:'Inter','Noto Sans Devanagari',system-ui,sans-serif;
+    background:var(--navy);color:var(--fg);
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,h4{font-family:'Space Grotesk','Noto Sans Devanagari',sans-serif;letter-spacing:-.02em}
+  /* Devanagari sits taller than Latin, so give it a little more room */
+  html[lang="hi"] body{line-height:1.7}
+  html[lang="hi"] .nm,html[lang="hi"] .pname{line-height:1.45}
+  html[lang="hi"] .role,html[lang="hi"] .sec-head h2,html[lang="hi"] .stat .l{letter-spacing:.02em}
+  .lang{font-family:'Noto Sans Devanagari','Inter',sans-serif;font-size:12.5px;font-weight:600}
+  a{color:inherit;text-decoration:none}
+  /* viewport-fit=cover puts the page under the rounded corners and the home
+     indicator, so the gutters have to clear whatever the device reserves. */
+  .wrap{max-width:1220px;margin:0 auto;
+    padding-left:max(16px,env(safe-area-inset-left));
+    padding-right:max(16px,env(safe-area-inset-right))}
+  @media(min-width:700px){ .wrap{padding:0 24px} }
+
+  .rail{position:fixed;left:0;top:0;height:100vh;width:3px;background:var(--line);z-index:60}
+  .rail-fill{width:100%;height:0;background:linear-gradient(var(--teal),var(--gold));transition:height .1s linear}
+
+  /* ── Nav ── */
+  /* Opaque by default. A frosted bar needs backdrop-filter to blur what passes
+     behind it; plenty of Android browsers do not have it, and there the bar is
+     simply see-through and the cards scroll straight through the search field.
+     So the solid colour is the base and the glass is the enhancement. */
+  nav{position:sticky;top:0;z-index:50;background:var(--navy);
+    border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:var(--navh);gap:12px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:600;
+    font-size:15px;min-width:0}
+  .brand .dot{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--teal),var(--gold));color:var(--on-accent);font-size:13px;font-weight:700}
+  .brand .bn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-links{display:flex;gap:22px;font-size:13.5px;color:var(--muted)}
+  .nav-links a{transition:color .2s;white-space:nowrap}
+  .nav-links a:hover,.nav-links a.on{color:var(--teal-bright)}
+  .nav-right{display:flex;align-items:center;gap:9px;flex-shrink:0}
+  .nav-cta{font-size:13px;font-weight:600;color:#fff;background:var(--alert);
+    padding:9px 14px;border-radius:8px;transition:.18s;white-space:nowrap}
+  .nav-cta:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .icon-btn{background:transparent;border:1px solid var(--line);border-radius:8px;width:37px;height:37px;
+    display:grid;place-items:center;cursor:pointer;color:var(--fg);flex-shrink:0;transition:.2s}
+  .icon-btn:hover{border-color:var(--teal);color:var(--teal-bright)}
+  .icon-btn svg{width:18px;height:18px}
+  .nav-toggle{display:none}
+  .nav-toggle .x{display:none}
+  .nav-toggle[aria-expanded="true"] .x{display:block}
+  .nav-toggle[aria-expanded="true"] .bars{display:none}
+  @media(max-width:980px){
+    .nav-toggle{display:grid}
+    .nav-links{position:absolute;top:var(--navh);left:0;right:0;flex-direction:column;gap:0;display:none;
+      background:var(--navy);border-bottom:1px solid var(--line);
+      padding:6px 20px 14px;max-height:70vh;overflow-y:auto}
+    .nav-links.open{display:flex}
+    .nav-links a{padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+    .nav-links a:last-child{border-bottom:none}
+  }
+  @media(max-width:430px){ .brand .bn{display:none} .nav-cta{padding:9px 11px} }
+
+  /* Reading down the page hides the nav; a flick up brings it back. The
+     search bar rides up with it rather than leaving a strip of scrolled
+     page above itself — it is sticky at the nav's height, so it has to be
+     moved, not just left there. */
+  @media(max-width:700px){
+    /* :not(.tabbar) is load-bearing, for the second time in this file. The bar
+       along the bottom of a phone is a <nav> too, so a bare `nav` rule reaches
+       it as well — and this one slid it up off the bottom of the screen every
+       time anyone scrolled down. */
+    nav:not(.tabbar),.searchbar{transition:transform .2s ease}
+    html[data-navhide="1"] nav:not(.tabbar){transform:translateY(-100%)}
+    html[data-navhide="1"] .searchbar{transform:translateY(calc(-1 * var(--navh) - 1px))}
+    /* Bigger than they were: 37px is under what a fingertip reliably hits. */
+    .icon-btn{width:42px;height:42px}
+    .nav-cta{min-height:42px;display:inline-flex;align-items:center}
+  }
+  @media(prefers-reduced-motion:reduce){ nav,.searchbar{transition:none} }
+
+  /* ── Hero (tightened) ── */
+  .hero{position:relative;padding:40px 0 34px;overflow:hidden}
+  @media(min-width:700px){ .hero{padding:58px 0 46px} }
+  .hero-glow{position:absolute;top:-40%;right:-8%;width:560px;height:560px;border-radius:50%;
+    background:radial-gradient(circle,rgba(14,165,200,.17),transparent 62%);pointer-events:none}
+  .hero-glow-2{position:absolute;bottom:-50%;left:-14%;width:460px;height:460px;border-radius:50%;
+    background:radial-gradient(circle,rgba(224,168,30,.10),transparent 62%);pointer-events:none}
+  /* ── The backdrop ──
+     The building line, low and faint along the foot of the hero. It is
+     drawn in currentColor and inherits --fg, so it is pale ink on the dark
+     themes and dark ink on paper without a second copy of anything.
+
+     Kept this faint on purpose: it is behind the society's name and the
+     counts, and a backdrop that competes with them has stopped being a
+     backdrop. The mask fades it out entirely towards the top, where the
+     title sits. */
+  .hero-art{position:absolute;right:0;bottom:0;left:0;height:min(78%,215px);
+    color:var(--fg);opacity:.055;pointer-events:none;user-select:none}
+  html[data-theme="paper"] .hero-art{opacity:.042}
+  .hero-art svg{display:block;width:100%;height:100%}
+
+  /* A real photograph, when the About sheet names one, in place of the
+     drawing. Greyed and dimmed to the same weight — a photograph at full
+     strength behind text is a wall, not a backdrop. */
+  .hero-photo{position:absolute;right:0;bottom:0;left:0;height:min(80%,260px);
+    background-position:center 65%;background-size:cover;background-repeat:no-repeat;
+    opacity:.10;filter:grayscale(1) contrast(.85);pointer-events:none;
+    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 78%);
+    mask-image:linear-gradient(to bottom,transparent,#000 78%)}
+  html[data-theme="paper"] .hero-photo{opacity:.075}
+  @media(prefers-reduced-motion:reduce){ .hero-art,.hero-photo{transition:none} }
+
+  .hero .wrap{position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--teal-bright);margin-bottom:16px;
+    border:1px solid var(--line);padding:6px 13px;border-radius:100px;background:rgba(14,165,200,.06)}
+  .eyebrow .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(14,165,200,.5)}70%{box-shadow:0 0 0 8px rgba(14,165,200,0)}100%{box-shadow:0 0 0 0 rgba(14,165,200,0)}}
+  .hero h1{font-size:clamp(27px,5.2vw,46px);font-weight:700;line-height:1.06;margin-bottom:12px}
+  .hero h1 .accent{background:linear-gradient(100deg,var(--teal-bright),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lede{font-size:15px;color:var(--muted);max-width:640px;margin-bottom:22px}
+  .hero-stats{display:flex;gap:26px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--line)}
+  @media(min-width:700px){ .hero-stats{gap:38px} }
+  /* Each count is a link to its section, so it has to look tappable. */
+  .stat{display:block;text-decoration:none;color:inherit;cursor:pointer;
+    border:0;background:none;padding:0;text-align:left;font:inherit;
+    border-bottom:2px solid transparent;transition:border-color .15s,transform .15s}
+  .stat:hover,.stat:focus-visible{border-bottom-color:var(--teal-bright);transform:translateY(-1px)}
+  .stat:hover .lbl,.stat:focus-visible .lbl{color:var(--fg)}
+  .stat:focus-visible{outline:none}
+  .stat .num{font-family:'Space Grotesk';font-size:25px;font-weight:700;color:#fff;line-height:1}
+  .stat .lbl{font-size:12.5px;color:var(--muted);margin-top:4px;transition:color .15s}
+  /* Wide enough for two columns. The counts stand to the right of the title
+     instead of below it, and the rule that ran the full width with nothing
+     under half of it becomes the divider between the two. */
+  @media(min-width:1040px){
+    .hero-row{display:flex;align-items:flex-end;gap:52px}
+    .hero-head{flex:1 1 auto;min-width:0}
+    .hero p.lede{margin-bottom:0}
+    .hero-stats{flex:0 0 auto;padding:2px 0 2px 34px;border-top:0;
+      border-left:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(2,minmax(104px,auto));gap:20px 34px}
+  }
+
+  /* ── Search ── */
+  /* +1px clears the nav's own bottom border, which the bar otherwise covers. */
+  .searchbar{position:sticky;top:calc(var(--navh) + 1px);z-index:45;background:var(--navy);
+    border-bottom:1px solid var(--line);padding:10px 0}
+
+  /* The glass, only where the blur behind it actually works. */
+  @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)) {
+    nav{background:color-mix(in srgb,var(--navy) 88%,transparent);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    .searchbar{background:color-mix(in srgb,var(--navy) 94%,transparent);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  }
+  .sfield{position:relative;display:flex;align-items:center}
+  .sfield>svg{position:absolute;left:14px;width:16px;height:16px;color:var(--muted);pointer-events:none}
+  .sfield input{width:100%;font:inherit;font-size:16px;color:var(--fg);min-height:var(--tap);
+    background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px 10px 41px;transition:.2s}
+  .sfield input::placeholder{color:var(--muted)}
+  .sfield input:focus{outline:none;border-color:var(--teal);background:rgba(14,165,200,.07)}
+  /* The type=search clear cross is inconsistent across browsers and absent on
+     Android, so the field brings its own — full tap height, right-hand thumb. */
+  .sfield input::-webkit-search-cancel-button{display:none}
+  .qclear{position:absolute;right:0;width:var(--tap);height:var(--tap);flex-shrink:0;
+    display:grid;place-items:center;background:none;border:0;padding:0;cursor:pointer;
+    color:var(--muted);border-radius:10px;-webkit-tap-highlight-color:transparent}
+  .qclear svg{width:17px;height:17px}
+  .qclear:hover{color:var(--fg)}
+  .sfield input{padding-right:calc(var(--tap) + 2px)}
+
+  /* ── Two-column layout ── */
+  .layout{display:flex;flex-direction:column;gap:16px;padding:26px 0 44px}
+  .side{display:contents}          /* phones: panels become siblings, orderable */
+  /* Home shows tiles only, so a panel appears solely on its own page — which
+     means it belongs below the back bar, not above it. */
+  .main{order:0;min-width:0}
+  .p-sos{order:1}
+  .p-docs{order:2}
+  @media(min-width:1000px){
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;align-items:start;
+      padding:30px 0 56px}
+    .side{display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(var(--navh) + 66px)}
+    /* No panels on screen: do not hold the sidebar column open. */
+    .layout.solo{grid-template-columns:minmax(0,1fr)}
+    .main,.side>*{order:0}
+  }
+
+  /* ── Section head (compact) ── */
+  /* The nav and the search bar are both sticky, so anything scrolled to the
+     top of the viewport lands underneath them. Every jump target reserves that
+     much room above itself. */
+  .sec,.panel{scroll-margin-top:calc(var(--navh) + 74px)}
+  .sec{margin-bottom:26px}
+  .sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;
+    padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .sec-head h2{font-size:15px;font-weight:600;letter-spacing:.02em}
+  .sec-head .n{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .sec-chev{display:none}
+  @media(max-width:700px){
+    /* The header used to fill the screen before a single contact appeared.
+       Name and tagline are enough up top; the address is in the footer. */
+    .hero{padding:22px 0 16px}
+    .hero p.lede{display:none}
+    .eyebrow{margin-bottom:9px;font-size:10.5px;padding:5px 11px}
+    .hero h1{font-size:clamp(21px,6vw,28px);margin-bottom:8px}
+    .hero-stats{gap:20px;padding-top:13px}
+    .stat .num{font-size:20px}
+    .stat .lbl{font-size:10.5px;margin-top:2px}
+
+    /* The top pad keeps the first record clear of the search bar rather
+       than tucked against it. (The card sizing lives with the card CSS
+       below — up here the later base rules would beat it.) */
+    .layout{padding:20px 0 32px;gap:12px}
+    .sec{margin-bottom:20px}
+  }
+
+  @media(max-width:700px){
+    /* Folded sections turn a long directory into a short menu on a phone. */
+    .sec-head{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+      padding-top:4px;padding-bottom:10px}
+    .sec-head:active{opacity:.7}
+    .sec-chev{display:block;width:15px;height:15px;flex:none;color:var(--muted);
+      transition:transform .2s}
+    .sec.closed .sec-chev{transform:rotate(-90deg)}
+    .sec.closed .cgrid{display:none}
+    .sec.closed{margin-bottom:10px;border-bottom:1px solid var(--line)}
+  }
+  .sec-head .tag{margin-left:auto;font-size:10.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--teal)}
+
+  /* ── Compact contact card ── */
+  /* Cards size to their content — nothing is clipped or ellipsised. */
+  /* stretch, not start: cards in a row match height and their action rows
+     line up, instead of each card ending wherever its text happens to stop */
+  .cgrid{display:grid;grid-template-columns:1fr;gap:10px;align-items:stretch}
+  @media(min-width:620px){ .cgrid{grid-template-columns:repeat(auto-fill,minmax(305px,1fr));gap:12px} }
+  .ccard{display:flex;flex-direction:column;padding:13px 14px;border-radius:12px;min-width:0;
+    background:var(--navy-2);border:1px solid var(--line);
+    transition:border-color .18s,transform .18s,background .18s}
+  .ccard:hover{border-color:rgba(14,165,200,.45);transform:translateY(-2px);background:var(--navy-3)}
+
+  .chead{display:flex;align-items:flex-start;gap:11px}
+  .av{width:38px;height:38px;flex-shrink:0;border-radius:10px;display:grid;place-items:center;
+    overflow:hidden;font-family:'Space Grotesk';font-weight:700;font-size:13px;color:var(--navy);
+    background:linear-gradient(135deg,var(--teal),var(--teal-bright))}
+  .av img{width:100%;height:100%;object-fit:cover}
+  .cid{flex:1;min-width:0}
+  .nm{font-size:15px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+  .role{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-top:2px;line-height:1.4}
+  .rate{flex-shrink:0;font-size:11.5px;font-weight:700;color:var(--gold);white-space:nowrap;
+    background:rgba(224,168,30,.13);border:1px solid rgba(224,168,30,.30);
+    padding:3px 8px;border-radius:7px;margin-top:1px}
+
+  .cdet{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:6px;overflow-wrap:anywhere}
+  /* A wing and number can repeat across a flat and a row house, so the kind of
+     home is the only thing telling two identical addresses apart. */
+     Built from --fg-2 and --line so it stays legible in every theme without
+     competing with the gold charge and red blood badges. */
+  .utype{display:inline-block;font-size:11px;font-weight:650;letter-spacing:.03em;
+    color:var(--fg-2);background:var(--line);border:1px solid var(--line);
+    border-radius:5px;padding:1px 7px;margin-right:7px;vertical-align:1px;white-space:nowrap}
+  .cdet b{color:var(--fg-2);font-weight:600}
+
+  /* Collapsed by default so every card in a row keeps the same height. */
+  .blood{flex-shrink:0;font-size:11.5px;font-weight:700;white-space:nowrap;
+    color:var(--alert-fg);background:var(--alert-tint);border:1px solid var(--alert-line);
+    padding:3px 8px;border-radius:7px;margin-top:1px;margin-left:6px}
+
+  /* Same disclosure treatment as the owner block, so a card never grows
+     just because someone answered more questions. */
+  .more{margin-top:9px}
+
+  .owner{margin-top:10px}
+  .owner>summary,.more>summary{list-style:none;cursor:pointer;display:inline-flex;
+    align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.05em;
+    color:var(--teal-bright);background:var(--navy-3);border:1px solid var(--line);
+    border-radius:8px;padding:6px 11px;min-height:32px;transition:.16s;
+    -webkit-tap-highlight-color:transparent}
+  .owner>summary::-webkit-details-marker,.more>summary::-webkit-details-marker{display:none}
+  .owner>summary::marker,.more>summary::marker{content:""}
+  .owner>summary:hover,.more>summary:hover{color:var(--fg);border-color:var(--teal)}
+  /* Open state must stay readable — the label used to vanish against its own
+     background once the panel expanded. */
+  .owner[open]>summary,.more[open]>summary{color:var(--fg);background:var(--navy-3)}
+  .owner>summary .chev,.more>summary .chev{width:13px;height:13px;transition:transform .18s}
+  .owner[open]>summary .chev,.more[open]>summary .chev{transform:rotate(180deg)}
+  .owner .obody,.more .mbody{margin-top:8px;padding:9px 11px;border-radius:9px;
+    background:var(--navy-3);border:1px solid var(--line)}
+  .owner .onm{font-size:13.5px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+  .owner .oline{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:2px;
+    overflow-wrap:anywhere}
+  .owner .oline a{color:var(--teal-bright);font-weight:600;font-variant-numeric:tabular-nums}
+  .owner .oline a:hover{text-decoration:underline}
+
+  /* margin-top:auto absorbs the spare height, so footers line up across a row */
+  .cfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-top:auto;padding-top:11px;border-top:1px solid var(--line)}
+  .tel{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;color:var(--teal-bright);
+    font-variant-numeric:tabular-nums;line-height:1.4;overflow-wrap:anywhere}
+  .tel:hover{text-decoration:underline}
+  .go{display:flex;gap:6px;flex-shrink:0;margin-left:auto}
+  .iact{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;
+    transition:.18s;-webkit-tap-highlight-color:transparent}
+  .iact svg{width:15px;height:15px}
+  .iact.call{background:var(--teal);color:var(--on-accent)}
+  .iact.call:hover{background:var(--teal-bright);transform:scale(1.06)}
+  .iact.alt{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted)}
+  .iact.alt:hover{color:var(--teal-bright);border-color:var(--teal)}
+  /* WhatsApp's own green, in both themes — people look for the colour, and a
+     recoloured icon reads as a different app. The green is fixed, so only the
+     glyph can move: #06301A sits at 7.33:1 on it, white at 1.98:1. */
+  .iact.wa{background:#25D366;color:#06301A;border:1px solid transparent}
+  .iact.wa:hover{background:#1FBE5A;transform:scale(1.06)}
+  button.iact{font:inherit;cursor:pointer;padding:0}
+  .iact.done{color:var(--teal-bright);border-color:var(--teal)}
+
+  /* A touch browser fires :hover on tap and leaves it applied until you tap
+     something else, so a scaled-up button stays scaled. Undo the hover-only
+     flourishes where there is no pointer, and give the tap its own feedback. */
+  @media(hover:none){
+    .iact.call:hover,.iact.wa:hover,.stat:hover,.nav-cta:hover,.tile:hover{transform:none}
+    .tile:hover{border-color:var(--line);background:var(--navy-2)}
+    .tile:active{border-color:var(--teal);background:var(--navy-3)}
+    /* A tapped card would otherwise stay lifted and highlighted, reading as
+       "selected" when nothing was selected. */
+    .ccard:hover{transform:none;border-color:var(--line);background:var(--navy-2)}
+    .iact.alt:hover{color:var(--muted);border-color:var(--line)}
+    .stat:hover{border-bottom-color:transparent}
+    .stat:hover .lbl{color:var(--muted)}
+    .tel:hover{text-decoration:none}
+    .iact:active{transform:scale(.94);opacity:.85}
+    .stat:active{border-bottom-color:var(--teal-bright)}
+    .stat:active .lbl{color:var(--fg)}
+    .tel:active{text-decoration:underline}
+  }
+
+  /* ── Home tiles ──
+     The page is a set of places, not one scroll. Home is the index: one tile
+     per section, each showing how much is inside it. */
+  .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:620px){ .tiles{grid-template-columns:repeat(3,1fr)} }
+  @media(min-width:1000px){ .tiles{grid-template-columns:repeat(4,1fr)} }
+  .tile{display:flex;flex-direction:column;gap:9px;min-height:104px;padding:14px;
+    background:var(--navy-2);border:1px solid var(--line);border-radius:14px;
+    text-decoration:none;color:inherit;transition:.18s;-webkit-tap-highlight-color:transparent}
+  .tile:hover{border-color:var(--teal);transform:translateY(-2px);background:var(--navy-3)}
+  .tile:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .ticon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:var(--line);color:var(--teal-bright);flex-shrink:0}
+  .ticon svg{width:19px;height:19px}
+  .tname{font-weight:650;font-size:14.5px;line-height:1.3;overflow-wrap:anywhere}
+  .tcount{margin-top:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .tile.urgent .ticon{background:var(--alert-tint);color:var(--alert-num)}
+  .tile.urgent{border-color:var(--alert-line)}
+
+  /* ── One section at a time ── */
+  .vbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;min-width:0}
+  .vback{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:var(--tap);
+    font-size:13.5px;font-weight:600;color:var(--muted);
+    -webkit-tap-highlight-color:transparent}
+  .vback:hover{color:var(--teal-bright)}
+  .vback svg{width:16px;height:16px}
+  /* Every section, one tap from any other. The bottom bar only fits four;
+     this fits them all and scrolls sideways for the rest. */
+  .vnav{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .vnav::-webkit-scrollbar{display:none}
+  .vchip{flex:none;display:inline-flex;align-items:center;min-height:38px;
+    padding:0 13px;border-radius:999px;white-space:nowrap;
+    font-size:12.5px;font-weight:600;color:var(--fg-2);
+    background:var(--navy-2);border:1px solid var(--line);transition:.15s;
+    -webkit-tap-highlight-color:transparent}
+  .vchip:hover{border-color:var(--teal);color:var(--fg)}
+  .vchip.on{color:var(--on-accent);background:var(--teal);border-color:var(--teal)}
+  @media(max-width:700px){ .vchip{min-height:var(--tap)} }
+
+  /* ── Bottom tab bar (phones) ── */
+  .tabbar{display:none}
+  @media(max-width:700px){
+    /* top:auto is load-bearing. This is a <nav>, so the nav{position:sticky;
+       top:0} rule above still applies its top — and top:0 together with
+       bottom:0 stretches a fixed element over the whole viewport, where it
+       silently swallowed every tap on the page. */
+    .tabbar{display:flex;position:fixed;top:auto;left:0;right:0;bottom:0;z-index:55;
+      background:var(--navy);border-top:1px solid var(--line);border-bottom:0;
+      padding-bottom:env(safe-area-inset-bottom)}
+    .tabbar a{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:3px;padding:7px 3px;min-height:56px;
+      font-size:10px;font-weight:600;color:var(--muted);text-align:center;
+      -webkit-tap-highlight-color:transparent}
+    .tabbar a svg{width:20px;height:20px}
+    .tabbar a.on{color:var(--teal-bright)}
+    .tabbar a.sos.on,.tabbar a.sos{color:var(--alert-num)}
+    .tabbar .tlbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+    /* The bar floats over the page, so the page has to end above it. */
+    footer{padding-bottom:calc(30px + 62px + env(safe-area-inset-bottom))}
+  }
+
+  /* ── Toast (offline notice, install prompt, update) ── */
+  /* Above the tab bar, clear of the home indicator, and never over the top of
+     what someone is reading. */
+  .toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    top:auto;z-index:90;display:flex;align-items:center;gap:10px;
+    padding:11px 12px;border-radius:12px;font-size:13px;line-height:1.4;
+    background:var(--navy-3);color:var(--fg);border:1px solid var(--line);
+    box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .toast .ticon{flex:none;width:18px;height:18px;color:var(--teal-bright)}
+  .toast .tmsg{flex:1;min-width:0}
+  .toast button{flex:none;min-height:36px;padding:0 12px;border-radius:8px;cursor:pointer;
+    font:inherit;font-size:12.5px;font-weight:650;
+    background:var(--teal);color:var(--on-accent);border:0;
+    -webkit-tap-highlight-color:transparent}
+  .toast button.ghost{background:none;color:var(--muted);border:1px solid var(--line)}
+  @media(max-width:700px){
+    .toast{bottom:calc(62px + 10px + env(safe-area-inset-bottom))}
+    .toast button{min-height:var(--tap)}
+  }
+
+  /* A quiet link out to the public services page. */
+  .pubshare{display:inline-flex;align-items:center;gap:8px;margin-top:2px;
+    min-height:var(--tap);padding:0 13px;border-radius:999px;font-size:12.5px;font-weight:600;
+    color:var(--teal-bright);background:var(--navy-2);border:1px dashed var(--teal-line,var(--line));
+    -webkit-tap-highlight-color:transparent}
+  .pubshare:hover{border-style:solid;border-color:var(--teal)}
+  .pubshare svg{width:15px;height:15px;flex:none}
+
+  /* ── Groups within a section ── */
+  .gchips{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  .gchips::-webkit-scrollbar{display:none}
+  .gchip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;
+    padding:0 12px;border-radius:999px;white-space:nowrap;cursor:pointer;
+    font:inherit;font-size:12.5px;font-weight:600;color:var(--fg-2);
+    background:var(--navy-2);border:1px solid var(--line);transition:.15s;
+    -webkit-tap-highlight-color:transparent}
+  .gchip:hover{border-color:var(--teal);color:var(--fg)}
+  .gchip.on{color:var(--on-accent);background:var(--teal);border-color:var(--teal)}
+  .gn{font-size:11px;font-weight:700;opacity:.7;font-variant-numeric:tabular-nums}
+  .gsub{display:flex;align-items:center;gap:8px;margin:16px 0 8px;
+    font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted)}
+  .gsub .gn{opacity:1;color:var(--teal-bright)}
+  .gsub:first-of-type{margin-top:0}
+  /* The second level — flats and row houses inside one wing. Quieter than the
+     wing heading above it, so the hierarchy reads at a glance. */
+  .gsub2{display:flex;align-items:center;gap:7px;margin:10px 0 6px;
+    font-size:12px;font-weight:600;color:var(--fg-2)}
+  .gsub2::before{content:"";width:10px;height:1px;background:var(--line);flex:none}
+  .gsub2 .gn{opacity:.75}
+  @media(max-width:700px){
+    .gchip{min-height:var(--tap)}
+    .gsub{margin:13px 0 7px}
+  }
+
+  /* ── Compact card extras ── */
+  .csub{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:3px;overflow-wrap:anywhere}
+  .crole{color:var(--fg-2)}
+  /* Why a card is in the results when the match is not on its face. */
+  .cmatch{font-size:12px;color:var(--teal-bright);margin-top:7px;overflow-wrap:anywhere}
+  /* The chevron is the only thing announcing that the card opens, so it stays
+     on the name row where the eye already is. */
+  .cgo{width:15px;height:15px;flex-shrink:0;color:var(--muted);align-self:center;margin-left:2px}
+  .ccard{cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .ccard:hover .cgo{color:var(--teal-bright)}
+  .ccard:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+  /* ── Detail sheet ── */
+  /* Every inset is written out. A fixed box that sets only three of them
+     inherits the fourth and stretches — that is how the tab bar once covered
+     the whole screen. */
+  .sheet-wrap{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:18px}
+  .sheet-back{position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(3,10,20,.7)}
+  .sheet{position:relative;z-index:1;width:100%;max-width:460px;max-height:86vh;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    background:var(--navy-2);border:1px solid var(--line);border-radius:16px;
+    padding:18px 18px 16px}
+  .sheet-x{position:absolute;top:8px;right:8px;width:var(--tap);height:var(--tap);
+    display:grid;place-items:center;background:none;border:0;cursor:pointer;
+    color:var(--muted);border-radius:10px;-webkit-tap-highlight-color:transparent}
+  .sheet-x:hover{color:var(--fg)}
+  .sheet-x svg{width:18px;height:18px}
+  .sheet .chead{padding-right:40px}
+  .sline{font-size:13.5px;color:var(--fg-2);line-height:1.55;margin-top:7px;overflow-wrap:anywhere}
+  .sline b{color:var(--muted);font-weight:600}
+  .sline a{color:var(--teal-bright)}
+  .sowner{margin-top:12px;padding:11px 12px;border-radius:10px;
+    background:var(--warn-tint);border:1px solid var(--warn-line)}
+  .sowner h4{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--warn-fg);margin-bottom:6px}
+  .sheet-go{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);
+    margin-left:0;justify-content:flex-start}
+  html.noscroll,html.noscroll body{overflow:hidden}
+  @media(max-width:700px){
+    /* A sheet from the bottom edge is where a thumb already is. */
+    .sheet-wrap{align-items:flex-end;padding:0}
+    .sheet{max-width:none;max-height:88vh;border-radius:18px 18px 0 0;
+      padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  }
+
+  /* ── List and grid ──
+     List is one line per person: name, where they are, and the two ways to
+     reach them. Grid keeps the roomier card and wraps it into columns.
+     Email and share moved into the detail sheet — four buttons and a name do
+     not fit on one line at 320px, and call and message are the two anyone
+     presses first. */
+  html[data-cards="list"] .cgrid{grid-template-columns:1fr!important;gap:0;
+    background:var(--navy-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  html[data-cards="list"] .ccard{flex-direction:row;align-items:center;gap:9px;
+    min-height:54px;padding:6px 9px 6px 13px;border:0;border-top:1px solid var(--line);
+    border-radius:0;background:none}
+  html[data-cards="list"] .cgrid .ccard:first-child{border-top:0}
+  html[data-cards="list"] .ccard:hover{background:var(--navy-3);transform:none}
+  html[data-cards="list"] .chead{flex:1;min-width:0;gap:0;align-items:center}
+  html[data-cards="list"] .av{display:none}
+  html[data-cards="list"] .cid{display:flex;align-items:baseline;gap:7px;min-width:0}
+  html[data-cards="list"] .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    flex:0 1 auto;font-size:calc(14.5px)}
+  html[data-cards="list"] .csub{margin-top:0;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;flex:0 1 auto;font-size:12px}
+  html[data-cards="list"] .csub .utype{display:none}
+  html[data-cards="list"] .cfoot{margin:0;padding:0;border:0;flex:none;width:auto;gap:6px}
+  html[data-cards="list"] .go{width:auto;margin:0;gap:6px;justify-content:flex-end}
+  html[data-cards="list"] .cmatch{display:none}
+  html[data-cards="list"] .rate{font-size:11.5px;background:none;border:0;padding:0}
+  @media(max-width:430px){ html[data-cards="list"] .rate{display:none} }
+
+  /* The switch, beside the search box. */
+  .vswitch{display:flex;gap:2px;flex:none;padding:3px;border-radius:10px;
+    background:var(--navy-2);border:1px solid var(--line)}
+  .vswitch button{width:36px;height:36px;display:grid;place-items:center;cursor:pointer;
+    border:0;border-radius:8px;background:none;color:var(--muted);
+    -webkit-tap-highlight-color:transparent}
+  .vswitch button svg{width:17px;height:17px}
+  .vswitch button.on{background:var(--teal);color:var(--on-accent)}
+  /* Below the base rule, not above it: same specificity, so whichever comes
+     last wins, and a phone block that sits earlier in the file quietly does
+     nothing at all. */
+  @media(max-width:700px){ .vswitch button{width:40px;height:40px} }
+  .sfield-row{display:flex;gap:9px;align-items:center}
+  .sfield-row .sfield{flex:1;min-width:0}
+  /* ── Notices ── */
+  /* One column at every width: a notice is read, not scanned, and text set
+     across a 600px card is easier than two columns of paragraphs. */
+  .nlist{display:flex;flex-direction:column;gap:10px}
+  .ncard{background:var(--navy-2);border:1px solid var(--line);border-left:3px solid var(--line);
+    border-radius:12px;padding:13px 15px}
+  .ncard.pinned{border-left-color:var(--gold);background:var(--warn-tint)}
+  .nmeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .ndate{font-size:11.5px;font-weight:600;color:var(--muted);
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .nnew,.npin,.ntag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .nnew{color:var(--on-accent);background:var(--teal)}
+  .npin{color:var(--warn-fg);background:var(--warn-tint);border:1px solid var(--warn-line)}
+  .ntag{color:var(--muted);background:var(--line);font-weight:600}
+  .ntitle{font-size:15.5px;font-weight:650;line-height:1.35;overflow-wrap:anywhere}
+  .nbody{font-size:13.5px;color:var(--fg-2);line-height:1.6;margin-top:6px;overflow-wrap:anywhere;
+    white-space:pre-line}
+  .nfile{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;
+    font-weight:600;color:var(--teal-bright);min-height:var(--tap)}
+  .nfile svg{width:15px;height:15px;flex-shrink:0}
+  @media(max-width:700px){
+    .ncard{padding:11px 13px;border-radius:11px}
+    .ntitle{font-size:15px}
+    .nbody{font-size:13px}
+  }
+
+  .ccard.sos{border-color:rgba(242,85,90,.42);
+    background:linear-gradient(150deg,rgba(242,85,90,.13),var(--navy-2))}
+  .ccard.sos .av{background:linear-gradient(135deg,var(--alert),var(--gold));color:#fff}
+  .ccard.sos .tel{color:var(--alert-num)}
+  .ccard.sos .iact.call{background:var(--alert);color:#fff}
+
+  /* Phone sizing for the cards. This block has to come AFTER the rules it
+     overrides: same specificity means source order decides, and when it sat
+     higher up the base .iact{width:34px} quietly won and every action button
+     rendered below the thumb-sized target it was supposed to have. */
+  @media(max-width:700px){
+    .cgrid{gap:8px}
+    .ccard{padding:10px 12px;border-radius:11px}
+    .chead{gap:10px}
+    .av{width:36px;height:36px;border-radius:9px;font-size:12.5px}
+    .nm{font-size:14.5px}
+    .role{font-size:10px;letter-spacing:.08em}
+    .csub{font-size:12px;margin-top:2px}
+    .cdet{font-size:12px;margin-top:4px;line-height:1.45}
+    /* The number lives in the detail sheet now, so the four actions share
+       one row: 4×44 + 3×8 = 200px, inside the 264px a card has at 320px. */
+    .cfoot{margin-top:9px;padding-top:9px;gap:8px}
+    .go{margin-left:0;width:100%;justify-content:flex-start;gap:8px}
+    .iact{width:44px;height:44px;border-radius:11px}
+    .iact svg{width:17px;height:17px}
+  }
+
+  /* ── Side panels ── */
+  .panel{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:14px 15px}
+  .panel.alarm{border-color:rgba(242,85,90,.38);
+    background:linear-gradient(165deg,rgba(242,85,90,.11),var(--navy-2))}
+  .panel h3{font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--teal);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .panel.alarm h3{color:var(--alert)}
+  .panel h3 svg{width:14px;height:14px}
+  .panel .cap{font-size:11.5px;color:var(--muted);margin-bottom:11px}
+  /* A shut panel keeps its heading and count, and drops the list. */
+  .panel.docs h3{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+  .panel.docs h3 .sec-chev{display:block;width:14px;height:14px;flex:none;margin-left:auto;
+    color:var(--muted);transition:transform .2s}
+  .panel.docs.closed h3 .sec-chev{transform:rotate(-90deg)}
+  .panel.docs.closed .pbody{display:none}
+  .panel.docs.closed .cap{margin-bottom:0}
+  .prow{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);min-width:0}
+  .prow .info{flex:1;min-width:0}
+  .prow .iact{margin-top:2px}
+  .prow:last-child{border-bottom:none;padding-bottom:0}
+  .prow:first-of-type{padding-top:0}
+  .pbadge{width:32px;height:32px;flex-shrink:0;border-radius:8px;display:grid;place-items:center;
+    font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.02em;
+    color:var(--gold);background:rgba(224,168,30,.13);border:1px solid rgba(224,168,30,.28)}
+  .panel.alarm .pbadge{color:#fff;background:linear-gradient(135deg,var(--alert),var(--gold));
+    border:none;font-size:12.5px}
+  .pname{font-size:13.5px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+  .pmeta{font-size:11.5px;color:var(--muted);line-height:1.45;margin-top:1px;overflow-wrap:anywhere}
+  .ptel{font-size:12.5px;font-weight:600;color:var(--alert-num);font-variant-numeric:tabular-nums;
+    margin-top:2px;overflow-wrap:anywhere}
+  .panel .more{display:block;margin-top:11px;font-size:12px;color:var(--teal-bright);text-align:center}
+
+  /* Notices: a site-wide confidentiality banner, and per-section caveats */
+  .banner{display:flex;gap:11px;align-items:flex-start;margin:18px 0 0;padding:12px 14px;
+    border-radius:12px;font-size:13px;line-height:1.5;color:var(--warn-fg);
+    background:var(--warn-tint);border:1px solid var(--warn-line)}
+  .banner svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--gold)}
+  .banner b{color:var(--fg);font-weight:600}
+  /* The cautions live in the footer now. Named, quieter than a mid-page
+     banner, and still the first thing attached to anything shared. */
+  /* A column of the footer grid now, so no rule of its own and no top
+     margin — the grid's own gap does that work. */
+  .foot-notes{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+  .fnote{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.55;
+    color:var(--warn-fg);max-width:80ch}
+  .fnote svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--gold)}
+  .fnote b{color:var(--fg-2);font-weight:650}
+
+  .empty{padding:26px 16px;text-align:center;color:var(--muted);
+    border:1px dashed var(--line);border-radius:12px;font-size:14px}
+
+  /* ── Footer ── */
+  footer{background:var(--navy);border-top:1px solid var(--line);
+    padding:34px 0 calc(30px + env(safe-area-inset-bottom))}
+  .foot-grid{display:flex;gap:24px 40px;flex-wrap:wrap;align-items:flex-start;margin-bottom:22px}
+  .foot-brand{flex:1 1 220px;min-width:200px}
+  .foot-brand p{font-size:13.5px;color:var(--muted);margin-top:10px}
+  /* The sections take whatever width is left rather than stacking into a thin
+     column beside a wide empty gap. */
+  .foot-col{flex:1 1 260px;min-width:0}
+  /* Wants a little more room than the section pills: it is prose. */
+  .foot-note-col{flex:1 1 320px}
+  /* Stacked, it needs the rule back to separate it from the pills above. */
+  @media(max-width:900px){
+    .foot-note-col{flex-basis:100%;border-top:1px solid var(--line);padding-top:18px}
+  }
+  .foot-col h5{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:10px;font-weight:600}
+  /* Wrapping pills: seven sections read as a set of shortcuts across two lines
+     instead of seven lines down. Big enough to hit on a phone, too. */
+  #footLinks{display:flex;flex-wrap:wrap;gap:8px}
+  .foot-col a{display:inline-flex;align-items:center;min-height:36px;padding:0 13px;
+    border-radius:999px;font-size:13.5px;color:var(--fg-2);
+    background:var(--navy-2);border:1px solid var(--line);transition:.18s;
+    -webkit-tap-highlight-color:transparent}
+  .foot-col a:hover{color:var(--teal-bright);border-color:var(--teal)}
+  /* Denser on a phone, not taller: at 44px these wrapped onto four lines and
+     took more room than the plain stacked links they replaced. The same links
+     sit in the nav at full size, so the footer set can be compact. */
+  @media(max-width:700px){
+    #footLinks{gap:6px}
+    .foot-col a{min-height:34px;padding:0 11px;font-size:13px}
+  }
+  .foot-bottom{border-top:1px solid var(--line);padding-top:16px;font-size:12.5px;color:var(--muted);
+    display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .credit{margin-left:auto}
+  .credit b{font-weight:600;color:var(--fg-2)}
+
+  .reveal{opacity:0;transform:translateY(14px);
+    transition:opacity .5s cubic-bezier(.2,.7,.3,1),transform .5s cubic-bezier(.2,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}.pulse{animation:none}html{scroll-behavior:auto}
+  }
+  a:focus-visible,button:focus-visible,input:focus-visible{
+    outline:2px solid var(--teal-bright);outline-offset:2px;border-radius:6px}
+  .fallback{max-width:620px;margin:0 auto;padding:60px 24px;text-align:center;color:var(--muted)}
+  .fallback h2{color:#fff;margin-bottom:12px;font-size:22px}
+  .fallback a{color:var(--teal-bright);text-decoration:underline}
+  /* ── Print ──
+     Paper gets its own colours. These pages are pale text on dark panels, and
+     browsers leave background graphics off by default, so printing one
+     untouched gives white text on white paper.
+
+     And the credit becomes a running footer. A fixed element in paged media is
+     not pinned to a viewport — it repeats on every sheet. It is held 16mm below
+     the content box, with a 24mm bottom page margin to receive it, so it sits
+     under the copy rather than across it. */
+  @media print{
+    @page{margin:14mm 14mm 24mm}
+
+    :root,html[data-theme="forest"],html[data-theme="plum"],html[data-theme="slate"],
+  html[data-theme="sunset"],html[data-theme="ocean"],html[data-theme="paper"]{
+      --fg:#000; --fg-2:#222; --muted:#555; --line:#bbb;
+      --on-accent:#000;
+    --navy:#fff; --navy-2:#fff; --navy-3:#fff;
+    --teal:#000; --teal-bright:#000; --gold:#444;
+    --alert:#333; --alert-fg:#333; --alert-num:#333;
+    --alert-tint:transparent; --alert-line:#bbb;
+    --warn-fg:#333; --warn-tint:transparent; --warn-line:#bbb;
+    }
+    *{box-shadow:none!important;text-shadow:none!important;
+      -webkit-print-color-adjust:economy;print-color-adjust:economy}
+    body{background:#fff}
+    a{text-decoration:none;color:inherit}
+
+    /* Anything that only answers to a tap, and the decorative layers. */
+    nav,.searchbar,.tabbar,.toast,.rail,.hero-glow,.hero-glow-2,.hero-art,
+    .hero-photo,.vswitch,.sheet-wrap,.cgo,.icon-btn,.nav-cta,.qclear,
+    .chips{display:none!important}
+
+    /* Painted pills are shapes a printer will not fill, so they are redrawn
+       as outlines rather than vanishing into the paper. */
+    .foot-col a,.blood,.rate{border:.5pt solid #bbb;border-radius:999px;
+      padding:0 6px;font-weight:600}
+
+    /* Keep a person, and a heading with its cards under it, together. */
+    .ccard,.tile,.fnote{break-inside:avoid}
+    .sec h2,.gsub{break-after:avoid}
+    footer{border-top:.5pt solid #bbb;margin-top:10mm}
+
+    /* The studio credit block below is the running footer, so the copy of
+       the line in the site own footer steps aside on paper rather than
+       printing underneath it. */
+    .credit{display:none}
+  }
+</style>
+
+<!-- ═══ Stunity Tech — studio credit (screen + print) ═══════════════════
+     Quiet on screen, set apart from the site's own footer text. In print it
+     becomes a running footer: fixed to the page box so it repeats on every
+     sheet, with @page reserving the space so it never lands on the copy.
+     Colour tokens fall back gracefully on sites that don't define them. -->
+<style>
+.stunity-credit{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:26px auto 34px;padding:20px 16px 0;max-width:1180px;
+  border-top:1px solid var(--line-soft,rgba(128,128,128,.22));
+  font-family:var(--mono,ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace);
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;line-height:1.5;
+  color:var(--muted,#6b7280);
+}
+.stunity-credit .sc-dot{width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--shade,currentColor);opacity:.75}
+.stunity-credit b{font-weight:500;color:var(--ink,inherit)}
+.stunity-credit[data-print-only]{display:none}
+.sc-wrap{position:relative;display:inline-block}
+.sc-link{color:inherit;text-decoration:none;
+  border-bottom:1px solid transparent;transition:border-color .18s ease}
+/* the attractor: a slow pulse on the end of the name, so the footer reads as
+   something to touch rather than a static byline. */
+.sc-link::after{content:"";display:inline-block;width:5px;height:5px;
+  margin-left:6px;border-radius:50%;background:currentColor;
+  vertical-align:middle;animation:scPulse 2.6s ease-in-out infinite}
+@keyframes scPulse{0%,100%{opacity:.28;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.25)}}
+.sc-wrap:hover .sc-link,.sc-wrap:focus-within .sc-link{
+  border-bottom-color:currentColor}
+
+.sc-card{position:absolute;bottom:calc(100% + 12px);left:0;
+  transform:translateY(6px);
+  width:max-content;max-width:min(272px,86vw);
+  display:grid;gap:7px;padding:14px 16px;
+  text-align:left;text-transform:none;letter-spacing:normal;line-height:1.45;
+  background:var(--sc-card-bg,#fdfdfb);color:var(--sc-card-ink,#1b1b1b);
+  border:1px solid rgba(128,128,128,.26);border-radius:12px;
+  box-shadow:0 12px 34px rgba(0,0,0,.22);
+  opacity:0;visibility:hidden;pointer-events:none;z-index:60;
+  transition:opacity .2s ease,transform .2s ease,visibility .2s}
+.sc-wrap:hover .sc-card,.sc-wrap:focus-within .sc-card{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translateY(0)}
+.sc-card::after{content:"";position:absolute;top:100%;left:22px;
+  border:6px solid transparent;
+  border-top-color:var(--sc-card-bg,#fdfdfb)}
+.sc-card b{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:600}
+.sc-card i{font-style:normal;font-size:12.5px;opacity:.72}
+.sc-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.sc-acts a{font-size:12px;text-decoration:none;color:inherit;
+  padding:4px 9px;border-radius:999px;
+  border:1px solid rgba(128,128,128,.34);
+  transition:background .16s ease,border-color .16s ease}
+.sc-acts a:hover{background:rgba(128,128,128,.14);
+  border-color:rgba(128,128,128,.6)}
+.sc-link:focus-visible,.sc-acts a:focus-visible{
+  outline:1px solid currentColor;outline-offset:3px;border-radius:2px}
+
+/* On touch the card is opened by tap (see the script), so it keeps the same
+   shape it has on a pointer device. Only the tap targets grow. */
+@media (hover:none){
+  .sc-acts a{padding:7px 12px}
+  .sc-card{gap:9px;padding:15px 17px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sc-link::after{animation:none}
+  .sc-card{transition:none}
+}
+@media print{
+  .sc-card{display:none!important}
+  .sc-link::after{display:none!important}
+  .sc-link{border-bottom:0!important;text-decoration:none!important;
+    color:inherit!important}
+}
+.sc-card{z-index:9999}
+/* When the script flips the card below the credit (no room above), the
+   little pointer has to move to the top edge with it. */
+.sc-card.sc-below::after{top:auto;bottom:100%;
+  border-top-color:transparent;border-bottom-color:var(--sc-card-bg,#fdfdfb)}
+@media print{
+  @page{margin-bottom:24mm}
+  html body #stunityCredit.stunity-credit,html body #stunityCredit.stunity-credit[data-print-only]{
+    display:flex!important;position:fixed;left:0;right:0;bottom:-16mm;
+    margin:0;padding:3mm 0 0;max-width:none;
+    border-top:.2mm solid #c9c9c9;background:#fff;color:#5b5b5b;
+    font-size:7.5pt;letter-spacing:.14em;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .stunity-credit b{color:#111}
+  .stunity-credit .sc-dot{background:#8a8a8a}
+}
+</style>
+
+<!-- Social and canonical: absolute URLs, because a crawler
+     resolves these from its own context, not the page's. -->
+<link rel="canonical" href="https://hedaprateek.github.io/People-Information/">
+<meta property="og:url" content="https://hedaprateek.github.io/People-Information/">
+<meta property="og:site_name" content="Stunity Tech">
+<meta property="og:image" content="https://hedaprateek.github.io/People-Information/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Society Directory">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Society Directory">
+<meta name="twitter:description" content="Committee, emergency numbers, service contacts, resident directory and society documents — all in one place.">
+<meta name="twitter:image" content="https://hedaprateek.github.io/People-Information/og.png">
+
+<!-- Cloudflare Web Analytics: cookieless, collects no personal data and
+     sets nothing on the device, so it needs no consent banner. Every site
+     here shares one origin, so ONE site token covers all of them and the
+     dashboard splits the numbers by path. Until a real token is pasted in
+     below, the guard returns early and nothing is loaded at all. -->
+<script>(function(){
+  var t = "__CF_BEACON_TOKEN__";
+  if (!t || t.charAt(0) === "_") return;          // not configured yet
+  var s = document.createElement("script");
+  s.defer = true;
+  s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+  s.setAttribute("data-cf-beacon", JSON.stringify({ token: t }));
+  document.head.appendChild(s);
+})();</script>
+</head>
+<body>
+<div class="rail"><div class="rail-fill" id="railFill"></div></div>
+
+<noscript>
+  <div class="fallback"><h2>This page needs JavaScript</h2>
+  <p>The directory is built in your browser. Please turn JavaScript on and reload.</p></div>
+</noscript>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand"><span class="dot" id="brandDot">S</span><span class="bn" id="brandName">Directory</span></a>
+    <div class="nav-links" id="navLinks"></div>
+    <div class="nav-right">
+      <a href="#" class="nav-cta" id="sosCta" hidden>Emergency</a>
+      <button class="icon-btn lang" id="langBtn" title="भाषा बदलें / Change language">EN</button>
+      <!-- Shown only where the app can actually be installed, and never once
+           it already is. Populated by installable(). -->
+      <button class="icon-btn" id="installBtn" hidden>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.2l3.6-3.6L17 11l-5 5-5-5 1.4-1.4L12 13.2V3zM5 19h14v2H5v-2z"/></svg>
+      </button>
+      <button class="icon-btn" id="shareBtn" title="Share this page" aria-label="Share this page">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16a3 3 0 00-2 .8l-7-4a3 3 0 000-1.6l7-4A3 3 0 1015 5l-7 4a3 3 0 100 6l7 4a3 3 0 103-3z"/></svg>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Menu">
+        <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-glow"></div><div class="hero-glow-2"></div>
+  <!-- Row houses on the left, flats on the right, which is what this
+       society actually is. Replaced by a photograph if the About sheet
+       names one; see chrome(). -->
+  <div class="hero-art" id="heroArt" aria-hidden="true">
+    <!-- The viewBox is the band's own shape, near 6:1. At 4:1 the slice took
+         the top off every building and the flats came out as plain slabs. -->
+    <svg viewBox="0 0 1400 230" preserveAspectRatio="xMidYMax slice" focusable="false">
+      <defs>
+        <pattern id="ha-win" width="23" height="26" patternUnits="userSpaceOnUse">
+          <rect x="7" y="8" width="10" height="11" rx="1.5"/>
+        </pattern>
+        <!-- Nothing at the top, where the name sits; the full weight only
+             along the ground. -->
+        <linearGradient id="ha-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+          <stop offset=".5" stop-color="#fff" stop-opacity=".42"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+        </linearGradient>
+        <mask id="ha-mask"><rect width="1400" height="230" fill="url(#ha-fade)"/></mask>
+      </defs>
+      <g fill="currentColor" mask="url(#ha-mask)">
+        <!-- three row houses -->
+        <path d="M52 156 120 112 188 156Z"/><rect x="64" y="152" width="112" height="62"/>
+        <path d="M196 156 264 112 332 156Z"/><rect x="208" y="152" width="112" height="62"/>
+        <path d="M340 156 408 112 476 156Z"/><rect x="352" y="152" width="112" height="62"/>
+        <!-- two trees, between the houses and the blocks -->
+        <rect x="516" y="190" width="5" height="24"/><circle cx="518" cy="180" r="17"/>
+        <rect x="556" y="196" width="4" height="18"/><circle cx="558" cy="189" r="13"/>
+        <!-- the flats, with a water tank on the tallest -->
+        <rect x="600" y="120" width="160" height="94"/>
+        <rect x="776" y="84" width="186" height="130"/>
+        <rect x="852" y="66" width="50" height="18"/>
+        <rect x="860" y="84" width="5" height="7"/><rect x="889" y="84" width="5" height="7"/>
+        <rect x="978" y="130" width="140" height="84"/>
+        <rect x="1134" y="152" width="120" height="62"/>
+        <rect x="1270" y="168" width="130" height="46"/>
+        <!-- the ground they stand on -->
+        <rect x="0" y="212" width="1400" height="2.5"/>
+      </g>
+      <!-- Windows and doors are punched back out in the page colour, so they
+           read as openings rather than as marks laid on top. -->
+      <g fill="var(--navy)" mask="url(#ha-mask)" opacity=".9">
+        <rect x="612" y="132" width="136" height="70" fill="url(#ha-win)"/>
+        <rect x="788" y="96" width="162" height="106" fill="url(#ha-win)"/>
+        <rect x="990" y="142" width="116" height="60" fill="url(#ha-win)"/>
+        <rect x="1146" y="164" width="96" height="38" fill="url(#ha-win)"/>
+        <rect x="112" y="186" width="17" height="28"/>
+        <rect x="256" y="186" width="17" height="28"/>
+        <rect x="400" y="186" width="17" height="28"/>
+      </g>
+    </svg>
+  </div>
+  <div class="hero-photo" id="heroPhoto" aria-hidden="true" hidden></div>
+  <div class="wrap">
+    <div class="hero-row">
+      <div class="hero-head">
+        <div class="eyebrow reveal"><span class="pulse"></span><span id="heroEyebrow">Resident Directory</span></div>
+        <h1 class="reveal" id="heroTitle">Loading…</h1>
+        <p class="lede reveal" id="heroLede"></p>
+      </div>
+      <div class="hero-stats reveal" id="heroStats"></div>
+    </div>
+  </div>
+</header>
+
+<div class="searchbar" id="searchbar" hidden>
+  <div class="wrap">
+    <div class="sfield-row">
+    <div class="sfield">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 3a7 7 0 105.3 11.6l4 4 1.4-1.4-4-4A7 7 0 0010 3zm0 2a5 5 0 110 10 5 5 0 010-10z"/></svg>
+      <!-- A phone keyboard capitalises and autocorrects names and flat numbers
+           into nonsense otherwise; enterkeyhint turns Return into Search. -->
+      <input id="q" type="search" placeholder="Search a name, flat, phone or document…"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+             enterkeyhint="search" aria-label="Search the directory">
+      <button type="button" id="qClear" class="qclear" hidden aria-label="Clear search">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>
+      </button>
+    </div>
+      <div class="vswitch" id="vswitch" role="group" aria-label="How the list looks">
+        <button type="button" data-cards="list" aria-label="One line each">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2.6H3V5zm0 5.7h18v2.6H3v-2.6zM3 16.4h18V19H3v-2.6z"/></svg>
+        </button>
+        <button type="button" data-cards="grid" aria-label="Cards">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap"><div id="banner"></div></div>
+
+<div class="wrap">
+  <div class="layout">
+    <main class="main" id="main">
+      <div class="vbar" id="vbar" hidden></div>
+      <div class="tiles" id="tiles" hidden></div>
+    </main>
+    <div class="side">
+      <aside class="p-sos" id="pSos"></aside>
+      <aside class="p-docs" id="pDocs"></aside>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-wrap" id="sheet" hidden></div>
+
+<!-- Offline notice and "add to home screen", both quiet until they apply. -->
+<div class="toast" id="toast" hidden></div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand"><span class="dot" id="footDot">S</span><span id="footName">Directory</span></div>
+        <p id="footAddr"></p>
+      </div>
+      <!-- No admin or data-file links here: this page is for members, and the
+           committee reaches admin.html by typing the address. -->
+      <div class="foot-col"><h5 id="footSecHead">Sections</h5><div id="footLinks"></div></div>
+      <!-- The section cautions and the public services link, gathered out of
+           the middle of the page. Filled in by chrome(), which also reveals
+           the heading — an empty column should not be labelled. -->
+      <div class="foot-col foot-note-col">
+        <h5 id="footNotesHead" hidden>Please note</h5>
+        <div class="foot-notes" id="footNotes"></div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span id="footReg"></span>
+      <span id="footUpd"></span>
+      <span class="credit"><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by Prateek</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var DATA_FILE = "directory.json";
+  var mainEl = document.getElementById("main"),
+      sosEl  = document.getElementById("pSos"),
+      docsEl = document.getElementById("pDocs"),
+      qBox   = document.getElementById("q");
+  var sections = [], meta = {}, sectionNotes = {}, sectionHindi = {}, sectionGroup = {};
+  var view = "home";          // which section is on screen; "home" is the index
+  // Loose key so "Services & Help" in About matches the sheet tab of that name.
+  function key(s){ return String(s).toLowerCase().replace(/[^a-z0-9]/g, ""); }
+
+  /* ---------------- language ---------------- */
+  var STR = {
+    en: {
+      code:"EN", other:"हिं", otherName:"हिंदी में देखें",
+      dir:"Resident Directory",
+      search:"Search a name, flat, phone or document…",
+      emergency:"Emergency",
+      membersOnly:"For society members only. ",
+      ownerDetails:"Owner details",
+      moreDetails:"More details",
+      call:"Call", email:"Email", whatsapp:"WhatsApp", share:"Share", details:"Details", close:"Close", matched:"Matched", all:"All", ungrouped:"Other", dismiss:"Not now", install:"Install", refresh:"Refresh", installTitle:"Add to home screen", publicPage:"Open the public page for this list — shareable with anyone in town",
+      installIos:"Tap the Share button below, then Add to Home Screen.",
+      installHow:"Open the browser menu and choose Install, or use the install icon in the address bar.",
+      installFirefox:"Firefox does not install web apps. Open this page in Chrome or Edge to install it — or bookmark it here.",
+      installSafari:"In Safari, choose File then Add to Dock.",
+      savedCopy:"saved copy",
+      installMsg:"Add the directory to your home screen — it opens without a browser and works with no signal.",
+      offlineMsg:"No connection. Showing the copy saved on this device.",
+      updateMsg:"A newer version of the directory is available.",
+      "new":"New", pinned:"Pinned", attachment:"Attachment", home:"Home",
+      entry:"entry", entries:"entries", matching:"matching",
+      sections:"Sections", pleaseNote:"Please note",
+      updated:"Updated",
+      empty:"This directory is empty.",
+      noMatch:"Nothing matches",
+      lede:"Committee, emergency numbers, services, residents and documents.",
+      ledeAddr:" — committee, emergency numbers, services, residents and documents.",
+      tapCall:"Tap a number to call straight away",
+      file:"file", files:"files", toView:"to view or download",
+      loadFail:"Couldn't load the directory",
+      localFile:"Browsers block reading local files directly, so open the published address instead.",
+      readFail:"Could not read"
+    },
+    hi: {
+      code:"हिं", other:"EN", otherName:"View in English",
+      dir:"निवासी निर्देशिका",
+      search:"नाम, फ्लैट, फ़ोन या दस्तावेज़ खोजें…",
+      emergency:"आपातकाल",
+      membersOnly:"केवल सोसाइटी सदस्यों के लिए। ",
+      ownerDetails:"मकान मालिक का विवरण",
+      moreDetails:"और जानकारी",
+      call:"कॉल करें", email:"ईमेल", whatsapp:"व्हाट्सएप", share:"साझा करें", details:"विवरण", close:"बंद करें", matched:"मिला", all:"सभी", ungrouped:"अन्य", dismiss:"अभी नहीं", install:"इंस्टॉल करें", refresh:"रिफ़्रेश", installTitle:"होम स्क्रीन पर जोड़ें", publicPage:"इस सूची का सार्वजनिक पेज खोलें — शहर में किसी के साथ साझा करने योग्य",
+      installIos:"नीचे शेयर बटन दबाएँ, फिर Add to Home Screen चुनें।",
+      installHow:"ब्राउज़र मेन्यू खोलें और Install चुनें, या पता-पट्टी में इंस्टॉल आइकन दबाएँ।",
+      installFirefox:"फ़ायरफ़ॉक्स वेब ऐप इंस्टॉल नहीं करता। इंस्टॉल करने के लिए इसे Chrome या Edge में खोलें।",
+      installSafari:"सफ़ारी में File फिर Add to Dock चुनें।",
+      savedCopy:"सहेजी गई कॉपी",
+      installMsg:"निर्देशिका को होम स्क्रीन पर जोड़ें — बिना नेटवर्क के भी चलेगी।",
+      offlineMsg:"नेटवर्क नहीं है। इस डिवाइस पर सहेजी गई कॉपी दिख रही है।",
+      updateMsg:"निर्देशिका का नया संस्करण उपलब्ध है।",
+      "new":"नया", pinned:"महत्वपूर्ण", attachment:"संलग्न", home:"होम",
+      entry:"प्रविष्टि", entries:"प्रविष्टियाँ", matching:"के लिए",
+      sections:"अनुभाग", pleaseNote:"कृपया ध्यान दें",
+      updated:"अपडेट किया गया",
+      empty:"इस निर्देशिका में कोई प्रविष्टि नहीं है।",
+      noMatch:"कोई परिणाम नहीं मिला",
+      lede:"समिति, आपातकालीन नंबर, सेवाएँ, निवासी और दस्तावेज़।",
+      ledeAddr:" — समिति, आपातकालीन नंबर, सेवाएँ, निवासी और दस्तावेज़।",
+      tapCall:"तुरंत कॉल करने के लिए नंबर पर टैप करें",
+      file:"फ़ाइल", files:"फ़ाइलें", toView:"देखने या डाउनलोड करने के लिए",
+      loadFail:"निर्देशिका लोड नहीं हो सकी",
+      localFile:"ब्राउज़र सीधे लोकल फ़ाइल नहीं पढ़ सकते। कृपया प्रकाशित पता खोलें।",
+      readFail:"पढ़ा नहीं जा सका"
+    }
+  };
+
+  var lang = (function () {
+    try {
+      var saved = localStorage.getItem("dir-lang");
+      if (saved === "hi" || saved === "en") return saved;
+    } catch (e) {}
+    // Fall back to the device language, so a Hindi phone opens in Hindi.
+    return /^hi\b/i.test(navigator.language || "") ? "hi" : "en";
+  })();
+
+  function t(k) { return (STR[lang] && STR[lang][k]) || STR.en[k] || k; }
+
+  // A sheet keeps its own name unless the About sheet supplies a Hindi one.
+  function sectionTitle(s) {
+    return (lang === "hi" && sectionHindi[key(s.title)]) || s.title;
+  }
+
+  function setLang(next) {
+    lang = next;
+    try { localStorage.setItem("dir-lang", next); } catch (e) {}
+    document.documentElement.lang = next;
+    if (sections.length) { chrome(); draw(); }
+  }
+  document.documentElement.lang = lang;
+
+  var P = {
+    phone:"M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 013 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z",
+    mail:"M3 5h18v14H3V5zm2 2v.5l7 4.5 7-4.5V7H5zm0 2.9V17h14V9.9l-7 4.5-7-4.5z",
+    down:"M12 3v10.2l3.6-3.6L17 11l-5 5-5-5 1.4-1.4L12 13.2V3zM5 19h14v2H5v-2z",
+    alert:"M12 2L1 21h22L12 2zm0 5l7.5 12.9h-15L12 7zm-1 4v4h2v-4h-2zm0 5v2h2v-2h-2z",
+    doc:"M6 2h8l4 4v16H6V2zm7 1.5V7h3.5L13 3.5zM8 12h8v2H8v-2zm0 4h8v2H8v-2z",
+    lock:"M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 016 0v2H9V7zm3 6a2 2 0 011 3.7V18h-2v-1.3A2 2 0 0112 13z",
+    wa:"M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 016.7 12.4l-.3.4.8 2.8-2.9-.8-.4.2A8 8 0 1112 4zm-3.6 4c-.2 0-.5 0-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1.1 2.6c.1.2 1.8 2.8 4.4 3.8 2.1.8 2.6.7 3 .6.6 0 1.6-.6 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.4-1.7c-.1-.3 0-.4.1-.5l.5-.5.3-.5v-.5l-.8-2c-.2-.5-.4-.4-.6-.4h-.4z",
+    share:"M18 16.1c-.8 0-1.4.3-1.9.8l-6.9-4a2.5 2.5 0 000-1.7l6.8-4a2.9 2.9 0 10-.9-2.1v.4L8.2 9.5a2.9 2.9 0 100 4.9l6.9 4.1-.1.4a2.9 2.9 0 102.9-2.9z",
+    home:"M12 3 2 11h3v10h6v-6h2v6h6V11h3L12 3z",
+    people:"M9 12a4 4 0 100-8 4 4 0 000 8zm0 2c-3.3 0-7 1.7-7 4v3h11.2A5 5 0 0113 18c0-1.6.8-3 2-4-1.7-.6-3.8-1-6-1zm8.5-9a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM18 15a3 3 0 100 6 3 3 0 000-6z",
+    tools:"M20.7 5.6 18 8.3l-2.3-2.3 2.7-2.7A5 5 0 0011.6 9L4 16.6V20h3.4L15 12.4a5 5 0 005.7-6.8z",
+    megaphone:"M18 3 8 7H4a2 2 0 00-2 2v4a2 2 0 002 2h1l1 6h3l-1-6h.3l9.7 4V3zm2 5v6a3 3 0 000-6z",
+    back:"M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z",
+    grid:"M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z",
+    book:"M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3zm2 2v13a1 1 0 001 1h9V6a1 1 0 00-1-1H7zm2 3h7v2H9V8zm0 4h7v2H9v-2z"
+  };
+  /* A tile is easier to recognise by shape than by reading it, so each kind of
+     section gets the icon its name suggests. */
+  function sectionIcon(s) {
+    var n = (s.title || "").toLowerCase();
+    if (s.sos) return P.alert;
+    if (s.notice) return P.megaphone;
+    if (s.map && s.map.file) return P.doc;
+    if (/resident|member|owner|tenant|famil|parent|student/.test(n)) return P.home;
+    if (/committee|office|bearer|coordinator|staff|team|volunteer/.test(n)) return P.people;
+    if (/service|help|vendor|trades|repair|maid|contractor/.test(n)) return P.tools;
+    if (/number|contact|phone|directory|local/.test(n)) return P.phone;
+    if (/document|form|bye.?law|rule|policy|minute/.test(n)) return P.book;
+    return P.grid;
+  }
+  function svg(d, stroke) {
+    var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("aria-hidden", "true");
+    if (stroke) { s.setAttribute("fill","none"); s.setAttribute("stroke","currentColor"); s.setAttribute("stroke-width","2.3"); }
+    else s.setAttribute("fill", "currentColor");
+    var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("d", d); s.appendChild(p); return s;
+  }
+  // Spreadsheet values are only ever set with textContent, never as markup.
+  function el(t, c, x) {
+    var n = document.createElement(t);
+    if (c) n.className = c;
+    if (x != null && x !== "") n.textContent = x;
+    return n;
+  }
+  function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"s";}
+  function initials(n) {
+    var p = String(n || "?").trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return "?";
+    return (p[0][0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase();
+  }
+  function isUrl(v){ return /^https?:\/\//i.test(String(v || "").trim()); }
+  function tel(v){ return "tel:" + String(v).replace(/[^\d+]/g, ""); }
+
+  /* wa.me wants a country code and digits only. A short helpline (100, 1912)
+     has no WhatsApp account, and neither does a number we cannot complete, so
+     anything that does not land in the 11–15 digit range gets no button. */
+  function waNum(v) {
+    var cc = String(meta.country || "91").replace(/\D/g, "") || "91";
+    var raw = String(v || "").trim();
+    var d = raw.replace(/\D/g, "");
+    if (!d) return "";
+    // A leading + or 00 means the author wrote a full international number.
+    var plus = raw.charAt(0) === "+" || /^00\d/.test(d);
+    var local = true;
+    d = d.replace(/^00/, "");
+    if (d.length > 10 && d.indexOf(cc) === 0) d = d.slice(cc.length);
+    else if (plus) local = false;          // +<some other country>
+    d = d.replace(/^0+/, "");             // a domestic trunk prefix
+
+    // Someone who wrote +1 415… meant that number; it is not ours to judge
+    // against a plan it does not belong to.
+    if (!local) return d.length >= 8 && d.length <= 15 ? d : "";
+    // India is the one plan worth hard-coding: a mobile is ten digits
+    // beginning 6-9. A landline's STD code, an 1800 number and a short
+    // helpline all fail that, which is exactly the point.
+    if (cc === "91") return /^[6-9]\d{9}$/.test(d) ? cc + d : "";
+    // Another country's own plan is not ours to guess: keep a length window.
+    return d.length >= 8 && d.length <= 14 ? cc + d : "";
+  }
+
+  var OFFICE=/\.(docx?|xlsx?|pptx?)$/i, INLINE=/\.(pdf|png|jpe?g|gif|webp|svg|txt)$/i;
+  function fileCol(cols) {
+    for (var i=0;i<cols.length;i++)
+      if (/^(file|link|url|document|attachment|path|download)$/
+          .test(cols[i].toLowerCase().replace(/[^a-z]/g,""))) return cols[i];
+    return null;
+  }
+  function classify(cols) {
+    var r = { name:null, phone:[], email:null, role:null, photo:null, file:null,
+              rate:null, blood:null, unit:null, place:[], rest:[],
+              owner:{ name:null, phone:[], address:[], email:null, other:[] } };
+    r.file = fileCol(cols);
+    cols.forEach(function (c) {
+      var k = c.toLowerCase().replace(/[^a-z]/g, "");
+      if (c === r.file) return;
+
+      // Owner/landlord columns are grouped, and must be claimed before the
+      // generic rules — otherwise "Owner Phone" becomes a call button for the
+      // tenant and "Owner Address" lands in their own address line.
+      if (/^(owner|landlord)/.test(k)) {
+        if (/phone|mobile|contact|cell|tel|number/.test(k)) r.owner.phone.push(c);
+        else if (/mail/.test(k)) r.owner.email = c;
+        else if (/address|addr|residence/.test(k)) r.owner.address.push(c);
+        else if (/name/.test(k)) r.owner.name = r.owner.name || c;
+        else r.owner.other.push(c);
+        return;
+      }
+
+      // What kind of home this is — flat, row house, shop, bungalow. A wing and
+      // number can repeat between a flat and a row house, so this has to be
+      // claimed before the "place" rule below, which would otherwise swallow
+      // "Unit Type" and "House Type" as if they were addresses.
+      if (!r.unit && /^(unittype|propertytype|housetype|hometype|dwelling|dwellingtype|premises|premisestype|unitkind|propertykind|residencetype)$/.test(k)) r.unit = c;
+      else if (!r.blood && /^(blood|bloodgroup|bloodtype|bg)$/.test(k)) r.blood = c;
+      else if (!r.rate && /^(charge|charges|rate|rates|fee|fees|price|cost|amount|visitcharge|chargespervisit|perisit|monthlycharge)$/.test(k)) r.rate = c;
+      else if (!r.photo && /^(photo|image|picture|avatar|pic|img|photourl)$/.test(k)) r.photo = c;
+      else if (!r.name && /^(name|fullname|membername|residentname|person|service|label|item|title|contactperson)$/.test(k)) r.name = c;
+      else if (/phone|mobile|cell|tel|contactno|number/.test(k)) r.phone.push(c);
+      else if (!r.email && /email|mail/.test(k)) r.email = c;
+      else if (!r.role && /^(role|designation|post|type|position|category)$/.test(k)) r.role = c;
+      else if (/flat|unit|door|block|wing|tower|house|floor|address/.test(k)) r.place.push(c);
+      else r.rest.push(c);
+    });
+    if (!r.name) {
+      var pool = cols.filter(function (c) {
+        return r.phone.indexOf(c)<0 && c!==r.email && c!==r.role &&
+               c!==r.photo && c!==r.file && c!==r.rate && c!==r.blood && c!==r.unit;
+      });
+      r.name = pool[0] || cols[0];
+      r.rest = r.rest.filter(function(c){return c!==r.name;});
+      r.place = r.place.filter(function(c){return c!==r.name;});
+    }
+    return r;
+  }
+  function ext(p){var m=String(p).split("?")[0].match(/\.([a-z0-9]+)$/i);return m?m[1].toUpperCase():"FILE";}
+  function absUrl(p){
+    if(/^https?:\/\//i.test(p))return p;
+    return location.origin+location.pathname.replace(/[^/]*$/,"")+p.replace(/^\.?\//,"");
+  }
+
+  /* ---------------- notices ----------------
+     A notice board is only useful in date order, so the date has to survive
+     whatever Excel and the person typing produced. India writes 25/08/2026,
+     so a slashed date is read day-first — the opposite of what JavaScript's
+     own Date parser assumes, which is exactly the bug this avoids. */
+  var MONTHS = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+  function parseDate(v) {
+    if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    var s = String(v == null ? "" : v).trim();
+    if (!s) return null;
+
+    // An unformatted Excel date cell arrives as a serial: days since 1899-12-30.
+    if (/^\d{5}(\.\d+)?$/.test(s)) {
+      var d0 = new Date(Date.UTC(1899, 11, 30) + Math.floor(+s) * 864e5);
+      return isNaN(d0.getTime()) ? null : d0;
+    }
+
+    var m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);        // 2026-08-25
+    if (m) return mk(+m[1], +m[2], +m[3]);
+
+    m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})/);          // 25/08/2026
+    if (m) {
+      var day = +m[1], mon = +m[2];
+      // 08/25/2026 can only be month-first, so read it that way rather than fail.
+      if (mon > 12 && day <= 12) { var sw = day; day = mon; mon = sw; }
+      return mk(yr(+m[3]), mon, day);
+    }
+
+    m = s.match(/^(\d{1,2})\s*(?:st|nd|rd|th)?[\s-]+([a-z]{3,})[\s,-]+(\d{2,4})/i);  // 25 Aug 2026
+    if (m) return mk(yr(+m[3]), mo(m[2]), +m[1]);
+
+    m = s.match(/^([a-z]{3,})[\s-]+(\d{1,2})(?:st|nd|rd|th)?[\s,-]+(\d{2,4})/i);     // Aug 25, 2026
+    if (m) return mk(yr(+m[3]), mo(m[1]), +m[2]);
+
+    return null;
+
+    function mo(name) { return MONTHS.indexOf(name.slice(0,3).toLowerCase()) + 1; }
+    function yr(n) { return n < 100 ? 2000 + n : n; }
+    function mk(y, mth, day) {
+      if (!mth || mth > 12 || !day || day > 31) return null;
+      var dd = new Date(Date.UTC(y, mth - 1, day));
+      // Rolls over on 31 February, which means the date was never real.
+      return dd.getUTCMonth() === mth - 1 && dd.getUTCDate() === day ? dd : null;
+    }
+  }
+
+  var NEW_DAYS = 14;
+  function isFresh(date, now) {
+    if (!date) return false;
+    var age = (now || new Date()).getTime() - date.getTime();
+    return age < NEW_DAYS * 864e5;        // a future-dated notice is new too
+  }
+  function fmtDate(d) {
+    if (!d) return "";
+    return d.toLocaleDateString(lang === "hi" ? "hi-IN" : "en-GB",
+      { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  }
+  function isNotice(name) { return /notice|announce|circular|bulletin/i.test(name); }
+
+  /* Which column holds what. Title is claimed before body, so a sheet whose
+     only text column is "Notice" gets a headline, not an untitled paragraph. */
+  function noticeMap(cols) {
+    var r = { date:null, title:null, body:[], pin:null, file:fileCol(cols), rest:[] };
+    cols.forEach(function (c) {
+      var k = c.toLowerCase().replace(/[^a-z]/g, "");
+      if (c === r.file) return;
+      if (!r.date && /^(date|posted|on|issued|dated|when)$/.test(k)) r.date = c;
+      else if (!r.pin && /^(pin|pinned|sticky|important|top)$/.test(k)) r.pin = c;
+      else if (!r.title && /^(title|subject|heading|headline|notice|announcement)$/.test(k)) r.title = c;
+      else if (/^(details|body|message|description|text|notes|note|content)$/.test(k)) r.body.push(c);
+      else r.rest.push(c);
+    });
+    if (!r.title) r.title = r.body.shift() || r.rest.shift() || cols[0];
+    return r;
+  }
+  function isPinned(row, map) {
+    if (!map.pin) return false;
+    return /^(y|yes|true|1|pin|pinned)$/i.test(String(row[map.pin] || "").trim());
+  }
+  /* Pinned first, then newest first. A row whose date cannot be read sorts to
+     the bottom rather than to the top, where an epoch date would put it. */
+  function noticeOrder(rows, map) {
+    return rows.map(function (row, i) {
+      return { row: row, i: i, d: parseDate(row[map.date]), p: isPinned(row, map) };
+    }).sort(function (a, b) {
+      if (a.p !== b.p) return a.p ? -1 : 1;
+      if (!a.d && !b.d) return a.i - b.i;
+      if (!a.d) return 1;
+      if (!b.d) return -1;
+      return b.d - a.d;
+    }).map(function (x) { return x.row; });
+  }
+
+  /* ---------------- offline, and installing ----------------
+     The plumber's number is wanted during a power cut and a neighbour's during
+     an outage, so the whole directory is kept on the device. */
+  var toastEl = document.getElementById("toast");
+  var installEvent = null;
+  var dataAsOf = null;        // when data.xlsx was actually fetched
+  var dataOffline = false;    // true when it came from the saved copy
+
+  function toast(msg, action, label) {
+    if (!toastEl) return;
+    toastEl.textContent = "";
+    var ic = svg(action ? P.down : P.alert);
+    ic.setAttribute("class", "ticon");
+    toastEl.appendChild(ic);
+    toastEl.appendChild(el("div", "tmsg", msg));
+    if (action) {
+      var go = el("button", null, label);
+      go.setAttribute("type", "button");
+      go.addEventListener("click", function () { toastEl.hidden = true; action(); });
+      toastEl.appendChild(go);
+    }
+    var no = el("button", "ghost", t("dismiss"));
+    no.setAttribute("type", "button");
+    no.addEventListener("click", function () { toastEl.hidden = true; });
+    toastEl.appendChild(no);
+    toastEl.hidden = false;
+  }
+
+  /** Already running from the home screen? Then there is nothing to offer.
+      The Android app counts: it is a WebView, so display-mode reads as
+      "browser" and the offer to install would otherwise appear inside the
+      installed app. It marks itself in the user agent for exactly this. */
+  function isInstalled() {
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+           navigator.standalone === true ||
+           /SocietyDirectoryApp\//.test(navigator.userAgent || "");
+  }
+  /* iPhone and iPad never fire beforeinstallprompt — Safari has no API for it
+     at all — so the only thing on offer there is telling someone where the
+     button is. */
+  function isIosSafari() {
+    var ua = navigator.userAgent || "";
+    var ios = /iPad|iPhone|iPod/.test(ua) ||
+              (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return ios && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+  }
+
+  /* Only Chrome and Edge hand over a prompt. Everywhere else the browser's own
+     control has to be pointed at, so the button is never a dead end. */
+  function installHelp() {
+    var ua = navigator.userAgent || "";
+    if (isIosSafari()) return t("installIos");
+    if (/Firefox\//.test(ua)) return t("installFirefox");
+    if (/Safari\//.test(ua) && !/Chrome|Chromium|Edg\//.test(ua)) return t("installSafari");
+    return t("installHow");
+  }
+
+  function doInstall() {
+    if (installEvent) {
+      try { localStorage.setItem("dir-install", "1"); } catch (err) {}
+      installEvent.prompt();
+      installEvent = null;
+      var btn = document.getElementById("installBtn");
+      if (btn) btn.hidden = true;
+      return;
+    }
+    toast(installHelp());
+  }
+
+  /* Shown to everyone who has not already installed it. Hiding it until the
+     browser volunteered a prompt meant it never appeared in Firefox, in
+     desktop Safari, or anywhere the manifest failed to load — which is the
+     opposite of a button you can come back to later. */
+  function showInstallBtn() {
+    var btn = document.getElementById("installBtn");
+    if (!btn) return;
+    if (isInstalled()) { btn.hidden = true; return; }
+    btn.hidden = false;
+    btn.title = t("installTitle");
+    btn.setAttribute("aria-label", t("installTitle"));
+  }
+
+  function installable() {
+    var btn = document.getElementById("installBtn");
+    if (btn) btn.addEventListener("click", doInstall);
+
+    // Chrome and Edge hand over a prompt to keep for later; hold on to it so
+    // the button works whenever it is pressed, not only on the first visit.
+    addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      installEvent = e;
+      showInstallBtn();
+      var asked = null;
+      try { asked = localStorage.getItem("dir-install"); } catch (err) {}
+      if (asked) return;      // offered once; the button is there from now on
+      toast(t("installMsg"), doInstall, t("install"));
+    });
+
+    // Offered straight away rather than waiting for a signal that only Chrome
+    // and Edge ever send.
+    showInstallBtn();
+
+    addEventListener("appinstalled", function () {
+      try { localStorage.setItem("dir-install", "1"); } catch (err) {}
+      if (toastEl) toastEl.hidden = true;
+      if (btn) btn.hidden = true;
+    });
+    // Losing the connection is worth saying, because what is on screen is then
+    // a saved copy rather than the live sheet.
+    addEventListener("offline", function () { toast(t("offlineMsg")); });
+    addEventListener("online", function () {
+      if (toastEl && !toastEl.hidden) toastEl.hidden = true;
+    });
+  }
+
+  /* Registered late and guarded: a browser without service workers, or a page
+     opened straight off the disk, simply carries on without one. */
+  function offlineReady() {
+    if (!("serviceWorker" in navigator)) return;
+    if (location.protocol !== "https:" && location.hostname !== "localhost") return;
+    addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").then(function (reg) {
+        reg.addEventListener("updatefound", function () {
+          var sw = reg.installing;
+          if (!sw) return;
+          sw.addEventListener("statechange", function () {
+            // A worker that installs while one is already in charge means the
+            // site has been redeployed under the reader.
+            if (sw.state === "installed" && navigator.serviceWorker.controller)
+              toast(t("updateMsg"), function () {
+                sw.postMessage("skip-waiting");
+                location.reload();
+              }, t("refresh"));
+          });
+        });
+      })["catch"](function () {});
+    });
+  }
+  offlineReady();
+
+  /* ---------------- grouping within a section ----------------
+     Twenty residents is a list; twenty residents split by wing is a building.
+     The column to split on is whichever one people would actually name the
+     groups by — the wing for a resident list, the trade for a services list —
+     and the About sheet can override it with "Group: Residents | Block". */
+  var GROUP_MIN = 6;          // below this a list is short enough as it is
+
+  /** The column the chips filter by, and the one that splits each group in
+      two below it — a wing holds both flats and row houses. */
+  function groupColsOf(s) {
+    var main = groupColOf(s);
+    if (!main) return null;
+    var sub = subColOf(s, main);
+    return sub ? [main, sub] : [main];
+  }
+  /* Only where the first column says *where* someone lives: a wing is a place
+     that can hold either kind of home, so the kind is worth separating inside
+     it. Splitting a trade by anything else just fragments the list. */
+  function subColOf(s, main) {
+    var told = sectionGroup[key(s.title)];
+    if (told && String(told).indexOf(",") > -1) {
+      var named = String(told).split(",")[1].trim().toLowerCase();
+      return s.cols.filter(function (c) { return c.toLowerCase().trim() === named; })[0] || null;
+    }
+    if (!/^(block|wing|tower|building|floor|phase|sector)$/
+          .test(main.toLowerCase().replace(/[^a-z]/g, ""))) return null;
+    var cand = s.cols.filter(function (c) {
+      return /^(unittype|propertytype|housetype|hometype|residencetype|dwelling)$/
+        .test(c.toLowerCase().replace(/[^a-z]/g, ""));
+    })[0];
+    // A column nobody has filled in yet splits nothing; it simply does not
+    // appear until it has values, and then it does.
+    return cand && spread(s, cand) > 1 ? cand : null;
+  }
+
+  function groupColOf(s) {
+    if (s.notice || s.sos || !s.rows || s.rows.length < GROUP_MIN) return null;
+
+    var told = sectionGroup[key(s.title)];
+    if (told) {
+      var first = String(told).split(",")[0].trim();
+      // "Group: Residents | none" turns it off for that sheet.
+      if (/^(none|off|no)$/i.test(first)) return null;
+      var exact = s.cols.filter(function (c) {
+        return c.toLowerCase().trim() === first.toLowerCase();
+      })[0];
+      if (exact && spread(s, exact) > 1) return exact;
+    }
+
+    var pick = function (rx) {
+      var hit = s.cols.filter(function (c) {
+        return c !== s.map.name && rx.test(c.toLowerCase().replace(/[^a-z]/g, ""));
+      });
+      for (var i = 0; i < hit.length; i++) if (usable(s, hit[i])) return hit[i];
+      return null;
+    };
+    // Where before what: a wing groups a building better than a job title, and
+    // a broad category beats a job title that is unique to one person.
+    return pick(/^(block|wing|tower|building|floor|phase|sector)$/) ||
+           pick(/^(category|department|group|kind|type)$/) ||
+           pick(/^(role|designation|post|trade|service|team|class)$/) ||
+           pick(/^(unittype|propertytype|housetype)$/) ||
+           null;
+  }
+  /* A column with a different value in nearly every row is not a grouping —
+     eighteen trades across eighteen people is the same list with headings on
+     it. Ask for roughly two rows per group before splitting on it. */
+  function usable(s, col) {
+    var n = spread(s, col);
+    return n > 1 && n <= Math.floor(s.rows.length / 1.5);
+  }
+  /** How many distinct values a column holds — one is not worth splitting. */
+  function spread(s, col) {
+    var seen = {}, n = 0;
+    s.rows.forEach(function (r) {
+      var v = String(r[col] || "").trim().toLowerCase();
+      if (v && !seen[v]) { seen[v] = 1; n++; }
+    });
+    return n;
+  }
+  /** [{key, label, rows}] in first-seen order, blanks collected at the end. */
+  function groupsOf(s, col) { return bucket(s.rows, col); }
+  /** The full tree: the groups the chips filter by, each split by the
+      sub-column. With no sub-column a group holds one unnamed run of rows, so
+      the renderer has a single shape to deal with either way. */
+  function groupTree(s, cols) {
+    return bucket(s.rows, cols[0]).map(function (g) {
+      g.subs = cols[1] ? bucket(g.rows, cols[1])
+                       : [{ key: "", label: "", rows: g.rows }];
+      return g;
+    });
+  }
+  function bucket(rows, col) {
+    var order = [], byKey = {};
+    rows.forEach(function (r) {
+      var raw = String(r[col] || "").trim();
+      var k = raw.toLowerCase() || " other";
+      if (!byKey[k]) {
+        byKey[k] = { key: k, label: raw || t("ungrouped"), rows: [] };
+        order.push(byKey[k]);
+      }
+      byKey[k].rows.push(r);
+    });
+    // Unlabelled rows are a leftover, not a category — they go last.
+    return order.filter(function (g) { return g.key !== " other"; })
+      .concat(order.filter(function (g) { return g.key === " other"; }));
+  }
+
+  /* ---------------- sharing ----------------
+     A resident's number is not ours to pass around: the page carries a notice
+     asking members not to share the list outside, and a Share button on a
+     resident card invites exactly that. A tradesperson's number is different —
+     it is a business contact, neighbours already pass those on, and the person
+     wants the work. So sharing is on for service and helpline sections and off
+     for people, unless the About sheet says otherwise:
+
+       Sharing | services   (default) trades and emergency numbers only
+       Sharing | all        every card, including residents
+       Sharing | off        no Share buttons anywhere
+  */
+  function shareable(s) {
+    var mode = String(meta.sharing || "services").toLowerCase().trim();
+    if (mode === "off" || mode === "no" || mode === "none") return false;
+    if (mode === "all" || mode === "everything" || mode === "yes") return true;
+    if (!s) return false;
+    return s.sos || !!s.map.rate ||
+      /service|vendor|help|trades|contractor|shop|business|repair|maid|staff/i.test(s.title);
+  }
+  function shareText(row, map, s, title) {
+    var L = [];
+    L.push(title);
+    if (map.role && row[map.role]) L.push(String(row[map.role]).trim());
+    var nums = map.phone.map(function (k) { return String(row[k] || "").trim(); }).filter(Boolean);
+    nums.forEach(function (n) { L.push("📞 " + n); });
+    if (map.rate && row[map.rate]) L.push("💰 " + String(row[map.rate]).trim());
+    // Whatever else the sheet holds — timings, notes, area covered.
+    map.rest.forEach(function (k) {
+      var v = String(row[k] || "").trim();
+      if (v) L.push(k + ": " + v);
+    });
+
+    var tail = [];
+    // The caution the section carries travels with the number, or the warning
+    // is left behind the moment the contact leaves the page.
+    var note = s && ((lang === "hi" && sectionNotes["hi:" + key(s.title)]) || sectionNotes[key(s.title)]);
+    if (note) tail.push("⚠️ " + note);
+    tail.push("— " + (meta.name || "our directory") +
+              (s ? " · " + sectionTitle(s) : ""));
+    if (location.protocol !== "file:") tail.push(location.origin + location.pathname);
+    return L.join("\n") + "\n\n" + tail.join("\n");
+  }
+
+  /* A notice reads top to bottom, not as a contact card: date and status
+     first, then the headline, then the text in full. */
+  function noticeCard(row, map, now) {
+    var d = parseDate(row[map.date]);
+    var pinned = isPinned(row, map);
+    var card = el("article", "ncard" + (pinned ? " pinned" : ""));
+
+    var top = el("div", "nmeta");
+    if (d) top.appendChild(el("time", "ndate", fmtDate(d)));
+    if (pinned) top.appendChild(el("span", "npin", t("pinned")));
+    if (isFresh(d, now)) top.appendChild(el("span", "nnew", t("new")));
+    // Any leftover column (Category, By, Posted by) becomes a quiet tag.
+    map.rest.forEach(function (k) {
+      var v = String(row[k] || "").trim();
+      if (v) top.appendChild(el("span", "ntag", v));
+    });
+    if (top.children.length) card.appendChild(top);
+
+    card.appendChild(el("h3", "ntitle", String(row[map.title] || "").trim() || "—"));
+    map.body.forEach(function (k) {
+      var v = String(row[k] || "").trim();
+      if (v) card.appendChild(el("p", "nbody", v));
+    });
+
+    if (map.file) {
+      var f = String(row[map.file] || "").trim();
+      if (f) {
+        var a = el("a", "nfile");
+        a.href = absUrl(f);
+        a.target = "_blank"; a.rel = "noopener";
+        a.appendChild(svg(P.doc));
+        a.appendChild(el("span", null, t("attachment") + " · " + ext(f)));
+        card.appendChild(a);
+      }
+    }
+    return card;
+  }
+
+  /* ---------------- action buttons ----------------
+     Shared by the compact card and the detail sheet, so a number is dialled
+     the same way from both. */
+  /** full: the sheet shows every way to reach someone; a row shows two. */
+  function actionRow(row, map, s, title, full) {
+    var nums = map.phone.map(function (k) { return String(row[k] || "").trim(); }).filter(Boolean);
+    var mail = map.email ? String(row[map.email] || "").trim() : "";
+    var wa = nums.length ? waNum(nums[0]) : "";
+    var go = el("div", "go");
+
+    if (nums.length) {
+      var a = el("a", "iact call"); a.href = tel(nums[0]);
+      a.title = t("call") + " " + title;
+      a.setAttribute("aria-label", t("call") + " " + title);
+      a.appendChild(svg(P.phone)); go.appendChild(a);
+    }
+    // Only when the number can actually reach WhatsApp — see waNum().
+    if (wa) {
+      var w = el("a", "iact wa"); w.href = "https://wa.me/" + wa;
+      w.target = "_blank"; w.rel = "noopener";
+      w.title = t("whatsapp") + " " + title;
+      w.setAttribute("aria-label", t("whatsapp") + " " + title);
+      w.appendChild(svg(P.wa)); go.appendChild(w);
+    }
+    // Email and share live in the detail sheet. Four buttons and a name do
+    // not fit on one line at 320px, and these are not the two anyone reaches
+    // for first.
+    if (mail && full) {
+      var m = el("a", "iact alt"); m.href = "mailto:" + mail;
+      m.title = t("email") + " " + title;
+      m.setAttribute("aria-label", t("email") + " " + title);
+      m.appendChild(svg(P.mail)); go.appendChild(m);
+    }
+    if (full && shareable(s) && (nums.length || mail)) {
+      var sh = el("button", "iact alt");
+      sh.setAttribute("type", "button");
+      sh.title = t("share") + " " + title;
+      sh.setAttribute("aria-label", t("share") + " " + title);
+      sh.appendChild(svg(P.share));
+      sh.addEventListener("click", function () {
+        var txt = shareText(row, map, s, title);
+        // The share sheet on a phone offers WhatsApp first; a desktop browser
+        // without it gets the message on the clipboard instead.
+        if (navigator.share) {
+          navigator.share({ title: title, text: txt })["catch"](function () {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(txt).then(function () {
+            sh.classList.add("done");
+            setTimeout(function () { sh.classList.remove("done"); }, 1400);
+          });
+        }
+      });
+      go.appendChild(sh);
+    }
+    // Dialling a number must not also open the detail sheet behind it.
+    go.addEventListener("click", function (ev) { ev.stopPropagation(); });
+    return go;
+  }
+
+  function avatarFor(row, map, title) {
+    var av = el("div", "av");
+    if (map.photo && isUrl(row[map.photo])) {
+      var img = document.createElement("img");
+      img.src = String(row[map.photo]).trim(); img.alt = ""; img.loading = "lazy";
+      img.onerror = function () { av.textContent = initials(title); };
+      av.appendChild(img);
+    } else av.textContent = initials(title);
+    return av;
+  }
+  function placeOf(row, map) {
+    return map.place.map(function (k) { return row[k]; }).filter(Boolean).join(" · ");
+  }
+
+  /* ---------------- compact contact card ----------------
+     Name, where they are, and the ways to reach them. Everything else — the
+     vehicle, the blood group, the emergency contact, the owner — is one tap
+     away in the detail sheet, so twenty of these fit on a screen instead of
+     four. */
+  function contact(row, map, sos, term, s) {
+    var c = el("div", "ccard" + (sos ? " sos" : ""));
+    var title = String(row[map.name] || "").trim() || "—";
+
+    var head = el("div", "chead");
+    head.appendChild(avatarFor(row, map, title));
+
+    var cid = el("div", "cid");
+    cid.appendChild(el("div", "nm", title));
+
+    var sub = el("div", "csub");
+    var utype = map.unit ? String(row[map.unit] || "").trim() : "";
+    var place = placeOf(row, map);
+    var role = map.role ? String(row[map.role] || "").trim() : "";
+    if (utype) sub.appendChild(el("span", "utype", utype));
+    if (place) sub.appendChild(document.createTextNode(place));
+    if (role) {
+      if (place) sub.appendChild(document.createTextNode(" · "));
+      sub.appendChild(el("span", "crole", role));
+    }
+    if (sub.children.length || place) cid.appendChild(sub);
+    head.appendChild(cid);
+
+    // Blood group keeps its badge on the face of the card: it is the one field
+    // someone scans for in an emergency, and it is useless a tap away.
+    var blood = map.blood ? String(row[map.blood] || "").trim() : "";
+    var rate = map.rate ? String(row[map.rate] || "").trim() : "";
+    if (rate) head.appendChild(el("span", "rate", rate));
+    if (blood) head.appendChild(el("span", "blood", blood));
+    c.appendChild(head);
+
+    // Filled in by applyFilter when a search matched something not on show.
+    var hint = el("div", "cmatch");
+    hint.hidden = true;
+    c.appendChild(hint);
+
+    var foot = el("div", "cfoot");
+    foot.appendChild(actionRow(row, map, s, title, false));
+    c.appendChild(foot);
+
+    /* The card itself opens the detail, so the footer keeps its whole width
+       for thumb-sized action buttons. The chevron by the name is what says
+       so; the action row stops its own clicks from reaching here. */
+    var chev = svg("M9 6l6 6-6 6", true);
+    chev.setAttribute("class", "cgo");
+    head.appendChild(chev);
+    c.setAttribute("role", "button");
+    c.setAttribute("tabindex", "0");
+    c.setAttribute("aria-label", t("details") + ": " + title);
+    var open = function () { openSheet(row, map, s, title); };
+    c.addEventListener("click", open);
+    c.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(); }
+    });
+    return c;
+  }
+
+  /* ---------------- detail sheet ---------------- */
+  var sheetOpen = false;
+
+  function closeSheet() {
+    var wrap = document.getElementById("sheet");
+    if (!wrap) return;
+    wrap.hidden = true;
+    wrap.textContent = "";
+    sheetOpen = false;
+    document.documentElement.classList.remove("noscroll");
+  }
+
+  function openSheet(row, map, s, title) {
+    var wrap = document.getElementById("sheet");
+    if (!wrap) return;
+    wrap.textContent = "";
+
+    var back = el("div", "sheet-back");
+    back.addEventListener("click", closeSheet);
+    wrap.appendChild(back);
+
+    var box = el("div", "sheet");
+    box.setAttribute("role", "dialog");
+    box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", title);
+
+    var x = el("button", "sheet-x");
+    x.setAttribute("type", "button");
+    x.setAttribute("aria-label", t("close"));
+    x.appendChild(svg("M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"));
+    x.addEventListener("click", closeSheet);
+    box.appendChild(x);
+
+    var head = el("div", "chead");
+    head.appendChild(avatarFor(row, map, title));
+    var cid = el("div", "cid");
+    cid.appendChild(el("div", "nm", title));
+    if (map.role && row[map.role]) cid.appendChild(el("div", "role", row[map.role]));
+    head.appendChild(cid);
+    var blood = map.blood ? String(row[map.blood] || "").trim() : "";
+    var rate = map.rate ? String(row[map.rate] || "").trim() : "";
+    if (rate) head.appendChild(el("span", "rate", rate));
+    if (blood) head.appendChild(el("span", "blood", blood));
+    box.appendChild(head);
+
+    var utype = map.unit ? String(row[map.unit] || "").trim() : "";
+    var place = placeOf(row, map);
+    if (utype || place) {
+      var pl = el("div", "cdet");
+      if (utype) pl.appendChild(el("span", "utype", utype));
+      if (place) pl.appendChild(document.createTextNode(place));
+      box.appendChild(pl);
+    }
+
+    // The numbers in full, spelled out — this is the page you read, not scan.
+    map.phone.forEach(function (k) {
+      var v = String(row[k] || "").trim();
+      if (!v) return;
+      var ln = el("div", "sline");
+      ln.appendChild(el("b", null, k + ": "));
+      var a = el("a", null, v); a.href = tel(v);
+      ln.appendChild(a);
+      box.appendChild(ln);
+    });
+    if (map.email && row[map.email]) {
+      var ml = el("div", "sline");
+      ml.appendChild(el("b", null, map.email + ": "));
+      var am = el("a", null, String(row[map.email]).trim());
+      am.href = "mailto:" + String(row[map.email]).trim();
+      ml.appendChild(am);
+      box.appendChild(ml);
+    }
+
+    // Everything else the sheet holds, in full and never truncated.
+    map.rest.forEach(function (k) {
+      var v = String(row[k] || "").trim();
+      if (!v) return;
+      var d = el("div", "sline");
+      d.appendChild(el("b", null, k + ": "));
+      d.appendChild(document.createTextNode(v));
+      box.appendChild(d);
+    });
+
+    if (map.file) {
+      var f = String(row[map.file] || "").trim();
+      if (f) {
+        var fa = el("a", "nfile");
+        fa.href = absUrl(f); fa.target = "_blank"; fa.rel = "noopener";
+        fa.appendChild(svg(P.doc));
+        fa.appendChild(el("span", null, t("attachment") + " · " + ext(f)));
+        box.appendChild(fa);
+      }
+    }
+
+    /* Tenanted flat: who owns it, and how to reach them. Renders only when the
+       row actually carries owner values. */
+    var o = map.owner;
+    var oName = o.name ? String(row[o.name] || "").trim() : "";
+    var oPhones = o.phone.map(function (k) { return String(row[k] || "").trim(); }).filter(Boolean);
+    var oAddr = o.address.map(function (k) { return String(row[k] || "").trim(); }).filter(Boolean);
+    var oMail = o.email ? String(row[o.email] || "").trim() : "";
+    var oOther = o.other.map(function (k) { return String(row[k] || "").trim(); }).filter(Boolean);
+
+    if (oName || oPhones.length || oAddr.length || oMail) {
+      var ow = el("div", "sowner");
+      ow.appendChild(el("h4", null, t("ownerDetails")));
+      if (oName) ow.appendChild(el("div", "onm", oName));
+      oPhones.forEach(function (num) {
+        var ln = el("div", "oline");
+        var a = el("a", null, num); a.href = tel(num);
+        ln.appendChild(a);
+        ow.appendChild(ln);
+      });
+      if (oMail) {
+        var l2 = el("div", "oline");
+        var a2 = el("a", null, oMail); a2.href = "mailto:" + oMail;
+        l2.appendChild(a2);
+        ow.appendChild(l2);
+      }
+      oAddr.forEach(function (v) { ow.appendChild(el("div", "oline", v)); });
+      oOther.forEach(function (v) { ow.appendChild(el("div", "oline", v)); });
+      box.appendChild(ow);
+    }
+
+    var acts = actionRow(row, map, s, title, true);
+    acts.className = "go sheet-go";
+    box.appendChild(acts);
+
+    wrap.appendChild(box);
+    wrap.hidden = false;
+    sheetOpen = true;
+    document.documentElement.classList.add("noscroll");
+    x.focus();
+  }
+
+  /* ---------------- side panel rows ---------------- */
+  function sosRow(row, map) {
+    var r = el("div", "prow");
+    var name = String(row[map.name] || "—");
+    r.appendChild(el("div", "pbadge", initials(name)));
+    var i = el("div", "info");
+    i.appendChild(el("div", "pname", name));
+    var extra = map.rest.concat(map.place).map(function(k){return row[k];}).filter(Boolean).join(" · ");
+    if (extra) i.appendChild(el("div", "pmeta", extra));
+    var nums = map.phone.map(function(k){return String(row[k]||"").trim();}).filter(Boolean);
+    if (nums.length) i.appendChild(el("div", "ptel", nums.join(" · ")));
+    r.appendChild(i);
+    if (nums.length) {
+      var a = el("a", "iact call"); a.href = tel(nums[0]);
+      a.setAttribute("aria-label", t("call") + " " + name);
+      a.style.background = "var(--alert)"; a.style.color = "#fff";
+      a.appendChild(svg(P.phone)); r.appendChild(a);
+    }
+    return r;
+  }
+  function docRow(row, map) {
+    var file = String(row[map.file] || "").trim();
+    var r = el("div", "prow");
+    r.appendChild(el("div", "pbadge", ext(file).slice(0,4)));
+    var i = el("div", "info");
+    i.appendChild(el("div", "pname", String(row[map.name] || file || "Document")));
+    var meta2 = map.rest.concat(map.place).map(function(k){
+      return k === map.file ? "" : row[k];
+    }).filter(Boolean).join(" · ");
+    if (meta2) i.appendChild(el("div", "pmeta", meta2));
+    r.appendChild(i);
+    if (file) {
+      var go = el("div", "go");
+      if (OFFICE.test(file) || INLINE.test(file)) {
+        var v = el("a", "iact alt");
+        v.href = OFFICE.test(file)
+          ? "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(absUrl(file))
+          : file;
+        v.target = "_blank"; v.rel = "noopener";
+        v.setAttribute("aria-label", "View");
+        v.appendChild(svg(P.doc)); go.appendChild(v);
+      }
+      var d = el("a", "iact alt"); d.href = file; d.setAttribute("download","");
+      d.setAttribute("aria-label", "Download");
+      d.appendChild(svg(P.down)); go.appendChild(d);
+      r.appendChild(go);
+    }
+    return r;
+  }
+
+  /* ---------------- chrome ---------------- */
+
+  /**
+   * A photograph of the society behind the dashboard, when the About sheet
+   * names one under Photo, Backdrop, Hero image, Cover image or Banner.
+   * Anything else and the drawn skyline stands.
+   *
+   * The value goes into a CSS url(), so it is checked rather than trusted:
+   * a quote or a bracket in it would end the url() early and let whatever
+   * follows be read as more CSS. Only a plain http(s) address or a path
+   * inside this site is allowed through.
+   */
+  function backdrop() {
+    var art = document.getElementById("heroArt");
+    var photo = document.getElementById("heroPhoto");
+    if (!art || !photo) return;
+    var src = String(meta.backdrop || "").trim();
+    var ok = src &&
+      !/["'()\\\s<>]/.test(src) &&
+      (/^https:\/\/[\w.-]+\/[\w./~%-]*$/.test(src) ||
+       /^(\.\/)?[\w][\w./-]*\.(jpe?g|png|webp|avif|gif)$/i.test(src)) &&
+      src.indexOf("..") === -1;
+    photo.hidden = !ok;
+    art.hidden = !!ok;
+    if (ok) photo.style.backgroundImage = 'url("' + src + '")';
+  }
+
+  function chrome() {
+    // An unknown name leaves the default rather than producing an unstyled page.
+    var THEMES = ["forest", "plum", "slate", "sunset", "ocean", "paper"];
+    if (meta.theme && THEMES.indexOf(meta.theme) >= 0)
+      document.documentElement.setAttribute("data-theme", meta.theme);
+    else document.documentElement.removeAttribute("data-theme");
+    var tcMeta = document.querySelector('meta[name=theme-color]');
+    if (tcMeta) tcMeta.setAttribute("content", meta.theme === "paper" ? "#F5F7FB" : "#0A1628");
+    backdrop();
+    var name = meta.name || "Society Directory";
+    document.title = name;
+    document.getElementById("brandName").textContent = name;
+    document.getElementById("footName").textContent = name;
+    var ini = name.trim().charAt(0).toUpperCase();
+    document.getElementById("brandDot").textContent = ini;
+    document.getElementById("footDot").textContent = ini;
+    document.getElementById("heroEyebrow").textContent = meta.tagline || t("dir");
+    qBox.placeholder = t("search");
+
+    var lb = document.getElementById("langBtn");
+    lb.textContent = t("other");
+    lb.setAttribute("aria-label", t("otherName"));
+    lb.title = t("otherName");
+    lb.onclick = function () { setLang(lang === "hi" ? "en" : "hi"); };
+
+    var h = document.getElementById("heroTitle");
+    h.textContent = "";
+    var parts = name.trim().split(/\s+/);
+    var tail = parts.length > 1 ? parts.pop() : "";
+    h.appendChild(document.createTextNode(parts.join(" ") + (tail ? " " : "")));
+    if (tail) h.appendChild(el("span", "accent", tail));
+
+    var addr = [meta.address, meta.city, meta.pincode].filter(Boolean).join(", ");
+    document.getElementById("heroLede").textContent = addr ? addr + t("ledeAddr") : t("lede");
+    document.getElementById("footAddr").textContent = addr;
+    document.getElementById("footReg").textContent = meta.registration ? "Reg. " + meta.registration : "";
+
+    var st = document.getElementById("heroStats");
+    st.textContent = "";
+    sections.slice(0, 4).forEach(function (s) {
+      // An anchor, not a div: the count is the quickest way into a section,
+      // and this makes it keyboard-reachable and long-pressable for free.
+      var d = document.createElement("a");
+      d.className = "stat";
+      d.href = "#" + s.id;
+      d.appendChild(el("div", "num", String(s.rows.length)));
+      d.appendChild(el("div", "lbl", sectionTitle(s)));
+      st.appendChild(d);
+    });
+
+    var nl = document.getElementById("navLinks"), fl = document.getElementById("footLinks");
+    nl.textContent = ""; fl.textContent = "";
+    sections.forEach(function (s) {
+      var a = document.createElement("a");
+      a.href = "#" + s.id; a.textContent = sectionTitle(s); a.dataset.id = s.id;
+      nl.appendChild(a);
+      var f = document.createElement("a");
+      f.href = "#" + s.id; f.textContent = sectionTitle(s);
+      fl.appendChild(f);
+    });
+    // By id, not by position: the notes column has an h5 of its own now.
+    document.getElementById("footSecHead").textContent = t("sections");
+
+    /* Every section's caution, and the way out to the public services page.
+       Both used to sit mid-page above the cards they applied to. */
+    var fn = document.getElementById("footNotes");
+    if (fn) {
+      fn.textContent = "";
+      sections.forEach(function (s) {
+        var note = (lang === "hi" && sectionNotes["hi:" + key(s.title)]) || sectionNotes[key(s.title)];
+        if (!note) return;
+        var row = el("div", "fnote");
+        row.appendChild(svg(P.alert));
+        var body = el("div");
+        // Named, because down here it is no longer next to the list it is about.
+        body.appendChild(el("b", null, sectionTitle(s) + ": "));
+        body.appendChild(document.createTextNode(note));
+        row.appendChild(body);
+        fn.appendChild(row);
+      });
+
+      // The services list is the one part of this directory useful to the whole
+      // town, so it has a public page. The link goes one way: that page carries
+      // nothing from here and no way back.
+      if (sections.some(function (s) {
+        return /service|help|vendor|trades/i.test(s.title) && !s.notice;
+      })) {
+        var pub = document.createElement("a");
+        pub.className = "pubshare";
+        pub.href = "services.html";
+        pub.target = "_blank";
+        pub.rel = "noopener";
+        pub.appendChild(svg(P.share));
+        pub.appendChild(el("span", null, t("publicPage")));
+        fn.appendChild(pub);
+      }
+      fn.hidden = !fn.children.length;
+      // An empty column should not carry a heading.
+      var fh = document.getElementById("footNotesHead");
+      fh.hidden = fn.hidden;
+      fh.textContent = t("pleaseNote");
+    }
+
+    var sos = sections.filter(function(s){return s.sos;})[0];
+    if (sos) {
+      var cta = document.getElementById("sosCta");
+      cta.hidden = false; cta.href = "#" + sos.id;
+      cta.textContent = t("emergency");
+    }
+
+    var bn = document.getElementById("banner");
+    bn.textContent = "";
+    var conf = (lang === "hi" && meta.confidentialHi) || meta.confidential;
+    if (conf) {
+      var b = el("div", "banner");
+      b.appendChild(svg(P.lock));
+      var txt = el("div");
+      txt.appendChild(el("b", null, t("membersOnly")));
+      txt.appendChild(document.createTextNode(conf));
+      b.appendChild(txt);
+      bn.appendChild(b);
+    }
+    document.getElementById("searchbar").hidden = false;
+  }
+
+  /* ---------------- render ---------------- */
+  function filtered(s, term) {
+    if (!term) return s.rows;
+    return s.rows.filter(function (r) {
+      return s.cols.map(function(c){return r[c];})
+        .filter(Boolean).join(" ").toLowerCase().indexOf(term) !== -1;
+    });
+  }
+  function head(title, count, tag) {
+    var h = el("div", "sec-head");
+    h.appendChild(el("h2", null, title));
+    h.appendChild(el("span", "n", String(count)));
+    if (tag) h.appendChild(el("span", "tag", tag));
+    return h;
+  }
+
+  /* Every card is built once. Typing then hides and shows what is already
+     there, instead of rebuilding the page — a rebuild changes the document
+     height on each keystroke, which makes the browser jump back to the top. */
+  var built = [];
+  var emptyEl = null;
+
+  function openState(id) {
+    try {
+      var raw = localStorage.getItem("dir-open");
+      if (raw) { var m = JSON.parse(raw); if (m && id in m) return !!m[id]; }
+    } catch (e) {}
+    return null;                       // nothing remembered yet
+  }
+  function rememberOpen(id, open) {
+    try {
+      var m = {};
+      try { m = JSON.parse(localStorage.getItem("dir-open") || "{}") || {}; } catch (e) {}
+      m[id] = open;
+      localStorage.setItem("dir-open", JSON.stringify(m));
+    } catch (e) {}
+  }
+
+  function draw() {
+    // The back bar and the tile grid live in the markup, so hold on to them
+    // across the clear rather than rebuilding them from scratch.
+    var vbarEl = document.getElementById("vbar");
+    var tilesEl = document.getElementById("tiles");
+    mainEl.textContent = ""; sosEl.textContent = ""; docsEl.textContent = "";
+    mainEl.appendChild(vbarEl); mainEl.appendChild(tilesEl);
+    built = []; emptyEl = null;
+
+    sections.forEach(function (s) {
+      if (s.sos) {                       // → sidebar, emergency panel
+        if (!s.rows.length) return;
+        var p = el("section", "panel alarm reveal");
+        p.id = s.id;
+        var hSos = el("h3"); hSos.appendChild(svg(P.alert));
+        hSos.appendChild(el("span", null, sectionTitle(s)));
+        p.appendChild(hSos);
+        p.appendChild(el("div", "cap", t("tapCall")));
+        var sItems = s.rows.map(function (row) {
+          var node = sosRow(row, s.map);
+          p.appendChild(node);
+          return { el: node, hay: hayOf(s, row) };
+        });
+        sosEl.appendChild(p);
+        // The emergency panel has a page of its own and also sits on home,
+        // because a number you need in a hurry should never be two taps away.
+        built.push({ el: p, viewId: s.id, panel: true, items: sItems, count: null, grid: null });
+        return;
+      }
+      // A notice may carry an attachment; that does not make it a document
+      // library, so it must not be diverted to the sidebar.
+      if (s.map.file && !s.notice) {     // → sidebar, documents panel
+        if (!s.rows.length) return;
+        var d = el("section", "panel docs reveal");
+        d.id = s.id;
+        var hDoc = el("h3"); hDoc.appendChild(svg(P.doc));
+        hDoc.appendChild(el("span", null, sectionTitle(s)));
+        var dChev = svg("M7 10l5 5 5-5", true);
+        dChev.setAttribute("class", "sec-chev");
+        hDoc.appendChild(dChev);
+        d.appendChild(hDoc);
+        var cap = el("div", "cap");
+        d.appendChild(cap);
+
+        // Documents are the least urgent thing here, so the list stays shut
+        // until asked for; the count tells you whether it is worth opening.
+        var dBody = el("div", "pbody");
+        var dItems = s.rows.map(function (row) {
+          var node = docRow(row, s.map);
+          dBody.appendChild(node);
+          return { el: node, hay: hayOf(s, row) };
+        });
+        d.appendChild(dBody);
+        docsEl.appendChild(d);
+
+        if (openState(s.id) !== true) d.classList.add("closed");
+        hDoc.setAttribute("role", "button");
+        hDoc.setAttribute("tabindex", "0");
+        hDoc.setAttribute("aria-expanded", d.classList.contains("closed") ? "false" : "true");
+        var dToggle = function () {
+          var shut = d.classList.toggle("closed");
+          hDoc.setAttribute("aria-expanded", shut ? "false" : "true");
+          rememberOpen(s.id, !shut);
+        };
+        hDoc.addEventListener("click", dToggle);
+        hDoc.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); dToggle(); }
+        });
+
+        built.push({ el: d, viewId: s.id, panel: true, head: hDoc, items: dItems,
+                     count: cap, isDocs: true, grid: null });
+        return;
+      }
+
+      var sec = el("section", "sec reveal");
+      sec.id = s.id;
+      var h = head(sectionTitle(s), s.rows.length, null);
+      var chev = svg("M7 10l5 5 5-5", true);
+      chev.setAttribute("class", "sec-chev");
+      h.appendChild(chev);
+      sec.appendChild(h);
+
+      /* The caution and the link to the public page both used to sit here,
+         between the heading and the first card. They are in the footer now:
+         a block of warning ahead of the thing someone came for teaches people
+         to scroll past warnings. The caution still travels attached to every
+         contact anyone shares — see shareText(). */
+
+      // face = what the compact card actually shows. Anything matched outside
+      // it needs saying, or the card looks like a stray result.
+      var items = [];
+      var makeItem = function (row, groupKey, subKey) {
+        var card = s.notice ? noticeCard(row, s.map) : contact(row, s.map, false, "", s);
+        var it = {
+          el: card, hay: hayOf(s, row), group: groupKey, sub: subKey || "",
+          face: card.textContent.toLowerCase(),
+          hint: card.querySelector(".cmatch"),
+          pairs: s.cols.map(function (k) {
+            return { k: k, v: String(row[k] || "").trim() };
+          }).filter(function (p) { return p.v; })
+        };
+        items.push(it);
+        return card;
+      };
+
+      var cols = groupColsOf(s);
+      var blocks = null, chipEls = null;
+      if (cols) {
+        var groups = groupTree(s, cols);
+        blocks = [];
+        chipEls = [];
+        var chips = el("div", "gchips");
+
+        // "All" first, then one chip per group. Chips narrow the section;
+        // a search ignores them, because a search is asked of the whole sheet.
+        [{ key: "", label: t("all"), n: s.rows.length }].concat(
+          groups.map(function (gr) { return { key: gr.key, label: gr.label, n: gr.rows.length }; })
+        ).forEach(function (c) {
+          var b = el("button", "gchip" + (c.key ? "" : " on"));
+          b.setAttribute("type", "button");
+          b.appendChild(el("span", null, c.label));
+          b.appendChild(el("span", "gn", String(c.n)));
+          b.addEventListener("click", function () {
+            built.forEach(function (bb) {
+              if (bb.viewId !== s.id) return;
+              bb.group = c.key;
+              (bb.chips || []).forEach(function (x) {
+                x.el.classList.toggle("on", x.key === c.key);
+              });
+            });
+            applyFilter();
+          });
+          chips.appendChild(b);
+          chipEls.push({ key: c.key, el: b });
+        });
+        sec.appendChild(chips);
+
+        groups.forEach(function (gr) {
+          var hd = el("div", "gsub");
+          hd.appendChild(el("span", null, gr.label));
+          hd.appendChild(el("span", "gn", String(gr.rows.length)));
+          sec.appendChild(hd);
+
+          // One run of cards per sub-group — flats and row houses in the same
+          // wing, told apart. With no sub-column there is a single unnamed run.
+          var subs = gr.subs.map(function (sb) {
+            var sh = null;
+            if (sb.key) {
+              sh = el("div", "gsub2");
+              sh.appendChild(el("span", null, sb.label));
+              sh.appendChild(el("span", "gn", String(sb.rows.length)));
+              sec.appendChild(sh);
+            }
+            var grid = el("div", "cgrid");
+            sb.rows.forEach(function (row) {
+              grid.appendChild(makeItem(row, gr.key, sb.key));
+            });
+            sec.appendChild(grid);
+            return { key: sb.key, head: sh, grid: grid };
+          });
+          blocks.push({ key: gr.key, head: hd, subs: subs });
+        });
+      } else {
+        var g = el("div", s.notice ? "nlist" : "cgrid");
+        s.rows.forEach(function (row) { g.appendChild(makeItem(row, "")); });
+        sec.appendChild(g);
+      }
+      mainEl.appendChild(sec);
+
+      // No accordion any more: a section is its own page, so there is nothing
+      // above or below it to fold away from.
+      built.push({ el: sec, viewId: s.id, items: items, group: "",
+                   blocks: blocks, chips: chipEls,
+                   count: h.querySelector(".n") });
+    });
+
+    emptyEl = el("div", "empty", t("empty"));
+    emptyEl.hidden = true;
+    mainEl.appendChild(emptyEl);
+
+    drawTiles();
+    drawTabs();
+    showView(viewFromHash(), true);
+    reveals(); spy();
+  }
+
+  /* ---------------- home, tabs, and one-section views ---------------- */
+
+  /** Sections that get a tile and a page of their own. */
+  function pageSections() {
+    return sections.filter(function (s) { return s.rows.length; });
+  }
+  function sectionById(id) {
+    return pageSections().filter(function (s) { return s.id === id; })[0] || null;
+  }
+  function viewFromHash() {
+    var want = (location.hash || "").slice(1);
+    return sectionById(want) ? want : "home";
+  }
+
+  function drawTiles() {
+    var box = document.getElementById("tiles");
+    box.textContent = "";
+    pageSections().forEach(function (s) {
+      var a = document.createElement("a");
+      a.className = "tile" + (s.sos ? " urgent" : "");
+      a.href = "#" + s.id;
+      var ic = el("div", "ticon");
+      ic.appendChild(svg(sectionIcon(s)));
+      a.appendChild(ic);
+      a.appendChild(el("div", "tname", sectionTitle(s)));
+      a.appendChild(el("div", "tcount", s.rows.length + " " +
+        (s.rows.length === 1 ? t("entry") : t("entries"))));
+      // No click handler: the href carries the section and the hash is the
+      // state. A listener that fails to fire would leave the tile dead; a
+      // plain anchor cannot.
+      box.appendChild(a);
+    });
+  }
+
+  /* Home, then the emergency section if there is one, then whatever comes
+     first — five is as many as fit across a phone without shrinking the
+     labels past reading. */
+  function tabSections() {
+    var all = pageSections();
+    var sos = all.filter(function (s) { return s.sos; });
+    var rest = all.filter(function (s) { return !s.sos; });
+    return sos.concat(rest).slice(0, 4);
+  }
+  function drawTabs() {
+    var bar = document.getElementById("tabbar");
+    bar.textContent = "";
+    var add = function (id, label, path, cls) {
+      var a = document.createElement("a");
+      a.className = cls || "";
+      a.href = "#" + id;
+      a.dataset.view = id;
+      a.appendChild(svg(path));
+      a.appendChild(el("span", "tlbl", label));
+      bar.appendChild(a);
+    };
+    add("home", t("home"), P.home);
+    tabSections().forEach(function (s) {
+      add(s.id, sectionTitle(s), sectionIcon(s), s.sos ? "sos" : "");
+    });
+  }
+
+  function drawBackBar() {
+    var bar = document.getElementById("vbar");
+    bar.textContent = "";
+    var a = document.createElement("a");
+    a.className = "vback";
+    a.href = "#home";
+    a.appendChild(svg(P.back));
+    a.appendChild(el("span", null, t("home")));
+    bar.appendChild(a);
+
+    // The whole directory, reachable from wherever you are.
+    var strip = el("div", "vnav");
+    var here = null;
+    pageSections().forEach(function (s) {
+      var c = document.createElement("a");
+      c.className = "vchip" + (s.id === view ? " on" : "");
+      c.href = "#" + s.id;
+      c.textContent = sectionTitle(s);
+      if (s.id === view) here = c;
+      strip.appendChild(c);
+    });
+    bar.appendChild(strip);
+    // Bring the section you are in into view, or it can sit off the right edge.
+    if (here && typeof here.offsetLeft === "number")
+      strip.scrollLeft = Math.max(0, here.offsetLeft - 48);
+  }
+
+  /** Renders whatever the hash says. Never called to *navigate* — the links do
+      that themselves — so it never writes to history, and the browser's back
+      button walks the sections for free. applyFilter decides what the view
+      means for each section, so visibility has exactly one owner. */
+  function showView(id, initial) {
+    view = sectionById(id) ? id : "home";
+    drawBackBar();
+    var mark = function (box, attr) {
+      if (!box) return;
+      Array.prototype.forEach.call(box.children, function (a) {
+        a.classList.toggle("on", (a.dataset && a.dataset[attr]) === view);
+      });
+    };
+    mark(document.getElementById("tabbar"), "view");
+    mark(document.getElementById("navLinks"), "id");
+    applyFilter();
+    // Landing mid-page after switching would hide the top of the new section.
+    // Instant, not smooth: html has scroll-behavior:smooth, and animating a
+    // long way while the content underneath is being swapped reads as the page
+    // having frozen. A page change should just be there.
+    if (!initial && (window.scrollY || window.pageYOffset || 0) > 0) {
+      try { window.scrollTo({ top: 0, behavior: "instant" }); }
+      catch (e) { window.scrollTo(0, 0); }
+    }
+  }
+
+  /** Everything searchable about one row, lowercased once at build time. */
+  function hayOf(s, row) {
+    return s.cols.map(function (c) { return row[c]; })
+      .filter(Boolean).join(" ").toLowerCase();
+  }
+
+  function applyFilter() {
+    var term = qBox.value.trim().toLowerCase();
+    var total = 0;
+
+    built.forEach(function (b) {
+      var shown = 0;
+      b.items.forEach(function (it) {
+        // A search is asked of the whole sheet, so it ignores which group is
+        // selected; without a search, the selected group is what you see.
+        var hit = term
+          ? it.hay.indexOf(term) !== -1
+          : (!b.group || it.group === b.group);
+        it.el.hidden = !hit;
+        if (hit) shown++;
+        // The detail is in the sheet now, so a card matched on something the
+        // compact face does not show says which field it was.
+        if (it.hint) {
+          var why = "";
+          if (term && hit && it.face.indexOf(term) === -1) {
+            for (var i = 0; i < it.pairs.length; i++) {
+              if (it.pairs[i].v.toLowerCase().indexOf(term) !== -1) {
+                why = it.pairs[i].k + ": " + it.pairs[i].v;
+                break;
+              }
+            }
+          }
+          it.hint.textContent = why;
+          it.hint.hidden = !why;
+        }
+      });
+      total += shown;
+      // Searching cuts across the whole directory — it would be useless if it
+      // only looked inside the section you happen to be standing in. So a
+      // search shows every section with a hit; browsing shows just this one.
+      b.el.hidden = term
+        ? shown === 0
+        : b.viewId !== view;
+      // Sections carry .reveal, which starts at opacity:0 and waits for an
+      // IntersectionObserver to add .in. A section observed while display:none
+      // may never get that callback, so switching to it would show a blank
+      // page. Anything put on screen here is revealed outright.
+      if (!b.el.hidden) b.el.classList.add("in");
+      if (b.count) {
+        b.count.textContent = b.isDocs
+          ? shown + " " + (shown === 1 ? t("file") : t("files")) + " " + t("toView")
+          : String(shown);
+      }
+      // A sub-heading with nothing under it is just noise, and so is the one
+      // heading left when a single group has been picked.
+      if (b.blocks) {
+        var only = !term && b.group;
+        b.blocks.forEach(function (bl) {
+          var anyInGroup = false;
+          bl.subs.forEach(function (sb) {
+            var any = b.items.some(function (it) {
+              return it.group === bl.key && it.sub === sb.key && !it.el.hidden;
+            });
+            sb.grid.hidden = !any;
+            // The sub-heading stays even when one group is picked: which wing
+            // you chose is on the chip, but flat-or-row-house still needs
+            // saying.
+            if (sb.head) sb.head.hidden = !any;
+            if (any) anyInGroup = true;
+          });
+          bl.head.hidden = !anyInGroup || !!only;
+        });
+      }
+    });
+
+    // Home is the index, so its tiles give way to results while searching.
+    var tilesEl = document.getElementById("tiles");
+    var vbarEl = document.getElementById("vbar");
+    if (tilesEl) tilesEl.hidden = !!term || view !== "home";
+    if (vbarEl) vbarEl.hidden = !!term || view === "home";
+
+    // An empty sidebar column would otherwise hold its 330px open on desktop.
+    var sideEl = document.querySelector(".side");
+    if (sideEl) {
+      var anyPanel = built.some(function (b) { return b.panel && !b.el.hidden; });
+      sideEl.hidden = !anyPanel;
+      var lay = document.querySelector(".layout");
+      if (lay) lay.classList.toggle("solo", !anyPanel);
+    }
+
+    if (emptyEl) {
+      emptyEl.hidden = total !== 0;
+      emptyEl.textContent = term
+        ? t("noMatch") + " “" + qBox.value.trim() + "”."
+        : t("empty");
+    }
+  }
+
+  /* One line each, or roomier cards. Remembered per device; a phone starts
+     as a list because that is what fits, a wide screen as cards. */
+  (function () {
+    var box = document.getElementById("vswitch");
+    if (!box) return;
+    /* Only a tap is remembered. Storing the width-based default too would mean
+       a phone opened once in landscape — over 700px, so cards — kept cards for
+       good after being turned back upright, without anyone having chosen it. */
+    var pick = function (v, save) {
+      document.documentElement.setAttribute("data-cards", v);
+      Array.prototype.forEach.call(box.children, function (b) {
+        var on = b.dataset.cards === v;
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      if (save) { try { localStorage.setItem("dir-cards", v); } catch (e) {} }
+    };
+    var saved = null;
+    try { saved = localStorage.getItem("dir-cards"); } catch (e) {}
+    pick(saved === "grid" || saved === "list" ? saved
+      : (window.matchMedia && window.matchMedia("(min-width:700px)").matches ? "grid" : "list"), false);
+    Array.prototype.forEach.call(box.children, function (b) {
+      b.addEventListener("click", function () { pick(b.dataset.cards, true); });
+    });
+  })();
+
+  /* Phones only, and only once past the hero — hiding the nav in the first
+     screenful would just flicker. It always comes back at the top of the
+     page, while the section menu is open, and while a sheet is up, so it can
+     never be hidden at a moment when someone wants it. */
+  (function () {
+    if (!window.matchMedia || !matchMedia("(max-width:700px)").matches) return;
+    var last = 0, hidden = false, ticking = false;
+    var de = document.documentElement;
+    var set = function (v) {
+      if (v === hidden) return;
+      hidden = v;
+      if (v) de.setAttribute("data-navhide", "1");
+      else de.removeAttribute("data-navhide");
+    };
+    var read = function () {
+      ticking = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      var menuOpen = (document.getElementById("navLinks") || {}).classList &&
+        document.getElementById("navLinks").classList.contains("open");
+      var sheetOpen = !(document.getElementById("sheet") || {}).hidden;
+      if (y < 140 || menuOpen || sheetOpen) set(false);
+      // A few pixels of jitter should not flip it back and forth.
+      else if (y > last + 6) set(true);
+      else if (y < last - 6) set(false);
+      last = y;
+    };
+    addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(read); }
+    }, { passive: true });
+  })();
+
+  qBox.addEventListener("input", applyFilter);
+
+  /* Clearing a search on a phone otherwise means holding backspace. */
+  var qClear = document.getElementById("qClear");
+  if (qClear) {
+    qClear.addEventListener("click", function () {
+      qBox.value = "";
+      applyFilter();
+      qBox.focus();
+    });
+    qBox.addEventListener("input", function () { qClear.hidden = !qBox.value; });
+  }
+
+  function reveals() {
+    // Everything with .reveal starts at opacity:0 and is only shown once the
+    // observer says it is on screen. With no observer that is the whole page,
+    // permanently blank — so fade-in is a bonus, not a requirement.
+    if (!window.IntersectionObserver) {
+      Array.prototype.forEach.call(document.querySelectorAll(".reveal"),
+        function (n) { n.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (rows) {
+      rows.forEach(function (r) {
+        if (r.isIntersecting) { r.target.classList.add("in"); io.unobserve(r.target); }
+      });
+    }, { rootMargin: "0px 0px -6% 0px" });
+    document.querySelectorAll(".reveal:not(.in)").forEach(function (n) { io.observe(n); });
+  }
+  function spy() {
+    var links = document.querySelectorAll("#navLinks a");
+    if (!links.length) return;
+    var io = new IntersectionObserver(function (rows) {
+      rows.forEach(function (r) {
+        if (!r.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle("on", a.dataset.id === r.target.id); });
+      });
+    }, { rootMargin: "-" + (60 + 60) + "px 0px -60% 0px" });
+    document.querySelectorAll("section[id]").forEach(function (s) { io.observe(s); });
+  }
+  addEventListener("scroll", function () {
+    var h = document.documentElement;
+    var p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
+    document.getElementById("railFill").style.height = Math.min(100, p * 100) + "%";
+  }, { passive: true });
+
+  var toggle = document.getElementById("navToggle"), navLinks = document.getElementById("navLinks");
+  toggle.onclick = function () {
+    var open = navLinks.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+  navLinks.addEventListener("click", function (e) {
+    if (e.target.tagName === "A") {
+      navLinks.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+      // The link's own href carries the section; nothing to intercept.
+    }
+  });
+  document.getElementById("shareBtn").onclick = function () {
+    if (location.protocol === "file:") {
+      alert("This page is open as a local file. Publish it, then share the web address.");
+      return;
+    }
+    var url = location.origin + location.pathname;
+    if (navigator.share) { navigator.share({ title: document.title, url: url }).catch(function(){}); return; }
+    navigator.clipboard.writeText(url)
+      .then(function(){ alert("Link copied:\n" + url); })
+      .catch(function(){ prompt("Copy this link:", url); });
+  };
+
+  /* ── Kept in the sheet, off the page ──
+     An underscore in front of a sheet tab, a column heading or a single cell
+     means "ours, not the noticeboard's": the spare number the committee keeps,
+     the resident who asked not to be listed. A Hide column with a yes in it
+     takes the whole row out.
+
+     Applied where the rows are gathered, not where they are drawn, so the
+     cards, the search, the share text, the detail sheet and the published file
+     are all covered by the one rule and none of them can show what the others
+     hide. */
+  var HIDE_COL = /^(hide|hidden|skip|unlisted|donotpublish|dontpublish)$/;
+  var HIDE_YES = /^(y|yes|true|1|x|✓|✔|हाँ|हा|होय)$/i;
+  function normKey(k) { return String(k).toLowerCase().replace(/[^a-z]/g, ""); }
+  function isHidden(v) { return String(v == null ? "" : v).trim().charAt(0) === "_"; }
+  function rowHidden(r) {
+    for (var k in r) {
+      if (!Object.prototype.hasOwnProperty.call(r, k)) continue;
+      if (HIDE_COL.test(normKey(k)) && HIDE_YES.test(String(r[k] == null ? "" : r[k]).trim()))
+        return true;
+    }
+    return false;
+  }
+  /** A copy with every hidden column and every hidden cell taken out. */
+  function shown(r) {
+    var out = {};
+    for (var k in r) {
+      if (!Object.prototype.hasOwnProperty.call(r, k)) continue;
+      if (isHidden(k) || HIDE_COL.test(normKey(k))) continue;
+      out[k] = isHidden(r[k]) ? "" : r[k];
+    }
+    return out;
+  }
+  /** Does this row still say anything once the hidden parts are gone? */
+  function hasAnything(r) {
+    for (var k in r) {
+      if (Object.prototype.hasOwnProperty.call(r, k) &&
+          String(r[k] == null ? "" : r[k]).trim() !== "") return true;
+    }
+    return false;
+  }
+
+  /* Everything that has to happen once the data is in, whichever way it
+     arrived — from directory.json in the browser, or from parse() when the
+     build script runs it over the workbook. Kept in one place so the two
+     paths cannot drift. */
+  function afterData() {
+  chrome(); draw();
+    // When the data came from, not when the page happened to be opened.
+    var asOf = (dataAsOf || new Date()).toLocaleDateString(
+      lang === "hi" ? "hi-IN" : undefined, { day: "numeric", month: "short", year: "numeric" });
+    document.getElementById("footUpd").textContent =
+      t("updated") + " " + asOf + (dataOffline ? " · " + t("savedCopy") : "");
+    // The browser back button should move between sections, not off the site.
+    installable();
+    addEventListener("hashchange", function () { closeSheet(); showView(viewFromHash()); });
+    addEventListener("keydown", function (e) {
+      if (sheetOpen && (e.key === "Escape" || e.key === "Esc")) closeSheet();
+    });
+  }
+
+  /* The normal path: the data is already parsed, so there is nothing to do
+     but take it and draw. */
+  function useDirectory(d) {
+    meta = d.meta || {};
+    sections = d.sections || [];
+    sectionNotes = d.notes || {};
+    sectionHindi = d.hindi || {};
+    sectionGroup = d.group || {};
+    if (!sections.length) throw new Error("No usable sheets found.");
+    afterData();
+  }
+  function parse(buf) {
+    var wb = XLSX.read(buf, { type: "array" });
+    sections = []; meta = {}; sectionNotes = {}; sectionHindi = {}; sectionGroup = {};
+    wb.SheetNames.forEach(function (name) {
+      // A leading underscore marks data that is collected but never published:
+      // dates of birth, landlord contacts, anything not for the noticeboard.
+      if (name.charAt(0) === "_") return;
+
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { defval:"", raw:false })
+        .filter(function (r) {
+          return Object.keys(r).some(function (k) { return String(r[k]).trim() !== ""; });
+        })
+        .filter(function (r) { return !rowHidden(r); })
+        .map(shown)
+        // A row whose every value was hidden has nothing left to draw.
+        .filter(hasAnything);
+      if (!rows.length) return;
+      var cols = Object.keys(rows[0]).filter(function (c) { return c.charAt(0) !== "_"; });
+      if (!cols.length) return;
+      if (/^(about|society|info|details|header)$/i.test(name) && cols.length >= 2) {
+        rows.forEach(function (r) {
+          var raw = String(r[cols[0]]).trim();
+          var v = String(r[cols[1]]).trim();
+
+          // "Note HI: <Section>" — Hindi wording of a caveat. Checked first,
+          // otherwise the generic note rule would swallow it.
+          var nh = raw.match(/^note\s*(?:hi|hindi|हिंदी)\s*[:\-]\s*(.+)$/i);
+          if (nh) { if (v) sectionNotes["hi:" + key(nh[1])] = v; return; }
+
+          // "Note: Services & Help" attaches a caveat to that section.
+          var m = raw.match(/^note\s*[:\-]\s*(.+)$/i);
+          if (m) { if (v) sectionNotes[key(m[1])] = v; return; }
+
+          // "Hindi: Services & Help" renames that section when Hindi is on.
+          var hm = raw.match(/^(?:hindi|हिंदी)\s*[:\-]\s*(.+)$/i);
+          if (hm) { if (v) sectionHindi[key(hm[1])] = v; return; }
+
+          // "Group: Residents" = Block picks the column a section splits on;
+          // "none" turns the split off for that sheet.
+          var gm = raw.match(/^group\s*[:\-]\s*(.+)$/i);
+          if (gm) { if (v) sectionGroup[key(gm[1])] = v; return; }
+
+          var k = raw.toLowerCase().replace(/[^a-z]/g,"");
+          if (/^(confidentialhi|confidentialnoticehi)$/.test(k)) { meta.confidentialHi = v; return; }
+          if (/^(confidential|confidentialnotice|privacynotice|sharingnotice)$/.test(k)) {
+            meta.confidential = v; return;
+          }
+          if (/^(societyname|name)$/.test(k)) meta.name = v;
+          else if (/tagline|subtitle/.test(k)) meta.tagline = v;
+          else if (/^address/.test(k)) meta.address = v;
+          else if (/^city/.test(k)) meta.city = v;
+          else if (/pin|zip/.test(k)) meta.pincode = v;
+          else if (/^reg/.test(k)) meta.registration = v;
+          else if (/logo/.test(k)) meta.logo = v;
+          else if (/^(photo|backdrop|heroimage|coverimage|banner)$/.test(k)) meta.backdrop = v;
+          else if (/^theme$/.test(k)) meta.theme = v.toLowerCase().trim();
+          else if (/^(sharing|sharecontacts|allowsharing)$/.test(k)) meta.sharing = v;
+          else if (/^(country|countrycode|dialcode|isd)$/.test(k)) meta.country = v;
+        });
+        return;
+      }
+      if (isNotice(name)) {
+        var nMap = noticeMap(cols);
+        sections.push({
+          id: slug(name), title: name, cols: cols, notice: true,
+          map: nMap, rows: noticeOrder(rows, nMap), sos: false
+        });
+        return;
+      }
+      sections.push({
+        id: slug(name), title: name, rows: rows, cols: cols,
+        map: classify(cols), sos: /emerg|sos|urgent|on.?call|helpline|24x7/i.test(name)
+      });
+    });
+    if (!sections.length) throw new Error("No usable sheets found.");
+    // Notices sit at the end of the page, below the contact sections, wherever
+    // the tab happens to sit in the workbook.
+    sections.sort(function (a, b) { return (a.notice ? 1 : 0) - (b.notice ? 1 : 0); });
+    afterData();
+  }
+  function fail(msg) {
+    document.getElementById("heroTitle").textContent = "Society Directory";
+    mainEl.textContent = "";
+    var f = el("div", "fallback");
+    f.appendChild(el("h2", null, t("loadFail")));
+    // No link to the data file here either — a failed load is not a reason to
+    // hand a visitor the raw spreadsheet.
+    f.appendChild(el("p", null, msg));
+    mainEl.appendChild(f);
+  }
+
+  /* 20 KB of JSON, already parsed, instead of 952 KB of SheetJS and a 78 KB
+     workbook. ?v= defeats CDN caching; the service worker matches on the path
+     alone so the saved copy still answers when offline. */
+  fetch(DATA_FILE + "?v=" + Date.now())
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      // The worker stamps the saved copy with the date it was saved. Without
+      // that, an offline page would print today's date over week-old data.
+      var head = function (n) {
+        try { return (r.headers && r.headers.get(n)) || ""; } catch (e) { return ""; }
+      };
+      var saved = head("X-Offline-Copy");
+      dataOffline = !!saved;
+      var when = saved || head("date");
+      var d = when ? new Date(when) : null;
+      dataAsOf = d && !isNaN(d.getTime()) ? d : new Date();
+      return r.json();
+    })
+    .then(useDirectory)
+    .catch(function (e) {
+      fail(location.protocol === "file:"
+        ? "Browsers block reading local files directly, so open the published address instead."
+        : "Could not read " + DATA_FILE + " (" + (e.message || e) + ").");
+    });
+  reveals();
+})();
+</script>
+
+<div class="stunity-credit" id="stunityCredit" data-print-only><span class="sc-dot"></span><span><span class="sc-wrap"><a class="sc-link" href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Stunity Tech</a><span class="sc-card" role="note"><b>Stunity Tech</b><i>Small tools, built one at a time.</i><span class="sc-acts"><a href="https://stunity-tech.hedaprateek.workers.dev" target="_blank" rel="noopener">Site &#8599;</a><a href="mailto:prateekheda@yahoo.com">Email</a><a href="https://wa.me/919021306979" target="_blank" rel="noopener">WhatsApp</a></span></span></span> — by <b>Prateek</b></span></div>
+<script>
+/* Card portal + positioner.
+   The card is moved to <body> while open: position:fixed alone is not enough
+   because a transformed ancestor (heirloom zooms with one) becomes the
+   containing block for fixed descendants. Moving the node escapes transforms,
+   overflow:hidden and stacking contexts together. Since it then leaves
+   .sc-wrap, the CSS :hover rule cannot reach it and visibility is set inline.
+   Pointer devices open on hover; touch devices open on tap. */
+(function(){
+  var M = 10, GAP = 12, T = null;
+  var fine = !window.matchMedia ||
+             matchMedia("(hover:hover) and (pointer:fine)").matches;
+  var list = document.querySelectorAll(".sc-wrap");
+  if (!list.length) return;
+
+  function isOpen(w){ return !!w.__scCard && w.__scCard.parentElement === document.body; }
+
+  function show(w){
+    var c = w.__scCard; if (!c) return;
+    clearTimeout(T);
+    if (c.parentElement !== document.body) document.body.appendChild(c);
+    c.style.position = "fixed"; c.style.bottom = "auto"; c.style.right = "auto";
+    c.style.transform = "none"; c.style.opacity = "1";
+    c.style.visibility = "visible"; c.style.pointerEvents = "auto";
+    c.style.maxWidth = (innerWidth - M * 2) + "px";
+    c.style.left = "0px"; c.style.top = "0px";
+    var t = w.getBoundingClientRect(), r = c.getBoundingClientRect();
+    var x = t.left + t.width / 2 - r.width / 2;
+    x = Math.max(M, Math.min(x, innerWidth - r.width - M));
+    var y = t.top - r.height - GAP, below = false;
+    if (y < M) { y = t.bottom + GAP; below = true; }
+    c.classList.toggle("sc-below", below);
+    c.style.left = Math.round(x) + "px";
+    c.style.top  = Math.round(y) + "px";
+    w.__trigger && w.__trigger.setAttribute("aria-expanded", "true");
+  }
+
+  function hide(w){
+    var c = w.__scCard; if (!c) return;
+    c.removeAttribute("style"); c.classList.remove("sc-below");
+    if (c.parentElement === document.body) w.appendChild(c);
+    w.__trigger && w.__trigger.setAttribute("aria-expanded", "false");
+  }
+  function hideAll(except){
+    for (var i = 0; i < list.length; i++) if (list[i] !== except) hide(list[i]);
+  }
+  function arm(w){ clearTimeout(T); T = setTimeout(function(){ hide(w); }, 120); }
+
+  for (var i = 0; i < list.length; i++) (function(w){
+    var c = w.querySelector(".sc-card");
+    var a = w.querySelector(".sc-link");
+    w.__scCard = c; w.__trigger = a;
+    if (a) { a.setAttribute("aria-expanded", "false"); }
+    if (!c) return;
+
+    if (fine) {
+      w.addEventListener("pointerenter", function(){ show(w); });
+      w.addEventListener("pointerleave", function(){ arm(w); });
+      c.addEventListener("pointerenter", function(){ clearTimeout(T); });
+      c.addEventListener("pointerleave", function(){ arm(w); });
+    } else if (a) {
+      /* First tap reveals the card rather than leaving for the site; a second
+         tap on the name goes there. Taps on the card actions always work. */
+      a.addEventListener("click", function(e){
+        if (!isOpen(w)) { e.preventDefault(); hideAll(w); show(w); }
+      });
+      document.addEventListener("click", function(e){
+        if (isOpen(w) && !w.contains(e.target) && !c.contains(e.target)) hide(w);
+      }, true);
+    }
+
+    w.addEventListener("focusin", function(){ show(w); });
+    w.addEventListener("focusout", function(){
+      setTimeout(function(){
+        if (!w.contains(document.activeElement) && !c.contains(document.activeElement)) hide(w);
+      }, 0);
+    });
+    c.addEventListener("focusin",  function(){ clearTimeout(T); });
+    c.addEventListener("focusout", function(){
+      setTimeout(function(){
+        if (!w.contains(document.activeElement) && !c.contains(document.activeElement)) hide(w);
+      }, 0);
+    });
+  })(list[i]);
+
+  addEventListener("keydown", function(e){ if (e.key === "Escape") hideAll(null); });
+  addEventListener("scroll", function(){
+    for (var i = 0; i < list.length; i++) if (isOpen(list[i])) show(list[i]);
+  }, {passive:true});
+  addEventListener("resize", function(){
+    for (var i = 0; i < list.length; i++) if (isOpen(list[i])) show(list[i]);
+  });
+})();
+</script>
+</body>
+</html>

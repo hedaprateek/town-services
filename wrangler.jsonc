@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "community-directory",
+  "main": "access/worker.mjs",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true },
+  "vars": { "OWNER_EMAIL": "prateekbct@gmail.com" },
+  "observability": { "enabled": false }
+}

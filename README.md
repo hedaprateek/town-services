@@ -1,5 +1,17 @@
 # Local Services & Help
 
+The **Google sign-in implementation** is on the `google-access` branch. It uses
+Firebase Authentication and Firestore for contacts, accounts and approvals, and a
+Cloudflare Worker for the website and protected API. Excel/CSV remains available
+for bulk administration. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup, tests,
+initial data migration and the required retirement of old public data links.
+
+Build the protected app with `npm run build`; only `dist/` is deployed by the
+included Worker configuration. Until account setup and cutover are completed,
+the original public deployment described below remains separate and unchanged.
+
+---
+
 A single-page list of local trades — plumbers, electricians, help at home — with a
 call and a WhatsApp button against each. Anyone can open it; there is no sign-in.
 

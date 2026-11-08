@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function email() { return request.auth.token.email.lower(); }
+    function owner() { return signedIn() && email() == 'prateekbct@gmail.com'; }
+    function ownPath() { return /databases/$(database)/documents/members/$(email()); }
+    function admin() {
+      return owner() || (signedIn() && exists(ownPath())
+        && get(ownPath()).data.uid == request.auth.uid
+        && get(ownPath()).data.status == 'approved'
+        && get(ownPath()).data.role == 'admin');
+    }
+    function canView(scope) {
+      return admin() || (signedIn() && exists(ownPath())
+        && get(ownPath()).data.uid == request.auth.uid
+        && get(ownPath()).data.status == 'approved'
+        && scope in get(ownPath()).data.scopes);
+    }
+    function validMember(d, id) {
+      return d.keys().hasOnly(['email','uid','name','phone','society','flat','reason','requested_scopes','scopes','status','role','created_at','updated_at'])
+        && d.email == id && (d.uid == null || d.uid is string)
+        && d.name is string && d.name.size() <= 160
+        && d.phone is string && d.phone.size() <= 40
+        && d.society is string && d.society.size() <= 160
+        && d.flat is string && d.flat.size() <= 80
+        && d.reason is string && d.reason.size() <= 500
+        && d.scopes is list && d.scopes.hasOnly(['society','town'])
+        && d.requested_scopes is list && d.requested_scopes.hasOnly(['society','town'])
+        && d.status in ['new','pending','approved','rejected','blocked']
+        && d.role in ['owner','admin','member']
+        && d.created_at is string && d.updated_at is string;
+    }
+    match /members/{id} {
+      allow get: if signedIn() && (id == email() || admin());
+      allow list: if admin();
+      allow create: if validMember(request.resource.data, id) && (
+        owner()
+        || (admin() && request.resource.data.role == 'member' && request.resource.data.uid == null)
+        || (signedIn() && id == email() && request.resource.data.uid == request.auth.uid
+          && request.resource.data.role == 'member' && request.resource.data.scopes.size() == 0
+          && request.resource.data.status in ['new','pending'])
+      );
+      allow update: if validMember(request.resource.data, id) && (
+        owner()
+        || (admin() && resource.data.role == 'member' && request.resource.data.role == 'member'
+          && id != 'prateekbct@gmail.com'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','scopes','updated_at']))
+        || (signedIn() && id == email() && request.resource.data.uid == request.auth.uid && (
+          (resource.data.uid == null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid','updated_at']))
+          || (resource.data.uid == request.auth.uid && resource.data.status in ['new','pending']
+            && request.resource.data.status == 'pending'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','phone','society','flat','reason','requested_scopes','status','updated_at']))
+        ))
+      );
+      allow delete: if false;
+    }
+    match /directories/{scope} {
+      allow get: if scope in ['society','town'] && canView(scope);
+      allow list: if admin();
+      allow create: if admin() && scope in ['society','town'] && request.resource.data.revision == 1
+        && request.resource.data.data_json is string && request.resource.data.data_json.size() <= 400000;
+      allow update: if admin() && scope in ['society','town']
+        && request.resource.data.revision == resource.data.revision + 1
+        && request.resource.data.data_json is string && request.resource.data.data_json.size() <= 400000;
+      allow delete: if false;
+    }
+    match /workbooks/{scope} {
+      allow get: if admin();
+      allow create, update: if admin() && scope in ['society','town']
+        && request.resource.data.content is string && request.resource.data.content.size() <= 900000;
+      allow list, delete: if false;
+    }
+    match /materials/{name} {
+      allow get: if canView('society');
+      allow list: if admin();
+      allow create, update: if admin() && request.resource.data.content is string
+        && request.resource.data.content.size() <= 1000000
+        && request.resource.data.content_type in ['application/pdf','image/png','image/jpeg','image/webp','text/plain; charset=utf-8','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+      allow delete: if false;
+    }
+    match /history/{version} {
+      allow read: if admin();
+      allow create: if admin() && request.resource.data.data_json is string && request.resource.data.data_json.size() <= 400000;
+      allow update, delete: if false;
+    }
+    match /audit/{event} {
+      allow read: if admin();
+      allow create: if admin() && request.resource.data.actor == email();
+      allow update, delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

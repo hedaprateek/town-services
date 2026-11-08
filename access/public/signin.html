@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Sign in · Community directories</title><link rel="stylesheet" href="/access.css"><script src="/access.js"></script></head>
+<body class="access-page"><main class="access-shell"><div class="access-eyebrow">Community directories</div><h1>A little help, for our neighbours.</h1><p>Sign in with Google to open the directories you have permission to view.</p>
+<section class="access-card"><p id="message" class="access-message" role="status" aria-live="polite">Checking sign-in…</p><button id="google" hidden>Continue with Google</button><div id="account" hidden><p class="access-muted" id="email"></p><button class="secondary" id="logout">Use another Google account</button></div><div id="links" class="access-actions"></div></section>
+<form id="register" class="access-card" hidden><h2>Request access</h2><p>Tell the administrator who you are. Your email is confirmed by Google. Access starts after approval.</p>
+<label for="name">Your name *</label><input id="name" required maxlength="160" autocomplete="name">
+<div class="access-row"><div><label for="society">Society / neighbourhood</label><input id="society" maxlength="160"></div><div><label for="flat">Flat / house number</label><input id="flat" maxlength="80"></div></div>
+<label for="phone">Mobile number (optional)</label><input id="phone" maxlength="40" type="tel" autocomplete="tel">
+<label><input type="checkbox" id="scopeSociety">Society contacts</label><label><input type="checkbox" id="scopeTown">Town services</label>
+<label for="reason">Anything the administrator should know?</label><textarea id="reason" maxlength="500"></textarea>
+<p class="access-muted">These details are shared with the directory administrators to review your request.</p><button id="submit" type="submit">Send access request</button></form>
+<button id="refresh" class="secondary" hidden>Check approval status</button>
+</main><div class="stunity-credit" id="stunityCredit"><span class="sc-dot"></span><span>Stunity Tech — by <b>Prateek</b></span></div>
+<script>
+(function(){
+const $=id=>document.getElementById(id), access=DirectoryAccess;
+const wanted=new URLSearchParams(location.search).get('return')||'';
+const target=wanted.startsWith('/town/')?'town':wanted.startsWith('/society/')?'society':null;
+const isAdmin=['/admin/','/society/admin.html','/town/admin.html'].some(p=>wanted.startsWith(p));
+function link(label,path){const a=document.createElement('a');a.className='button';a.textContent=label;a.href=path;$('links').append(a);}
+function show(m){
+ $('links').replaceChildren();$('google').hidden=!!m;$('account').hidden=!m;$('register').hidden=true;$('refresh').hidden=!m;
+ if(!m){$('message').textContent='Use your Google account. The administrator decides which directories you can view.';return;}
+ $('email').textContent='Signed in as '+m.email;
+ const admin=['owner','admin'].includes(m.role)&&m.status==='approved';
+ if(m.status==='approved'){
+  $('message').textContent='Welcome, '+(m.name||m.email)+'.';
+  const safe=/^\/(?:town|society)\/(?:index\.html)?(?:[?#].*)?$/.test(wanted)||wanted==='/admin/'||/^\/(?:town|society)\/admin\.html$/.test(wanted);
+  if(safe&&(isAdmin?admin:target&&(admin||m.scopes.includes(target)))){location.replace(wanted);return;}
+  if(admin||m.scopes.includes('society'))link('Society contacts','/society/');
+  if(admin||m.scopes.includes('town'))link('Town services','/town/');
+  if(admin)link('Administration','/admin/');
+  if(target&&!admin&&!m.scopes.includes(target))$('message').textContent='You are signed in, but this directory needs separate approval. Contact the administrator.';
+ }else if(m.status==='blocked'||m.status==='rejected')$('message').textContent=m.status==='blocked'?'Access has been blocked. Contact the administrator.':'Your request was not approved. Contact the administrator.';
+ else{
+  $('message').textContent=m.status==='pending'?'Your request is waiting for administrator approval. You can update your details below.':'You are signed in. Complete the form to request access.';
+  $('register').hidden=false;
+  for(const k of ['name','phone','society','flat','reason'])$(k).value=m[k]||'';
+  $('scopeSociety').checked=m.requested_scopes.includes('society')||target==='society';$('scopeTown').checked=m.requested_scopes.includes('town')||target==='town';
+ }
+}
+access.ready.then(show).catch(e=>{$('message').textContent=e.message;$('message').classList.add('error');});
+$('google').onclick=async()=>{try{$('google').disabled=true;await access.signIn();}catch(e){$('message').textContent=e.code==='auth/popup-blocked'?'Allow the Google sign-in popup and try again. If you opened this inside another app, open the link in Chrome or Safari.':e.message;$('google').disabled=false;}};
+$('logout').onclick=()=>access.signOut();$('refresh').onclick=async()=>{try{show((await access.get('/api/me')).user);}catch(e){$('message').textContent=e.message;}};
+$('register').onsubmit=async e=>{e.preventDefault();$('submit').disabled=true;try{const scopes=[];if($('scopeSociety').checked)scopes.push('society');if($('scopeTown').checked)scopes.push('town');
+ const b={scopes};for(const k of ['name','phone','society','flat','reason'])b[k]=$(k).value;
+ show((await access.get('/api/register',{method:'POST',body:b})).user);window.scrollTo({top:0,behavior:'smooth'});
+}catch(err){$('message').textContent=err.message;window.scrollTo({top:0,behavior:'smooth'});}finally{$('submit').disabled=false;}};
+})();
+</script></body></html>
