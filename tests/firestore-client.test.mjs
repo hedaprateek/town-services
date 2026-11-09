@@ -11,3 +11,14 @@ test('a missing Firebase database or failed commit never reports successful publ
  t.mock.method(globalThis,'fetch',async()=>Response.json({error:{status:'NOT_FOUND'}},{status:404}));
  const db=new FirestoreStore('test-project','user-token');assert.equal(await db.get('directories','town'),null);await assert.rejects(db.commit([db.write('directories','town',{revision:1},null)]));
 });
+
+test('database outages, malformed responses, quota exhaustion and missing indexes return actionable failures',async t=>{
+ const db=new FirestoreStore('test-project','user-token');
+ const cases=[
+  [async()=>{throw Error('network unavailable');},503,/database could not be reached/],
+  [async()=>new Response('<html>upstream unavailable</html>',{status:502}),502,/unexpected response/],
+  [async()=>Response.json({error:{status:'RESOURCE_EXHAUSTED'}},{status:429}),429,/quota/],
+  [async()=>Response.json({error:{status:'FAILED_PRECONDITION'}},{status:400}),503,/Firestore indexes/]
+ ];
+ for(const [response,status,message]of cases){const mock=t.mock.method(globalThis,'fetch',response);await assert.rejects(db.get('directories','town'),e=>e.status===status&&message.test(e.message));mock.mock.restore();}
+});

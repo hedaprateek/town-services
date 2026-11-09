@@ -1,5 +1,10 @@
 # Local Services & Help
 
+**Deploying this version from GitHub to Cloudflare? Start with
+[CLOUDFLARE-GITHUB.md](CLOUDFLARE-GITHUB.md).** It lists the exact repository,
+`google-access` branch, Worker names, build settings and first-login/import steps
+for both town services and society directory.
+
 The **Google sign-in implementation** is on the `google-access` branch. It uses
 Firebase Authentication and Firestore for contacts, accounts and approvals, and a
 Cloudflare Worker for the website and protected API. Excel/CSV remains available

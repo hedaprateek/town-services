@@ -3,9 +3,11 @@
   "name": "community-directory",
   "account_id": "e502481b7b665526ecf3121456aa137a",
   "main": "access/worker.mjs",
+  "build": { "command": "npm run build" },
   "compatibility_date": "2026-11-01",
   "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true },
   "vars": {
+    "DEFAULT_DIRECTORY": "town",
     "OWNER_EMAIL": "prateekbct@gmail.com",
     "FIREBASE_PROJECT_ID": "community-directory-88fc7",
     "FIREBASE_API_KEY": "AIzaSyC61yYT12y11_EFx8357S58La-gJGW-Yh4",

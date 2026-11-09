@@ -122,3 +122,22 @@ test('every returned response disables caching, and unknown source-file routes a
     if(path.includes('wrangler')||path.endsWith('xlsx')||path.includes('.dev')||path.includes('private-data'))assert.equal(r.status,404);
   }
 });
+
+test('each repository starts at its directory and keeps legacy admin/material links behind Google sign-in',async()=>{
+ const {env,request}=fixture();
+ for(const scope of ['society','town']){
+  env.DEFAULT_DIRECTORY=scope;
+  const home=await request('/');assert.equal(home.status,302);assert.equal(new URL(home.headers.get('location')).searchParams.get('return'),'/'+scope+'/');
+  assert.equal((await request('/admin.html')).headers.get('location'),'https://directory.test/'+scope+'/admin.html');
+ }
+ env.DEFAULT_DIRECTORY='society';const legacy=await request('/materials/notice.pdf');assert.equal(legacy.headers.get('location'),'https://directory.test/society/materials/notice.pdf');
+ assert.match((await request('/society/materials/notice.pdf')).headers.get('location'),/signin/);
+ for(const path of ['/.community/index.html','/.community/RELEASE.json','/data.xlsx','/directory.json'])assert.equal((await request(path,await token('owner@example.com'))).status,404);
+});
+
+test('simultaneous first sign-ins do not fail when another request created the same verified account',async()=>{
+ const {request,store}=fixture(),identity=await token('race@example.com');
+ const original=store.commit.bind(store);let conflict=true;
+ store.commit=async writes=>{await original(writes);if(conflict&&writes[0]?.c==='members'){conflict=false;throw Object.assign(Error('Another request created the member'),{status:409});}};
+ const result=await request('/api/session',identity,'POST');assert.equal(result.status,200);assert.equal((await result.json()).user.email,'race@example.com');
+});

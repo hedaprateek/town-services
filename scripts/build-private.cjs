@@ -53,7 +53,9 @@ for (const dir of ['icons', 'template', 'forms']) {
     copy('society/' + dir + '/' + file, 'society/' + dir + '/' + file);
   }
 }
-copy('society/manifest.webmanifest', 'society/manifest.webmanifest');
+const societyManifest=JSON.parse(read('society/manifest.webmanifest'));
+societyManifest.description='Society contacts and documents for approved viewers. Google sign-in and an internet connection are required.';
+write('society/manifest.webmanifest',JSON.stringify(societyManifest,null,2)+'\n');
 
 // Retain the original society parser, including hidden sheets/columns/cells and notice order.
 const grab = re => { const m = read('society/index.html').match(re); if (!m) throw Error('Society workbook parser changed: ' + re); return m[0]; };

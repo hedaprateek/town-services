@@ -17,9 +17,12 @@ function decode(v) {
 export class FirestoreStore {
   constructor(project,token){this.root=`projects/${project}/databases/(default)/documents`;this.token=token;}
   async request(suffix,method='GET',body){
-    const r=await fetch('https://firestore.googleapis.com/v1/'+this.root+suffix,{method,headers:{Authorization:'Bearer '+this.token,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(20000)});
+    let r;
+    try { r=await fetch('https://firestore.googleapis.com/v1/'+this.root+suffix,{method,headers:{Authorization:'Bearer '+this.token,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(20000)}); }
+    catch { throw Object.assign(Error('The database could not be reached. Please try again in a moment.'),{status:503}); }
     if(r.status===404&&method==='GET')return null;
-    const j=await r.json();
+    const j=await r.json().catch(()=>{throw Object.assign(Error('The database returned an unexpected response. Please try again.'),{status:502});});
+    if(!r.ok&&j.error?.status==='FAILED_PRECONDITION')throw Object.assign(Error('Database setup is incomplete. Ask the owner to check the Firestore indexes.'),{status:503});
     if(!r.ok){const status=r.status===401?401:r.status===403?403:[409,412].includes(r.status)?409:r.status===429?429:502;
       throw Object.assign(Error(status===409?'Someone changed this data. Export your draft, reload and try again.':status===403?'Firebase denied access. Check approval and the deployed security rules.':status===429?'The free database quota or request limit was reached. Please try again later.':'Firebase could not complete the request.'),{status});}
     return j;

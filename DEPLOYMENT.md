@@ -1,5 +1,9 @@
 # Google sign-in and Firebase directory
 
+For the user's usual **GitHub → Cloudflare dashboard** deployment, use
+[CLOUDFLARE-GITHUB.md](CLOUDFLARE-GITHUB.md). It covers both repositories and their
+independent Worker builds. The CLI instructions below are an optional alternative.
+
 This is the final design: **Firebase Authentication + Firestore for all live data**,
 with a Cloudflare Worker serving the existing interfaces and protected API.
 Excel/CSV is for bulk import/export through the editors. No Cloudflare database,
@@ -89,9 +93,10 @@ existing town/society contact data, source workbooks and document attachments in
 by Git and never staged as a website asset.
 
 In `/admin/`, the owner uploads that file using **Initial directory import**.
-It refuses to overwrite a directory that already exists. The two directories import
-separately, so a network failure can leave one completed; use the relevant editor to
-upload the remaining workbook. No resident emails are approved automatically.
+It refuses to overwrite different existing data. The two directories import
+separately; after a connection failure, upload the same file again to preserve
+identical saved directories and import the missing ones. No resident emails are
+approved automatically.
 
 Use **Add approved emails** or its spreadsheet upload to preapprove viewers for
 society contacts, town services, or both. Existing people, especially blocks, are

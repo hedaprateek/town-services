@@ -29,8 +29,8 @@ async function identify(request,env,verify,makeStore){
  if(!user){
   const owner=identity.email===String(env.OWNER_EMAIL).toLowerCase();
   user={email:identity.email,uid:identity.uid,name:identity.name,phone:'',society:'',flat:'',reason:'',requested_scopes:[],scopes:owner?SCOPES:[],status:owner?'approved':'new',role:owner?'owner':'member',created_at:now,updated_at:now};
-  await db.set('members',identity.email,user,null);
- }else if(!user.uid){const old=user;user={...user,uid:identity.uid,updated_at:now};await db.set('members',identity.email,user,old);}
+  try{await db.set('members',identity.email,user,null);}catch(e){if(e.status!==409)throw e;user=await db.get('members',identity.email);need(user?.uid===identity.uid,409,'Your account changed during sign-in. Reload to try again.');}
+ }else if(!user.uid){const old=user;user={...user,uid:identity.uid,updated_at:now};try{await db.set('members',identity.email,user,old);}catch(e){if(e.status!==409)throw e;user=await db.get('members',identity.email);need(user?.uid===identity.uid,409,'Your account changed during sign-in. Reload to try again.');}}
  return {identity,user,db};
 }
 function validateDirectory(scope,data){
@@ -117,7 +117,11 @@ export function createHandler(verify=verifyIdentity,makeStore=(p,t)=>new Firesto
     }
     throw new Failure(404,'Not found.');
    }
-   if(path==='/'||path==='/index.html')return secure(Response.redirect(url.origin+'/signin.html',302));
+   const home=SCOPES.includes(env.DEFAULT_DIRECTORY)?'/'+env.DEFAULT_DIRECTORY+'/':null;
+   if(path==='/'||path==='/index.html')return secure(Response.redirect(url.origin+'/signin.html'+(home?'?return='+encodeURIComponent(home):''),302));
+   if(home&&path==='/admin.html')return secure(Response.redirect(url.origin+home+'admin.html'+url.search,302));
+   if(home&&path.startsWith('/materials/')&&env.DEFAULT_DIRECTORY==='society')return secure(Response.redirect(url.origin+'/society'+path+url.search,302));
+   if(['/admin','/town','/society'].includes(path))return secure(Response.redirect(url.origin+path+'/'+url.search,302));
    // Reviewed scripts and icons contain no contacts; avoid a database read for each asset.
    if(['/town/directory-core.js','/society/workbook-parser.js','/admin/xlsx.full.min.js','/town/sw.js','/society/sw.js'].includes(path)||/^\/(town|society)\/icons\/[\w.-]+\.(png|svg)$/.test(path)){
     need(['GET','HEAD'].includes(request.method),405,'Method not allowed.');return secure(await env.ASSETS.fetch(request));

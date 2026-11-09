@@ -35,11 +35,14 @@ let timer;$('search').oninput=()=>{clearTimeout(timer);timer=setTimeout(()=>load
 $('backup').onclick=async()=>{try{const r=await a.api('/api/admin/backup'),url=URL.createObjectURL(await r.blob()),l=node('a');l.href=url;l.download='directory-backup-'+new Date().toISOString().slice(0,10)+'.json';l.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){say(e.message,true);}};
 $('audit').onclick=async()=>{try{const j=await a.get('/api/admin/audit');$('events').replaceChildren(...j.events.map(e=>node('p',new Date(e.created_at).toLocaleString()+' · '+e.actor+' · '+e.action+' · '+e.target)));}catch(e){say(e.message,true);}};
 $('initial').onclick=()=>$('initialFile').click();$('initialFile').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>8_000_000)throw Error('Use an initial import file under 8 MB.');const j=JSON.parse(await f.text());if(!Array.isArray(j.documents)||j.documents.length!==2||!j.documents.every(d=>['society','town'].includes(d.scope)))throw Error('Invalid initial directory file.');
-const current=await Promise.all(j.documents.map(d=>a.get('/api/admin/directory/'+d.scope)));if(current.some(d=>d.revision!==0))throw Error('A directory has already been published. Use its contact editor to update it; this initial import will not overwrite it.');
-if(!confirm('Import both directories and '+(j.materials||[]).length+' documents? No member email addresses will be automatically approved.'))return;
-$('initial').disabled=true;for(const d of j.documents){await a.get('/api/admin/directory/'+d.scope,{method:'PUT',body:{data:d.data,workbook:d.workbook,revision:0}});}
-for(const m of j.materials||[])await a.get('/api/admin/material?name='+encodeURIComponent(m.name),{method:'PUT',body:{content:m.content}});
-say('Imported both directories and their documents. Add approved viewer emails next.');
-}catch(err){say('Initial import: '+err.message+' If one directory already saved, import any remaining workbook through its editor.',true);}finally{$('initial').disabled=false;e.target.value='';}};
+if(new Set(j.documents.map(d=>d.scope)).size!==2)throw Error('The import must contain society and town exactly once.');
+const current=await Promise.all(j.documents.map(d=>a.get('/api/admin/directory/'+d.scope)));
+for(let i=0;i<current.length;i++)if(current[i].revision!==0&&(JSON.stringify(current[i].data)!==JSON.stringify(j.documents[i].data)||(current[i].workbook||null)!==(j.documents[i].workbook||null)))throw Error('The '+j.documents[i].scope+' directory has already changed. Use its contact editor; this import will not overwrite it.');
+if(!confirm('Import missing directories and '+(j.materials||[]).length+' documents? Identical directories will be skipped. No member email addresses will be automatically approved.'))return;
+$('initial').disabled=true;let imported=0,skipped=0;
+for(let i=0;i<j.documents.length;i++){const d=j.documents[i];if(current[i].revision!==0){skipped++;continue;}say('Importing '+d.scope+' directory…');await a.get('/api/admin/directory/'+d.scope,{method:'PUT',body:{data:d.data,workbook:d.workbook,revision:0}});imported++;}
+for(const [i,m]of (j.materials||[]).entries()){say('Importing document '+(i+1)+' of '+j.materials.length+'…');await a.get('/api/admin/material?name='+encodeURIComponent(m.name),{method:'PUT',body:{content:m.content}});}
+say('Import complete: '+imported+' directories imported, '+skipped+' identical directories preserved. Add approved viewer emails next.');
+}catch(err){say('Initial import: '+err.message+' After a connection failure, upload the same file again to resume. Previously saved identical directories will be preserved.',true);}finally{$('initial').disabled=false;e.target.value='';}};
 a.ensure('society',true).then(async m=>{self=m;$('initialSection').hidden=m.role!=='owner';say('Signed in as '+m.email+'. New users need your approval.');await load();});
 })();</script></body></html>

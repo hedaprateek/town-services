@@ -9,7 +9,7 @@
 <label><input type="checkbox" id="scopeSociety">Society contacts</label><label><input type="checkbox" id="scopeTown">Town services</label>
 <label for="reason">Anything the administrator should know?</label><textarea id="reason" maxlength="500"></textarea>
 <p class="access-muted">These details are shared with the directory administrators to review your request.</p><button id="submit" type="submit">Send access request</button></form>
-<button id="refresh" class="secondary" hidden>Check approval status</button>
+<button id="refresh" class="secondary" hidden>Check approval status</button><div id="recovery" class="access-actions" hidden><button id="retry" class="secondary">Reload and try again</button><button id="reset" class="secondary">Use another Google account</button></div>
 </main><div class="stunity-credit" id="stunityCredit"><span class="sc-dot"></span><span>Stunity Tech — by <b>Prateek</b></span></div>
 <script>
 (function(){
@@ -25,7 +25,7 @@ function show(m){
  const admin=['owner','admin'].includes(m.role)&&m.status==='approved';
  if(m.status==='approved'){
   $('message').textContent='Welcome, '+(m.name||m.email)+'.';
-  const safe=/^\/(?:town|society)\/(?:index\.html)?(?:[?#].*)?$/.test(wanted)||wanted==='/admin/'||/^\/(?:town|society)\/admin\.html$/.test(wanted);
+  const safe=/^\/(?:town|society)\/(?:index\.html)?(?:[?#].*)?$/.test(wanted)||wanted==='/admin/'||/^\/(?:town|society)\/admin\.html$/.test(wanted)||/^\/society\/materials\/[A-Za-z0-9][A-Za-z0-9_.-]{0,159}$/.test(wanted);
   if(safe&&(isAdmin?admin:target&&(admin||m.scopes.includes(target)))){location.replace(wanted);return;}
   if(admin||m.scopes.includes('society'))link('Society contacts','/society/');
   if(admin||m.scopes.includes('town'))link('Town services','/town/');
@@ -39,9 +39,12 @@ function show(m){
   $('scopeSociety').checked=m.requested_scopes.includes('society')||target==='society';$('scopeTown').checked=m.requested_scopes.includes('town')||target==='town';
  }
 }
-access.ready.then(show).catch(e=>{$('message').textContent=e.message;$('message').classList.add('error');});
-$('google').onclick=async()=>{try{$('google').disabled=true;await access.signIn();}catch(e){$('message').textContent=e.code==='auth/popup-blocked'?'Allow the Google sign-in popup and try again. If you opened this inside another app, open the link in Chrome or Safari.':e.message;$('google').disabled=false;}};
-$('logout').onclick=()=>access.signOut();$('refresh').onclick=async()=>{try{show((await access.get('/api/me')).user);}catch(e){$('message').textContent=e.message;}};
+function failed(e){$('message').textContent=access.message(e);$('message').classList.add('error');$('recovery').hidden=false;}
+access.ready.then(show).catch(failed);
+$('google').onclick=async()=>{try{$('google').disabled=true;await access.signIn();}catch(e){failed(e);$('google').disabled=false;}};
+async function logout(){try{await access.signOut();}catch(e){failed(e);}}
+$('retry').onclick=()=>location.reload();$('reset').onclick=logout;$('logout').onclick=logout;
+$('refresh').onclick=async()=>{try{show((await access.get('/api/me')).user);}catch(e){failed(e);}};
 $('register').onsubmit=async e=>{e.preventDefault();$('submit').disabled=true;try{const scopes=[];if($('scopeSociety').checked)scopes.push('society');if($('scopeTown').checked)scopes.push('town');
  const b={scopes};for(const k of ['name','phone','society','flat','reason'])b[k]=$(k).value;
  show((await access.get('/api/register',{method:'POST',body:b})).user);window.scrollTo({top:0,behavior:'smooth'});
