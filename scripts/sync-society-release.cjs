@@ -8,7 +8,7 @@ if(fs.existsSync(out)&&fs.realpathSync(out)!==path.join(fs.realpathSync(destinat
 const files=new Map();
 function collect(rel){const full=path.join(source,rel);if(fs.statSync(full).isDirectory()){for(const entry of fs.readdirSync(full))collect(rel+'/'+entry);}else files.set(rel,fs.readFileSync(full));}
 for(const rel of ['access','index.html','admin.html','directory-core.js','icons','manifest.webmanifest','firestore.rules','firestore.indexes.json','scripts/build-private.cjs','scripts/browser-private.mjs','scripts/check-deployment.mjs',
- 'tests/access.test.mjs','tests/firestore-client.test.mjs','tests/firestore-rules.test.mjs','tests/private-build.test.cjs','tests/memory-store.mjs'])collect(rel);
+ 'scripts/runtime-smoke.mjs','tests/access.test.mjs','tests/firestore-client.test.mjs','tests/firestore-rules.test.mjs','tests/private-build.test.cjs','tests/memory-store.mjs'])collect(rel);
 for(const rel of ['index.html','admin.html','manifest.webmanifest','LICENSE'])collect('society/'+rel);
 for(const dir of ['icons','template','forms'])collect('society/'+dir);
 for(const rel of files.keys())if(/(?:^|\/)(?:materials|private-data|node_modules|dist)(?:\/|$)|(?:^|\/)(?:services\.json|directory\.json|data\.xlsx|services\.xlsx|\.env.*|\.dev.vars)$/.test(rel))throw Error('Runtime data cannot enter the release: '+rel);
@@ -19,7 +19,7 @@ for(const [rel,bytes]of files){const full=path.join(out,rel);fs.mkdirSync(path.d
 const manifest={source:'hedaprateek/town-services',branch:'google-access',files:Object.fromEntries([...files].map(([rel,bytes])=>[rel,crypto.createHash('sha256').update(bytes).digest('hex')]))};
 fs.writeFileSync(path.join(out,'RELEASE.json'),JSON.stringify(manifest,null,2)+'\n');
 const pkg=JSON.parse(fs.readFileSync(path.join(source,'package.json'),'utf8'));
-pkg.scripts={build:'node .community/scripts/build-private.cjs',test:'node --test .community/tests/*.test.cjs .community/tests/*.test.mjs',dev:'wrangler dev',deploy:'wrangler deploy','test:browser':'node .community/scripts/browser-private.mjs','check:deployment':'node .community/scripts/check-deployment.mjs','firebase:rules':'firebase deploy --only firestore','test:rules':'firebase emulators:exec --project demo-community-directory --only firestore "node --test .community/tests/firestore-rules.test.mjs"'};
+pkg.scripts={build:'node .community/scripts/build-private.cjs',test:'node --test .community/tests/*.test.cjs .community/tests/*.test.mjs',dev:'wrangler dev',deploy:'wrangler deploy','test:browser':'node .community/scripts/browser-private.mjs','test:runtime':'node .community/scripts/runtime-smoke.mjs','check:deployment':'node .community/scripts/check-deployment.mjs','firebase:rules':'firebase deploy --only firestore','test:rules':'firebase emulators:exec --project demo-community-directory --only firestore "node --test .community/tests/firestore-rules.test.mjs"'};
 fs.writeFileSync(path.join(destination,'package.json'),JSON.stringify(pkg,null,2)+'\n');
 for(const rel of ['package-lock.json','.node-version','.firebaserc'])fs.copyFileSync(path.join(source,rel),path.join(destination,rel));
 const config=JSON.parse(fs.readFileSync(path.join(source,'wrangler.jsonc'),'utf8'));

@@ -136,7 +136,9 @@ export function createHandler(verify=verifyIdentity,makeStore=(p,t)=>new Firesto
     }
    }else need(['/signin.html','/access.js','/access.css','/sw.js','/health'].includes(path),404,'Not found.');
    if(path==='/health')return secure(json({service:'community-directory',configured}));
-   need(['GET','HEAD'].includes(request.method),405,'Method not allowed.');return secure(await env.ASSETS.fetch(request));
+   need(['GET','HEAD'].includes(request.method),405,'Method not allowed.');
+   const assetURL=new URL(request.url);if(path.endsWith('/'))assetURL.pathname+='index.html';
+   return secure(await env.ASSETS.fetch(new Request(assetURL,request)));
   }catch(e){return secure(json({error:e.status?e.message:'The request could not be completed. Please retry.'},e.status||500));}
  };
 }

@@ -12,6 +12,7 @@ try{
  const configResponse=await request('/api/config');assert.equal(configResponse.status,200);const config=await configResponse.json();
  assert.equal(config.configured,true);assert.equal(config.firebase.projectId,'community-directory-88fc7','Unexpected Firebase project.');
  const root=await request('/');assert.equal(root.status,302);assert.match(root.headers.get('location'),/\/signin\.html/);
+ const login=await request('/signin.html');assert.equal(login.status,200,'The login HTML must be served directly, without an asset-router redirect.');assert.match(await login.text(),/Continue with Google/);
  for(const scope of ['society','town']){
   const page=await request('/'+scope+'/');assert.equal(page.status,302,'Anonymous '+scope+' pages must require sign-in.');assert.match(page.headers.get('location'),/\/signin\.html/);
   const api=await request('/api/directory/'+scope);assert.equal(api.status,401,'Anonymous '+scope+' data requests must be denied.');assert.match(api.headers.get('cache-control'),/no-store/);

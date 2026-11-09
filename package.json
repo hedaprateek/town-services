@@ -8,6 +8,7 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test:browser": "node scripts/browser-private.mjs",
+    "test:runtime": "node scripts/runtime-smoke.mjs",
     "check:deployment": "node scripts/check-deployment.mjs",
     "release:society": "node scripts/sync-society-release.cjs",
     "firebase:rules": "firebase deploy --only firestore",

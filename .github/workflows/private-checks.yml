@@ -23,6 +23,7 @@ jobs:
       - run: npm test
       - run: npm run test:rules
       - run: npm run build
+      - run: npm run test:runtime
       - run: node scripts/browser-private.mjs
       - run: npx wrangler deploy --dry-run
   android:
