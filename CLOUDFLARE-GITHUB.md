@@ -5,6 +5,33 @@ approvals, workbooks, documents and audit history. Excel/CSV is an admin import
 and export format. No Cloudflare database, email sender or service-account key is
 required. The owner is **prateekbct@gmail.com**.
 
+## One deployment already includes both interfaces
+
+The `town-services` **google-access** branch is pushed to GitHub and contains
+both `/town/` and `/society/`, both contact editors, and the common `/admin/` page.
+Deploying the `community-directory` Worker from that branch is sufficient to use
+**both directories**. You do not need to deploy a second Worker to start using the
+society directory. Use the town column in the table below for that single deployment.
+
+The separate `People-Information` release is also complete, committed and tested
+locally. Its Git push from this machine is currently returning HTTP 403 despite
+confirmed repository write access. Until that push succeeds, its `google-access`
+branch is not available on GitHub. A code-only Git bundle is prepared locally at
+`town-services/private-data/society-google-access.bundle`; it contains the society
+release commits relative to its existing `main`, without copying runtime contacts
+or migration data. On the other device, transfer that bundle securely and run:
+
+```text
+git clone https://github.com/hedaprateek/People-Information.git
+cd People-Information
+git fetch /path/to/society-google-access.bundle google-access:google-access
+git switch google-access
+git push -u origin google-access
+```
+
+Only then use the society column below if you want to keep its separate existing
+`society-info` hostname. The single shared Worker above is ready on GitHub now.
+
 ## Cloudflare dashboard settings
 
 Use **Workers with Git integration**, in the existing Cloudflare account. Select
@@ -55,7 +82,9 @@ Official Cloudflare instructions:
 
 Firebase project **community-directory-88fc7** is already on Spark with Google
 sign-in, the Standard Firestore database in Mumbai, security rules, the members
-status/email index, and four large-content indexing exemptions configured.
+status/email index, and four large-content indexing exemptions configured. Both
+hostnames below are authorized in Firebase; this was checked through the public
+Google project settings API after saving the society hostname in the console.
 Do not switch to paid billing for this release.
 
 Before the first login, open Firebase Authentication → Settings → Authorized
